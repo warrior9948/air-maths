@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Air Maths Board - Stage 1</title>
+<title>Air Maths Board - Stage 2</title>
 
 <style>
     * {
@@ -14,54 +14,123 @@
     body {
         margin: 0;
         overflow: hidden;
-        background: #000;
+        background: #020008;
         font-family: Arial, sans-serif;
     }
 
+    /* CAMERA */
     #camera {
         position: fixed;
         width: 100vw;
         height: 100vh;
         object-fit: cover;
         transform: scaleX(-1);
-        opacity: 0.35;
+        opacity: 0.30;
     }
 
+    /* DRAWING CANVAS */
     #canvas {
         position: fixed;
         top: 0;
         left: 0;
         width: 100vw;
         height: 100vh;
+        z-index: 2;
     }
 
+    /* FINGER CURSOR */
+    #cursor {
+        position: fixed;
+
+        width: 22px;
+        height: 22px;
+
+        border: 3px solid #ff00ff;
+        border-radius: 50%;
+
+        box-shadow:
+            0 0 8px #ff00ff,
+            0 0 18px #ff00ff,
+            0 0 30px #ff00ff;
+
+        pointer-events: none;
+
+        z-index: 5;
+
+        display: none;
+
+        transform: translate(-50%, -50%);
+    }
+
+    /* TITLE */
     #title {
         position: fixed;
+
         top: 15px;
         left: 15px;
+
         z-index: 10;
 
         color: white;
+
         font-size: 25px;
         font-weight: bold;
 
         text-shadow:
-            0 0 10px #ff00ff,
-            0 0 20px #ff00ff;
+            0 0 8px #ff00ff,
+            0 0 18px #ff00ff,
+            0 0 35px #ff00ff;
     }
 
+    /* STATUS */
     #status {
         position: fixed;
+
         top: 55px;
         left: 15px;
+
         z-index: 10;
 
         color: white;
+
         font-size: 15px;
+
+        text-shadow:
+            0 0 8px #ff00ff;
     }
 
+    /* INSTRUCTIONS */
+    #instructions {
+        position: fixed;
+
+        right: 15px;
+        top: 15px;
+
+        z-index: 10;
+
+        color: white;
+
+        background: rgba(5, 0, 15, 0.65);
+
+        padding: 12px;
+
+        border-radius: 12px;
+
+        border: 1px solid rgba(255, 0, 255, 0.6);
+
+        box-shadow:
+            0 0 10px rgba(255, 0, 255, 0.4),
+            inset 0 0 15px rgba(255, 0, 255, 0.1);
+
+        font-size: 13px;
+
+        backdrop-filter: blur(6px);
+    }
+
+    /* START BUTTON */
     #startButton {
         position: fixed;
+
         z-index: 20;
 
         top: 50%;
@@ -71,33 +140,43 @@
 
         padding: 18px 30px;
 
-        border: none;
+        border: 2px solid #ff00ff;
+
         border-radius: 15px;
 
-        background: #ff00ff;
+        background: rgba(255, 0, 255, 0.15);
+
         color: white;
 
         font-size: 20px;
         font-weight: bold;
+
+        box-shadow:
+            0 0 10px #ff00ff,
+            0 0 25px #ff00ff,
+            inset 0 0 15px rgba(255, 0, 255, 0.2);
+
+        backdrop-filter: blur(8px);
     }
 
-    #instructions {
-        position: fixed;
-        z-index: 10;
+    /* SMALL SCREEN */
+    @media (max-width: 600px) {
 
-        right: 15px;
-        top: 15px;
+        #title {
+            font-size: 20px;
+        }
 
-        color: white;
+        #status {
+            font-size: 13px;
+        }
 
-        background: rgba(0,0,0,0.6);
+        #instructions {
+            font-size: 11px;
+            padding: 9px;
+        }
 
-        padding: 12px;
-
-        border-radius: 12px;
-
-        font-size: 13px;
     }
+
 </style>
 </head>
 
@@ -106,6 +185,8 @@
 <video id="camera" autoplay playsinline></video>
 
 <canvas id="canvas"></canvas>
+
+<div id="cursor"></div>
 
 <div id="title">
     ✨ AIR MATHS BOARD
@@ -126,7 +207,8 @@
 </button>
 
 
-<!-- MediaPipe Hands -->
+<!-- MEDIAPIPE -->
+
 <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
@@ -149,6 +231,9 @@ const startButton =
 const status =
     document.getElementById("status");
 
+const cursor =
+    document.getElementById("cursor");
+
 
 let previousX = null;
 let previousY = null;
@@ -160,8 +245,11 @@ let previousY = null;
 
 function resizeCanvas() {
 
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+    canvas.width =
+        window.innerWidth;
+
+    canvas.height =
+        window.innerHeight;
 
 }
 
@@ -195,11 +283,15 @@ function clearCanvas() {
 
 function distance(a, b) {
 
-    const dx = a.x - b.x;
-    const dy = a.y - b.y;
+    const dx =
+        a.x - b.x;
+
+    const dy =
+        a.y - b.y;
 
     return Math.sqrt(
-        dx * dx + dy * dy
+        dx * dx +
+        dy * dy
     );
 
 }
@@ -224,13 +316,14 @@ function fingerUp(
 
 
 // -------------------------------------
-// MEDIAPIPE
+// MEDIAPIPE HANDS
 // -------------------------------------
 
 const hands =
     new Hands({
 
-        locateFile: function(file) {
+        locateFile:
+        function(file) {
 
             return (
                 "https://cdn.jsdelivr.net/npm/" +
@@ -260,7 +353,8 @@ hands.setOptions({
 // HAND RESULTS
 // -------------------------------------
 
-hands.onResults(function(results) {
+hands.onResults(
+function(results) {
 
     if (
         !results.multiHandLandmarks ||
@@ -270,8 +364,11 @@ hands.onResults(function(results) {
         previousX = null;
         previousY = null;
 
+        cursor.style.display =
+            "none";
+
         status.innerText =
-            "Show your hand";
+            "🖐️ Show your hand";
 
         return;
 
@@ -282,12 +379,13 @@ hands.onResults(function(results) {
         results.multiHandLandmarks[0];
 
 
-    // Index finger
+    // ---------------------------------
+    // FINGERS
+    // ---------------------------------
+
     const indexUp =
         fingerUp(hand, 8, 6);
 
-
-    // Other fingers
     const middleUp =
         fingerUp(hand, 12, 10);
 
@@ -296,6 +394,37 @@ hands.onResults(function(results) {
 
     const pinkyUp =
         fingerUp(hand, 20, 18);
+
+
+    // ---------------------------------
+    // INDEX POSITION
+    // ---------------------------------
+
+    const index =
+        hand[8];
+
+
+    const x =
+        (1 - index.x) *
+        canvas.width;
+
+    const y =
+        index.y *
+        canvas.height;
+
+
+    // ---------------------------------
+    // SHOW CURSOR
+    // ---------------------------------
+
+    cursor.style.display =
+        "block";
+
+    cursor.style.left =
+        x + "px";
+
+    cursor.style.top =
+        y + "px";
 
 
     // ---------------------------------
@@ -314,6 +443,9 @@ hands.onResults(function(results) {
         previousX = null;
         previousY = null;
 
+        cursor.style.display =
+            "none";
+
         status.innerText =
             "✋ Open hand — board cleared";
 
@@ -323,29 +455,12 @@ hands.onResults(function(results) {
 
 
     // ---------------------------------
-    // INDEX FINGER POSITION
-    // ---------------------------------
-
-    const index =
-        hand[8];
-
-
-    // Mirror X coordinate
-    const x =
-        (1 - index.x) *
-        canvas.width;
-
-    const y =
-        index.y *
-        canvas.height;
-
-
-    // ---------------------------------
-    // THUMB + INDEX PINCH
+    // THUMB
     // ---------------------------------
 
     const thumb =
         hand[4];
+
 
     const pinch =
         distance(
@@ -368,6 +483,10 @@ hands.onResults(function(results) {
             previousY !== null
         ) {
 
+            /*
+             * OUTER GLOW
+             */
+
             ctx.beginPath();
 
             ctx.moveTo(
@@ -380,21 +499,85 @@ hands.onResults(function(results) {
                 y
             );
 
-            ctx.lineWidth = 7;
+            ctx.lineWidth = 13;
 
-            ctx.lineCap = "round";
+            ctx.lineCap =
+                "round";
 
-            ctx.lineJoin = "round";
+            ctx.lineJoin =
+                "round";
 
             ctx.strokeStyle =
-                "#ff00ff";
+                "rgba(255, 0, 255, 0.35)";
 
             ctx.shadowColor =
                 "#ff00ff";
 
-            ctx.shadowBlur = 15;
+            ctx.shadowBlur = 25;
 
             ctx.stroke();
+
+
+            /*
+             * INNER NEON LINE
+             */
+
+            ctx.beginPath();
+
+            ctx.moveTo(
+                previousX,
+                previousY
+            );
+
+            ctx.lineTo(
+                x,
+                y
+            );
+
+            ctx.lineWidth = 5;
+
+            ctx.lineCap =
+                "round";
+
+            ctx.lineJoin =
+                "round";
+
+            ctx.strokeStyle =
+                "#ff66ff";
+
+            ctx.shadowColor =
+                "#ff00ff";
+
+            ctx.shadowBlur = 12;
+
+            ctx.stroke();
+
+
+            /*
+             * BRIGHT CORE
+             */
+
+            ctx.beginPath();
+
+            ctx.moveTo(
+                previousX,
+                previousY
+            );
+
+            ctx.lineTo(
+                x,
+                y
+            );
+
+            ctx.lineWidth = 2;
+
+            ctx.strokeStyle =
+                "white";
+
+            ctx.shadowBlur = 5;
+
+            ctx.stroke();
+
 
             ctx.shadowBlur = 0;
 
@@ -404,8 +587,9 @@ hands.onResults(function(results) {
         previousX = x;
         previousY = y;
 
+
         status.innerText =
-            "☝️ Drawing in the air...";
+            "☝️ ✨ Drawing in the air...";
 
     }
 
@@ -476,7 +660,7 @@ async function startCamera() {
 
 
         status.innerText =
-            "Camera ready! Show your hand.";
+            "🟢 Camera ready! Show your hand.";
 
     }
 
@@ -485,7 +669,7 @@ async function startCamera() {
         console.error(error);
 
         status.innerText =
-            "Camera permission denied";
+            "🔴 Camera permission denied";
 
         alert(
             "Camera could not be started. " +
