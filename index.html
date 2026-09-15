@@ -26,6 +26,7 @@
         object-fit: cover;
         transform: scaleX(-1);
         opacity: 0.30;
+        z-index: 0;
     }
 
     /* DRAWING CANVAS */
@@ -38,28 +39,15 @@
         z-index: 2;
     }
 
-    /* FINGER CURSOR */
-    #cursor {
+    /* CURSOR CANVAS */
+    #cursorCanvas {
         position: fixed;
-
-        width: 22px;
-        height: 22px;
-
-        border: 3px solid #ff00ff;
-        border-radius: 50%;
-
-        box-shadow:
-            0 0 8px #ff00ff,
-            0 0 18px #ff00ff,
-            0 0 30px #ff00ff;
-
-        pointer-events: none;
-
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
         z-index: 5;
-
-        display: none;
-
-        transform: translate(-50%, -50%);
+        pointer-events: none;
     }
 
     /* TITLE */
@@ -184,9 +172,11 @@
 
 <video id="camera" autoplay playsinline></video>
 
+<!-- MAIN DRAWING -->
 <canvas id="canvas"></canvas>
 
-<div id="cursor"></div>
+<!-- FINGER CURSOR -->
+<canvas id="cursorCanvas"></canvas>
 
 <div id="title">
     ✨ AIR MATHS BOARD
@@ -225,14 +215,17 @@ const canvas =
 const ctx =
     canvas.getContext("2d");
 
+const cursorCanvas =
+    document.getElementById("cursorCanvas");
+
+const cursorCtx =
+    cursorCanvas.getContext("2d");
+
 const startButton =
     document.getElementById("startButton");
 
 const status =
     document.getElementById("status");
-
-const cursor =
-    document.getElementById("cursor");
 
 
 let previousX = null;
@@ -251,6 +244,12 @@ function resizeCanvas() {
     canvas.height =
         window.innerHeight;
 
+    cursorCanvas.width =
+        window.innerWidth;
+
+    cursorCanvas.height =
+        window.innerHeight;
+
 }
 
 resizeCanvas();
@@ -262,7 +261,7 @@ window.addEventListener(
 
 
 // -------------------------------------
-// CLEAR
+// CLEAR MAIN BOARD
 // -------------------------------------
 
 function clearCanvas() {
@@ -273,6 +272,165 @@ function clearCanvas() {
         canvas.width,
         canvas.height
     );
+
+}
+
+
+// -------------------------------------
+// CLEAR CURSOR
+// -------------------------------------
+
+function clearCursor() {
+
+    cursorCtx.clearRect(
+        0,
+        0,
+        cursorCanvas.width,
+        cursorCanvas.height
+    );
+
+}
+
+
+// -------------------------------------
+// DRAW FUTURISTIC CURSOR
+// -------------------------------------
+
+function drawCursor(x, y) {
+
+    clearCursor();
+
+    /*
+     * OUTER GLOW
+     */
+
+    cursorCtx.beginPath();
+
+    cursorCtx.arc(
+        x,
+        y,
+        25,
+        0,
+        Math.PI * 2
+    );
+
+    cursorCtx.strokeStyle =
+        "rgba(255, 0, 255, 0.35)";
+
+    cursorCtx.lineWidth = 8;
+
+    cursorCtx.shadowColor =
+        "#ff00ff";
+
+    cursorCtx.shadowBlur = 30;
+
+    cursorCtx.stroke();
+
+
+    /*
+     * MAIN RING
+     */
+
+    cursorCtx.beginPath();
+
+    cursorCtx.arc(
+        x,
+        y,
+        16,
+        0,
+        Math.PI * 2
+    );
+
+    cursorCtx.strokeStyle =
+        "#ff00ff";
+
+    cursorCtx.lineWidth = 3;
+
+    cursorCtx.shadowColor =
+        "#ff00ff";
+
+    cursorCtx.shadowBlur = 18;
+
+    cursorCtx.stroke();
+
+
+    /*
+     * WHITE CENTER
+     */
+
+    cursorCtx.beginPath();
+
+    cursorCtx.arc(
+        x,
+        y,
+        4,
+        0,
+        Math.PI * 2
+    );
+
+    cursorCtx.fillStyle =
+        "white";
+
+    cursorCtx.shadowColor =
+        "white";
+
+    cursorCtx.shadowBlur = 10;
+
+    cursorCtx.fill();
+
+
+    /*
+     * FOUR SMALL TARGET MARKS
+     */
+
+    cursorCtx.strokeStyle =
+        "#ff66ff";
+
+    cursorCtx.lineWidth = 2;
+
+    cursorCtx.shadowColor =
+        "#ff00ff";
+
+    cursorCtx.shadowBlur = 12;
+
+
+    // Top
+    cursorCtx.beginPath();
+
+    cursorCtx.moveTo(x, y - 23);
+    cursorCtx.lineTo(x, y - 31);
+
+    cursorCtx.stroke();
+
+
+    // Bottom
+    cursorCtx.beginPath();
+
+    cursorCtx.moveTo(x, y + 23);
+    cursorCtx.lineTo(x, y + 31);
+
+    cursorCtx.stroke();
+
+
+    // Left
+    cursorCtx.beginPath();
+
+    cursorCtx.moveTo(x - 23, y);
+    cursorCtx.lineTo(x - 31, y);
+
+    cursorCtx.stroke();
+
+
+    // Right
+    cursorCtx.beginPath();
+
+    cursorCtx.moveTo(x + 23, y);
+    cursorCtx.lineTo(x + 31, y);
+
+    cursorCtx.stroke();
+
+
+    cursorCtx.shadowBlur = 0;
 
 }
 
@@ -356,6 +514,15 @@ hands.setOptions({
 hands.onResults(
 function(results) {
 
+    // Clear old cursor every frame
+
+    clearCursor();
+
+
+    // ---------------------------------
+    // NO HAND
+    // ---------------------------------
+
     if (
         !results.multiHandLandmarks ||
         results.multiHandLandmarks.length === 0
@@ -363,9 +530,6 @@ function(results) {
 
         previousX = null;
         previousY = null;
-
-        cursor.style.display =
-            "none";
 
         status.innerText =
             "🖐️ Show your hand";
@@ -414,17 +578,13 @@ function(results) {
 
 
     // ---------------------------------
-    // SHOW CURSOR
+    // DRAW CURSOR
     // ---------------------------------
 
-    cursor.style.display =
-        "block";
-
-    cursor.style.left =
-        x + "px";
-
-    cursor.style.top =
-        y + "px";
+    drawCursor(
+        x,
+        y
+    );
 
 
     // ---------------------------------
@@ -443,8 +603,7 @@ function(results) {
         previousX = null;
         previousY = null;
 
-        cursor.style.display =
-            "none";
+        clearCursor();
 
         status.innerText =
             "✋ Open hand — board cleared";
