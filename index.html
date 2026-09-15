@@ -7,204 +7,464 @@
 <title>Air Maths Board - Stage 2</title>
 
 <style>
-    * {
-        box-sizing: border-box;
-    }
 
-    body {
-        margin: 0;
-        overflow: hidden;
-        background: #020008;
-        font-family: Arial, sans-serif;
-    }
+* {
+    box-sizing: border-box;
+}
 
-    /* CAMERA */
-    #camera {
-        position: fixed;
-        width: 100vw;
-        height: 100vh;
-        object-fit: cover;
-        transform: scaleX(-1);
-        opacity: 0.30;
-        z-index: 0;
-    }
+body {
+    margin: 0;
+    overflow: hidden;
+    background: #020008;
+    font-family: Arial, sans-serif;
+}
 
-    /* DRAWING CANVAS */
-    #canvas {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100vw;
-        height: 100vh;
-        z-index: 2;
-    }
 
-    /* CURSOR CANVAS */
-    #cursorCanvas {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100vw;
-        height: 100vh;
-        z-index: 5;
-        pointer-events: none;
-    }
+/* =====================================
+   CAMERA
+===================================== */
 
-    /* TITLE */
+#camera {
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+
+    object-fit: cover;
+
+    transform: scaleX(-1);
+
+    opacity: 0.30;
+
+    z-index: 0;
+}
+
+
+/* =====================================
+   DRAWING CANVAS
+===================================== */
+
+#canvas {
+    position: fixed;
+
+    top: 0;
+    left: 0;
+
+    width: 100vw;
+    height: 100vh;
+
+    z-index: 2;
+
+    pointer-events: none;
+}
+
+
+/* =====================================
+   FUTURISTIC FINGER CURSOR
+===================================== */
+
+#cursor {
+
+    position: fixed;
+
+    width: 42px;
+    height: 42px;
+
+    border: 3px solid #ff00ff;
+
+    border-radius: 50%;
+
+    pointer-events: none;
+
+    z-index: 99999;
+
+    display: none;
+
+    transform: translate(-50%, -50%);
+
+    box-shadow:
+        0 0 8px #ff00ff,
+        0 0 18px #ff00ff,
+        0 0 35px #ff00ff,
+        inset 0 0 12px #ff00ff;
+
+    background:
+        rgba(255, 0, 255, 0.08);
+
+}
+
+
+/* =====================================
+   CURSOR CENTER
+===================================== */
+
+#cursor::after {
+
+    content: "";
+
+    position: absolute;
+
+    width: 7px;
+    height: 7px;
+
+    background: white;
+
+    border-radius: 50%;
+
+    top: 50%;
+    left: 50%;
+
+    transform:
+        translate(-50%, -50%);
+
+    box-shadow:
+        0 0 8px white,
+        0 0 15px #ff00ff;
+
+}
+
+
+/* =====================================
+   CURSOR TARGET MARKS
+===================================== */
+
+.cursorMark {
+
+    position: absolute;
+
+    background: #ff66ff;
+
+    box-shadow:
+        0 0 8px #ff00ff;
+
+}
+
+
+/* TOP */
+
+#markTop {
+
+    width: 3px;
+    height: 10px;
+
+    left: 50%;
+    top: -13px;
+
+    transform:
+        translateX(-50%);
+
+}
+
+
+/* BOTTOM */
+
+#markBottom {
+
+    width: 3px;
+    height: 10px;
+
+    left: 50%;
+    bottom: -13px;
+
+    transform:
+        translateX(-50%);
+
+}
+
+
+/* LEFT */
+
+#markLeft {
+
+    width: 10px;
+    height: 3px;
+
+    left: -13px;
+    top: 50%;
+
+    transform:
+        translateY(-50%);
+
+}
+
+
+/* RIGHT */
+
+#markRight {
+
+    width: 10px;
+    height: 3px;
+
+    right: -13px;
+    top: 50%;
+
+    transform:
+        translateY(-50%);
+
+}
+
+
+/* =====================================
+   TITLE
+===================================== */
+
+#title {
+
+    position: fixed;
+
+    top: 15px;
+    left: 15px;
+
+    z-index: 10;
+
+    color: white;
+
+    font-size: 25px;
+
+    font-weight: bold;
+
+    text-shadow:
+        0 0 8px #ff00ff,
+        0 0 18px #ff00ff,
+        0 0 35px #ff00ff;
+}
+
+
+/* =====================================
+   STATUS
+===================================== */
+
+#status {
+
+    position: fixed;
+
+    top: 55px;
+    left: 15px;
+
+    z-index: 10;
+
+    color: white;
+
+    font-size: 15px;
+
+    text-shadow:
+        0 0 8px #ff00ff;
+}
+
+
+/* =====================================
+   INSTRUCTIONS
+===================================== */
+
+#instructions {
+
+    position: fixed;
+
+    right: 15px;
+    top: 15px;
+
+    z-index: 10;
+
+    color: white;
+
+    background:
+        rgba(5, 0, 15, 0.65);
+
+    padding: 12px;
+
+    border-radius: 12px;
+
+    border:
+        1px solid
+        rgba(255, 0, 255, 0.6);
+
+    box-shadow:
+        0 0 10px
+        rgba(255, 0, 255, 0.4),
+
+        inset 0 0 15px
+        rgba(255, 0, 255, 0.1);
+
+    font-size: 13px;
+
+    backdrop-filter:
+        blur(6px);
+}
+
+
+/* =====================================
+   START BUTTON
+===================================== */
+
+#startButton {
+
+    position: fixed;
+
+    z-index: 20;
+
+    top: 50%;
+    left: 50%;
+
+    transform:
+        translate(-50%, -50%);
+
+    padding: 18px 30px;
+
+    border:
+        2px solid #ff00ff;
+
+    border-radius: 15px;
+
+    background:
+        rgba(255, 0, 255, 0.15);
+
+    color: white;
+
+    font-size: 20px;
+
+    font-weight: bold;
+
+    box-shadow:
+        0 0 10px #ff00ff,
+        0 0 25px #ff00ff,
+
+        inset 0 0 15px
+        rgba(255, 0, 255, 0.2);
+
+    backdrop-filter:
+        blur(8px);
+}
+
+
+/* =====================================
+   MOBILE
+===================================== */
+
+@media (max-width: 600px) {
+
     #title {
-        position: fixed;
-
-        top: 15px;
-        left: 15px;
-
-        z-index: 10;
-
-        color: white;
-
-        font-size: 25px;
-        font-weight: bold;
-
-        text-shadow:
-            0 0 8px #ff00ff,
-            0 0 18px #ff00ff,
-            0 0 35px #ff00ff;
-    }
-
-    /* STATUS */
-    #status {
-        position: fixed;
-
-        top: 55px;
-        left: 15px;
-
-        z-index: 10;
-
-        color: white;
-
-        font-size: 15px;
-
-        text-shadow:
-            0 0 8px #ff00ff;
-    }
-
-    /* INSTRUCTIONS */
-    #instructions {
-        position: fixed;
-
-        right: 15px;
-        top: 15px;
-
-        z-index: 10;
-
-        color: white;
-
-        background: rgba(5, 0, 15, 0.65);
-
-        padding: 12px;
-
-        border-radius: 12px;
-
-        border: 1px solid rgba(255, 0, 255, 0.6);
-
-        box-shadow:
-            0 0 10px rgba(255, 0, 255, 0.4),
-            inset 0 0 15px rgba(255, 0, 255, 0.1);
-
-        font-size: 13px;
-
-        backdrop-filter: blur(6px);
-    }
-
-    /* START BUTTON */
-    #startButton {
-        position: fixed;
-
-        z-index: 20;
-
-        top: 50%;
-        left: 50%;
-
-        transform: translate(-50%, -50%);
-
-        padding: 18px 30px;
-
-        border: 2px solid #ff00ff;
-
-        border-radius: 15px;
-
-        background: rgba(255, 0, 255, 0.15);
-
-        color: white;
-
         font-size: 20px;
-        font-weight: bold;
-
-        box-shadow:
-            0 0 10px #ff00ff,
-            0 0 25px #ff00ff,
-            inset 0 0 15px rgba(255, 0, 255, 0.2);
-
-        backdrop-filter: blur(8px);
     }
 
-    /* SMALL SCREEN */
-    @media (max-width: 600px) {
-
-        #title {
-            font-size: 20px;
-        }
-
-        #status {
-            font-size: 13px;
-        }
-
-        #instructions {
-            font-size: 11px;
-            padding: 9px;
-        }
-
+    #status {
+        font-size: 13px;
     }
+
+    #instructions {
+        font-size: 11px;
+        padding: 9px;
+    }
+
+    #cursor {
+
+        width: 38px;
+        height: 38px;
+
+        border-width: 3px;
+    }
+
+}
 
 </style>
 </head>
 
+
 <body>
 
-<video id="camera" autoplay playsinline></video>
 
-<!-- MAIN DRAWING -->
+<!-- CAMERA -->
+
+<video
+    id="camera"
+    autoplay
+    playsinline>
+</video>
+
+
+<!-- DRAWING -->
+
 <canvas id="canvas"></canvas>
 
-<!-- FINGER CURSOR -->
-<canvas id="cursorCanvas"></canvas>
+
+<!-- =====================================
+     VISIBLE FINGER CURSOR
+===================================== -->
+
+<div id="cursor">
+
+    <div
+        id="markTop"
+        class="cursorMark">
+    </div>
+
+    <div
+        id="markBottom"
+        class="cursorMark">
+    </div>
+
+    <div
+        id="markLeft"
+        class="cursorMark">
+    </div>
+
+    <div
+        id="markRight"
+        class="cursorMark">
+    </div>
+
+</div>
+
+
+<!-- TITLE -->
 
 <div id="title">
     ✨ AIR MATHS BOARD
 </div>
 
+
+<!-- STATUS -->
+
 <div id="status">
     Press START
 </div>
 
+
+<!-- INSTRUCTIONS -->
+
 <div id="instructions">
+
     ☝️ Index finger = Draw<br>
+
     🤏 Pinch = Stop drawing<br>
+
     ✋ Open hand = Clear
+
 </div>
+
+
+<!-- START -->
 
 <button id="startButton">
     START CAMERA
 </button>
 
 
-<!-- MEDIAPIPE -->
+
+<!-- =====================================
+     MEDIAPIPE
+===================================== -->
 
 <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
 
 
+
 <script>
+
+
+/* =====================================
+   ELEMENTS
+===================================== */
 
 const video =
     document.getElementById("camera");
@@ -215,11 +475,8 @@ const canvas =
 const ctx =
     canvas.getContext("2d");
 
-const cursorCanvas =
-    document.getElementById("cursorCanvas");
-
-const cursorCtx =
-    cursorCanvas.getContext("2d");
+const cursor =
+    document.getElementById("cursor");
 
 const startButton =
     document.getElementById("startButton");
@@ -229,12 +486,14 @@ const status =
 
 
 let previousX = null;
+
 let previousY = null;
 
 
-// -------------------------------------
-// CANVAS SIZE
-// -------------------------------------
+
+/* =====================================
+   CANVAS SIZE
+===================================== */
 
 function resizeCanvas() {
 
@@ -244,15 +503,10 @@ function resizeCanvas() {
     canvas.height =
         window.innerHeight;
 
-    cursorCanvas.width =
-        window.innerWidth;
-
-    cursorCanvas.height =
-        window.innerHeight;
-
 }
 
 resizeCanvas();
+
 
 window.addEventListener(
     "resize",
@@ -260,9 +514,10 @@ window.addEventListener(
 );
 
 
-// -------------------------------------
-// CLEAR MAIN BOARD
-// -------------------------------------
+
+/* =====================================
+   CLEAR BOARD
+===================================== */
 
 function clearCanvas() {
 
@@ -276,168 +531,10 @@ function clearCanvas() {
 }
 
 
-// -------------------------------------
-// CLEAR CURSOR
-// -------------------------------------
 
-function clearCursor() {
-
-    cursorCtx.clearRect(
-        0,
-        0,
-        cursorCanvas.width,
-        cursorCanvas.height
-    );
-
-}
-
-
-// -------------------------------------
-// DRAW FUTURISTIC CURSOR
-// -------------------------------------
-
-function drawCursor(x, y) {
-
-    clearCursor();
-
-    /*
-     * OUTER GLOW
-     */
-
-    cursorCtx.beginPath();
-
-    cursorCtx.arc(
-        x,
-        y,
-        25,
-        0,
-        Math.PI * 2
-    );
-
-    cursorCtx.strokeStyle =
-        "rgba(255, 0, 255, 0.35)";
-
-    cursorCtx.lineWidth = 8;
-
-    cursorCtx.shadowColor =
-        "#ff00ff";
-
-    cursorCtx.shadowBlur = 30;
-
-    cursorCtx.stroke();
-
-
-    /*
-     * MAIN RING
-     */
-
-    cursorCtx.beginPath();
-
-    cursorCtx.arc(
-        x,
-        y,
-        16,
-        0,
-        Math.PI * 2
-    );
-
-    cursorCtx.strokeStyle =
-        "#ff00ff";
-
-    cursorCtx.lineWidth = 3;
-
-    cursorCtx.shadowColor =
-        "#ff00ff";
-
-    cursorCtx.shadowBlur = 18;
-
-    cursorCtx.stroke();
-
-
-    /*
-     * WHITE CENTER
-     */
-
-    cursorCtx.beginPath();
-
-    cursorCtx.arc(
-        x,
-        y,
-        4,
-        0,
-        Math.PI * 2
-    );
-
-    cursorCtx.fillStyle =
-        "white";
-
-    cursorCtx.shadowColor =
-        "white";
-
-    cursorCtx.shadowBlur = 10;
-
-    cursorCtx.fill();
-
-
-    /*
-     * FOUR SMALL TARGET MARKS
-     */
-
-    cursorCtx.strokeStyle =
-        "#ff66ff";
-
-    cursorCtx.lineWidth = 2;
-
-    cursorCtx.shadowColor =
-        "#ff00ff";
-
-    cursorCtx.shadowBlur = 12;
-
-
-    // Top
-    cursorCtx.beginPath();
-
-    cursorCtx.moveTo(x, y - 23);
-    cursorCtx.lineTo(x, y - 31);
-
-    cursorCtx.stroke();
-
-
-    // Bottom
-    cursorCtx.beginPath();
-
-    cursorCtx.moveTo(x, y + 23);
-    cursorCtx.lineTo(x, y + 31);
-
-    cursorCtx.stroke();
-
-
-    // Left
-    cursorCtx.beginPath();
-
-    cursorCtx.moveTo(x - 23, y);
-    cursorCtx.lineTo(x - 31, y);
-
-    cursorCtx.stroke();
-
-
-    // Right
-    cursorCtx.beginPath();
-
-    cursorCtx.moveTo(x + 23, y);
-    cursorCtx.lineTo(x + 31, y);
-
-    cursorCtx.stroke();
-
-
-    cursorCtx.shadowBlur = 0;
-
-}
-
-
-// -------------------------------------
-// DISTANCE
-// -------------------------------------
+/* =====================================
+   DISTANCE
+===================================== */
 
 function distance(a, b) {
 
@@ -455,9 +552,10 @@ function distance(a, b) {
 }
 
 
-// -------------------------------------
-// FINGER UP
-// -------------------------------------
+
+/* =====================================
+   FINGER UP
+===================================== */
 
 function fingerUp(
     landmarks,
@@ -473,9 +571,42 @@ function fingerUp(
 }
 
 
-// -------------------------------------
-// MEDIAPIPE HANDS
-// -------------------------------------
+
+/* =====================================
+   SHOW CURSOR
+===================================== */
+
+function showCursor(x, y) {
+
+    cursor.style.display =
+        "block";
+
+    cursor.style.left =
+        x + "px";
+
+    cursor.style.top =
+        y + "px";
+
+}
+
+
+
+/* =====================================
+   HIDE CURSOR
+===================================== */
+
+function hideCursor() {
+
+    cursor.style.display =
+        "none";
+
+}
+
+
+
+/* =====================================
+   MEDIAPIPE HANDS
+===================================== */
 
 const hands =
     new Hands({
@@ -494,6 +625,7 @@ const hands =
     });
 
 
+
 hands.setOptions({
 
     maxNumHands: 1,
@@ -507,21 +639,18 @@ hands.setOptions({
 });
 
 
-// -------------------------------------
-// HAND RESULTS
-// -------------------------------------
+
+/* =====================================
+   HAND RESULTS
+===================================== */
 
 hands.onResults(
 function(results) {
 
-    // Clear old cursor every frame
 
-    clearCursor();
-
-
-    // ---------------------------------
-    // NO HAND
-    // ---------------------------------
+    /* ---------------------------------
+       NO HAND
+    --------------------------------- */
 
     if (
         !results.multiHandLandmarks ||
@@ -529,7 +658,10 @@ function(results) {
     ) {
 
         previousX = null;
+
         previousY = null;
+
+        hideCursor();
 
         status.innerText =
             "🖐️ Show your hand";
@@ -539,13 +671,19 @@ function(results) {
     }
 
 
+
+    /* ---------------------------------
+       GET HAND
+    --------------------------------- */
+
     const hand =
         results.multiHandLandmarks[0];
 
 
-    // ---------------------------------
-    // FINGERS
-    // ---------------------------------
+
+    /* ---------------------------------
+       FINGER STATES
+    --------------------------------- */
 
     const indexUp =
         fingerUp(hand, 8, 6);
@@ -560,9 +698,10 @@ function(results) {
         fingerUp(hand, 20, 18);
 
 
-    // ---------------------------------
-    // INDEX POSITION
-    // ---------------------------------
+
+    /* ---------------------------------
+       INDEX POSITION
+    --------------------------------- */
 
     const index =
         hand[8];
@@ -572,24 +711,27 @@ function(results) {
         (1 - index.x) *
         canvas.width;
 
+
     const y =
         index.y *
         canvas.height;
 
 
-    // ---------------------------------
-    // DRAW CURSOR
-    // ---------------------------------
 
-    drawCursor(
+    /* ---------------------------------
+       SHOW CURSOR
+    --------------------------------- */
+
+    showCursor(
         x,
         y
     );
 
 
-    // ---------------------------------
-    // OPEN PALM
-    // ---------------------------------
+
+    /* ---------------------------------
+       OPEN PALM
+    --------------------------------- */
 
     if (
         indexUp &&
@@ -601,9 +743,10 @@ function(results) {
         clearCanvas();
 
         previousX = null;
+
         previousY = null;
 
-        clearCursor();
+        hideCursor();
 
         status.innerText =
             "✋ Open hand — board cleared";
@@ -613,9 +756,10 @@ function(results) {
     }
 
 
-    // ---------------------------------
-    // THUMB
-    // ---------------------------------
+
+    /* ---------------------------------
+       THUMB
+    --------------------------------- */
 
     const thumb =
         hand[4];
@@ -628,23 +772,26 @@ function(results) {
         );
 
 
-    // ---------------------------------
-    // DRAWING
-    // ---------------------------------
+
+    /* ---------------------------------
+       DRAWING
+    --------------------------------- */
 
     if (
         indexUp &&
         pinch > 0.07
     ) {
 
+
         if (
             previousX !== null &&
             previousY !== null
         ) {
 
-            /*
-             * OUTER GLOW
-             */
+
+            /* -------------------------
+               OUTER GLOW
+            ------------------------- */
 
             ctx.beginPath();
 
@@ -658,7 +805,8 @@ function(results) {
                 y
             );
 
-            ctx.lineWidth = 13;
+            ctx.lineWidth =
+                13;
 
             ctx.lineCap =
                 "round";
@@ -672,14 +820,16 @@ function(results) {
             ctx.shadowColor =
                 "#ff00ff";
 
-            ctx.shadowBlur = 25;
+            ctx.shadowBlur =
+                25;
 
             ctx.stroke();
 
 
-            /*
-             * INNER NEON LINE
-             */
+
+            /* -------------------------
+               INNER NEON
+            ------------------------- */
 
             ctx.beginPath();
 
@@ -693,7 +843,8 @@ function(results) {
                 y
             );
 
-            ctx.lineWidth = 5;
+            ctx.lineWidth =
+                5;
 
             ctx.lineCap =
                 "round";
@@ -707,14 +858,16 @@ function(results) {
             ctx.shadowColor =
                 "#ff00ff";
 
-            ctx.shadowBlur = 12;
+            ctx.shadowBlur =
+                12;
 
             ctx.stroke();
 
 
-            /*
-             * BRIGHT CORE
-             */
+
+            /* -------------------------
+               WHITE CORE
+            ------------------------- */
 
             ctx.beginPath();
 
@@ -728,12 +881,17 @@ function(results) {
                 y
             );
 
-            ctx.lineWidth = 2;
+            ctx.lineWidth =
+                2;
 
             ctx.strokeStyle =
                 "white";
 
-            ctx.shadowBlur = 5;
+            ctx.shadowColor =
+                "white";
+
+            ctx.shadowBlur =
+                5;
 
             ctx.stroke();
 
@@ -743,7 +901,9 @@ function(results) {
         }
 
 
+
         previousX = x;
+
         previousY = y;
 
 
@@ -752,9 +912,11 @@ function(results) {
 
     }
 
+
     else {
 
         previousX = null;
+
         previousY = null;
 
         status.innerText =
@@ -765,13 +927,15 @@ function(results) {
 });
 
 
-// -------------------------------------
-// START CAMERA
-// -------------------------------------
+
+/* =====================================
+   START CAMERA
+===================================== */
 
 async function startCamera() {
 
     try {
+
 
         const stream =
             await navigator.mediaDevices.getUserMedia({
@@ -785,8 +949,10 @@ async function startCamera() {
             });
 
 
+
         video.srcObject =
             stream;
+
 
 
         const camera =
@@ -811,7 +977,9 @@ async function startCamera() {
             );
 
 
+
         camera.start();
+
 
 
         startButton.style.display =
@@ -823,12 +991,15 @@ async function startCamera() {
 
     }
 
+
     catch(error) {
 
         console.error(error);
 
+
         status.innerText =
             "🔴 Camera permission denied";
+
 
         alert(
             "Camera could not be started. " +
@@ -841,14 +1012,16 @@ async function startCamera() {
 }
 
 
-// -------------------------------------
-// START BUTTON
-// -------------------------------------
+
+/* =====================================
+   START BUTTON
+===================================== */
 
 startButton.addEventListener(
     "click",
     startCamera
 );
+
 
 </script>
 
