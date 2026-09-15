@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>Air Maths Board</title>
+
+<style>
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    background: #050510;
+    color: white;
+    font-family: Arial, sans-serif;
+    overflow: hidden;
+}
+
+#camera {
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    object-fit: cover;
+    transform: scaleX(-1);
+    opacity: 0.35;
+}
+
+#drawCanvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 2;
+}
+
+#ui {
+    position: fixed;
+    z-index: 5;
+    top: 15px;
+    left: 15px;
+    right: 15px;
+    pointer-events: none;
+}
+
+.title {
+    font-size: 25px;
+    font-weight: bold;
+    text-shadow:
+        0 0 10px #00ffff,
+        0 0 20px #00ffff;
+}
+
+#status {
+    margin-top: 8px;
+    font-size: 15px;
+}
+
+#resultBox {
+    position: fixed;
+    z-index: 6;
+    bottom: 25px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0,0,0,0.75);
+    border: 2px solid #00ffff;
+    border-radius: 15px;
+    padding: 12px 25px;
+    min-width: 280px;
+    text-align: center;
+    font-size: 22px;
+    box-shadow: 0 0 20px #00ffff;
+}
+
+#start {
+    position: fixed;
+    z-index: 20;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    padding: 18px 35px;
+    border: none;
+    border-radius: 15px;
+    background: #00ffff;
+    color: black;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+#help {
+    position: fixed;
+    z-index: 6;
+    top: 80px;
+    right: 15px;
+    background: rgba(0,0,0,0.65);
+    padding: 12px;
+    border-radius: 12px;
+    font-size: 13px;
+}
+
+</style>
+</head>
+
+<body>
+
+<video id="camera"
+       autoplay
+       playsinline>
+</video>
+
+<canvas id="drawCanvas"></canvas>
+
+<div id="ui">
+
+    <div class="title">
+        ✨ AIR MATHS BOARD
+    </div>
+
+    <div id="status">
+        Press START and show your hand
+    </div>
+
+</div>
+
+<div id="help">
+
+☝️ Draw<br>
+✌️ Geometry mode<br>
+✋ Clear<br>
+🤏 Pinch = stop drawing
+
+</div>
+
+<div id="resultBox">
+    Result: —
+</div>
+
+<button id="start">
+    START CAMERA
+</button>
+
+<!-- MediaPipe -->
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js"></script>
+
+<script>
+
+const video =
+    document.getElementById("camera");
+
+const canvas =
+    document.getElementById("drawCanvas");
+
+const ctx =
+    canvas.getContext("2d");
+
+const statusText =
+    document.getElementById("status");
+
+const resultBox =
+    document.getElementById("resultBox");
+
+const startButton =
+    document.getElementById("start");
+
+let drawing = false;
+
+let lastX = null;
+let lastY = null;
+
+let points = [];
+
+let mode = "MATH";
+
+
+// --------------------------------------------------
+// CANVAS
+// --------------------------------------------------
+
+function resizeCanvas() {
+
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+}
+
+resizeCanvas();
+
+window.addEventListener(
+    "resize",
+    resizeCanvas
+);
+
+
+// --------------------------------------------------
+// DRAWING
+// --------------------------------------------------
+
+function drawLine(x1,y1,x2,y2) {
+
+    ctx.beginPath();
+
+    ctx.moveTo(x1,y1);
+    ctx.lineTo(x2,y2);
+
+    ctx.lineWidth = 7;
+
+    ctx.lineCap = "round";
+
+    ctx.strokeStyle = "#ff00ff";
+
+    ctx.shadowColor = "#ff00ff";
+
+    ctx.shadowBlur = 15;
+
+    ctx.stroke();
+
+    ctx.shadowBlur = 0;
+
+}
+
+
+// --------------------------------------------------
+// CLEAR
+// --------------------------------------------------
+
+function clearBoard() {
+
+    ctx.clearRect(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+    );
+
+    points = [];
+
+    resultBox.innerText =
+        "Result: —";
+
+}
+
+
+// --------------------------------------------------
+// DISTANCE
+// --------------------------------------------------
+
+function distance(a,b) {
+
+    return Math.sqrt(
+        Math.pow(a.x-b.x,2) +
+        Math.pow(a.y-b.y,2)
+    );
+
+}
+
+
+// --------------------------------------------------
+// FINGER DETECTION
+// --------------------------------------------------
+
+function fingerUp(
+    landmarks,
+    tip,
+    pip
+) {
+
+    return landmarks[tip].y <
+           landmarks[pip].y;
+
+}
+
+
+// --------------------------------------------------
+// HAND DETECTION
+// --------------------------------------------------
+
+const hands = new Hands({
+
+    locateFile: (file) => {
+
+        return `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`;
+
+    }
+
+});
+
+
+hands.setOptions({
+
+    maxNumHands: 1,
+
+    modelComplexity: 1,
+
+    minDetectionConfidence: 0.65,
+
+    minTrackingConfidence: 0.65
+
+});
+
+
+// --------------------------------------------------
+// HAND RESULTS
+// --------------------------------------------------
+
+hands.onResults((results) => {
+
+    if (!results.multiHandLandmarks ||
+        results.multiHandLandmarks.length === 0) {
+
+        drawing = false;
+
+        lastX = null;
+        lastY = null;
+
+        statusText.innerText =
+            "Show your hand to the camera";
+
+        return;
+
+    }
+
+
+    const hand =
+        results.multiHandLandmarks[0];
+
+
+    // ----------------------------------------------
+    // FINGERS
+    // ----------------------------------------------
+
+    const index =
+        fingerUp(hand,8,6);
+
+    const middle =
+        fingerUp(hand,12,10);
+
+    const ring =
+        fingerUp(hand,16,14);
+
+    const pinky =
+        fingerUp(hand,20,18);
+
+
+    // ----------------------------------------------
+    // PALM / CLEAR
+    // ----------------------------------------------
+
+    const openPalm =
+        index &&
+        middle &&
+        ring &&
+        pinky;
+
+
+    if (openPalm) {
+
+        drawing = false;
+
+        lastX = null;
+        lastY = null;
+
+        statusText.innerText =
+            "✋ OPEN PALM — CLEARING";
+
+        clearBoard();
+
+        return;
+
+    }
+
+
+    // ----------------------------------------------
+    // GEOMETRY MODE
+    // ----------------------------------------------
+
+    if (index && middle && !ring && !pinky) {
+
+        mode = "GEOMETRY";
+
+        statusText.innerText =
+            "✌️ GEOMETRY MODE";
+
+    }
+
+    else {
+
+        mode = "MATH";
+
+    }
+
+
+    // ----------------------------------------------
+    // INDEX FINGER
+    // ----------------------------------------------
+
+    const ix =
+        hand[8].x;
+
+    const iy =
+        hand[8].y;
+
+
+    // Convert mirrored camera coordinates
+
+    const x =
+        (1 - ix) *
+        canvas.width;
+
+    const y =
+        iy *
+        canvas.height;
+
+
+    // ----------------------------------------------
+    // PINCH
+    // ----------------------------------------------
+
+    const thumb =
+        hand[4];
+
+    const indexTip =
+        hand[8];
+
+
+    const pinchDistance =
+        distance(
+            thumb,
+            indexTip
+        );
+
+
+    const pinching =
+        pinchDistance < 0.07;
+
+
+    // ----------------------------------------------
+    // DRAW
+    // ----------------------------------------------
+
+    if (index && !pinching) {
+
+        if (lastX !== null &&
+            lastY !== null) {
+
+            drawLine(
+                lastX,
+                lastY,
+                x,
+                y
+            );
+
+            points.push({
+                x:x,
+                y:y
+            });
+
+        }
+
+        lastX = x;
+        lastY = y;
+
+        drawing = true;
+
+        statusText.innerText =
+            mode === "GEOMETRY"
+            ? "✌️ Drawing geometry..."
+            : "☝️ Drawing mathematics...";
+
+    }
+
+    else {
+
+        drawing = false;
+
+        lastX = null;
+        lastY = null;
+
+    }
+
+});
+
+
+// --------------------------------------------------
+// CAMERA
+// --------------------------------------------------
+
+async function startCamera() {
+
+    try {
+
+        const stream =
+            await navigator.mediaDevices
+            .getUserMedia({
+
+                video: {
+                    facingMode: "user",
+                    width: {
+                        ideal: 1280
+                    },
+                    height: {
+                        ideal: 720
+                    }
+                },
+
+                audio:false
+
+            });
+
+
+        video.srcObject =
+            stream;
+
+
+        const camera =
+            new Camera(
+                video,
+                {
+
+                    onFrame: async () => {
+
+                        await hands.send({
+                            image: video
+                        });
+
+                    },
+
+                    width: 1280,
+
+                    height: 720
+
+                }
+            );
+
+
+        camera.start();
+
+
+        startButton.style.display =
+            "none";
+
+        statusText.innerText =
+            "Camera ready — show your hand!";
+
+    }
+
+    catch(error) {
+
+        console.error(error);
+
+        statusText.innerText =
+            "Camera permission/error: " +
+            error.message;
+
+    }
+
+}
+
+
+// --------------------------------------------------
+// START
+// --------------------------------------------------
+
+startButton.addEventListener(
+    "click",
+    startCamera
+);
+
+
+// --------------------------------------------------
+// KEYBOARD BACKUP
+// --------------------------------------------------
+
+document.addEventListener(
+    "keydown",
+    (event) => {
+
+        if (event.key.toLowerCase() === "c") {
+
+            clearBoard();
+
+        }
+
+    }
+);
+
+</script>
+
+</body>
+</html>
