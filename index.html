@@ -682,10 +682,10 @@ function hideCursor() {
 
 
 /* =====================================
-   FAST INTERPOLATED DRAWING
+   ADVANCED CONTINUOUS DRAWING
 ===================================== */
 
-function drawInterpolatedLine(
+function drawContinuousLine(
     x1,
     y1,
     x2,
@@ -698,7 +698,7 @@ function drawInterpolatedLine(
     const dy =
         y2 - y1;
 
-    const distanceBetweenPoints =
+    const segmentDistance =
         Math.sqrt(
             dx * dx +
             dy * dy
@@ -706,18 +706,16 @@ function drawInterpolatedLine(
 
 
     /*
-     * More distance = more
-     * intermediate points.
-     *
-     * 4 pixels gives a dense
-     * and continuous stroke.
+     * Create enough points so that
+     * even a large movement becomes
+     * a dense continuous stroke.
      */
 
     const steps =
         Math.max(
             1,
             Math.ceil(
-                distanceBetweenPoints / 4
+                segmentDistance / 3
             )
         );
 
@@ -743,15 +741,9 @@ function drawInterpolatedLine(
         const t =
             i / steps;
 
-        const ix =
-            x1 + dx * t;
-
-        const iy =
-            y1 + dy * t;
-
         ctx.lineTo(
-            ix,
-            iy
+            x1 + dx * t,
+            y1 + dy * t
         );
 
     }
@@ -800,15 +792,9 @@ function drawInterpolatedLine(
         const t =
             i / steps;
 
-        const ix =
-            x1 + dx * t;
-
-        const iy =
-            y1 + dy * t;
-
         ctx.lineTo(
-            ix,
-            iy
+            x1 + dx * t,
+            y1 + dy * t
         );
 
     }
@@ -857,15 +843,9 @@ function drawInterpolatedLine(
         const t =
             i / steps;
 
-        const ix =
-            x1 + dx * t;
-
-        const iy =
-            y1 + dy * t;
-
         ctx.lineTo(
-            ix,
-            iy
+            x1 + dx * t,
+            y1 + dy * t
         );
 
     }
@@ -1091,9 +1071,9 @@ function(results) {
 
 
 
-    /* ---------------------------------
-       DRAWING
-    --------------------------------- */
+    /* =================================
+       CONTINUOUS DRAWING
+    ================================= */
 
     if (
         indexUp &&
@@ -1106,7 +1086,14 @@ function(results) {
             previousY !== null
         ) {
 
-            drawInterpolatedLine(
+
+            /*
+             * Draw the complete distance
+             * between the previous finger
+             * position and current position.
+             */
+
+            drawContinuousLine(
                 previousX,
                 previousY,
                 x,
