@@ -89,7 +89,6 @@ body {
 
     background:
         rgba(255, 0, 255, 0.08);
-
 }
 
 
@@ -119,7 +118,6 @@ body {
     box-shadow:
         0 0 8px white,
         0 0 15px #ff00ff;
-
 }
 
 
@@ -135,7 +133,6 @@ body {
 
     box-shadow:
         0 0 8px #ff00ff;
-
 }
 
 
@@ -151,7 +148,6 @@ body {
 
     transform:
         translateX(-50%);
-
 }
 
 
@@ -167,7 +163,6 @@ body {
 
     transform:
         translateX(-50%);
-
 }
 
 
@@ -183,7 +178,6 @@ body {
 
     transform:
         translateY(-50%);
-
 }
 
 
@@ -199,7 +193,6 @@ body {
 
     transform:
         translateY(-50%);
-
 }
 
 
@@ -490,6 +483,23 @@ let previousX = null;
 let previousY = null;
 
 
+/* =====================================
+   SMOOTH CURSOR VARIABLES
+===================================== */
+
+let smoothX = null;
+
+let smoothY = null;
+
+
+/*
+ * Lower value = smoother
+ * Higher value = faster
+ */
+
+const smoothing = 0.25;
+
+
 
 /* =====================================
    CANVAS SIZE
@@ -661,6 +671,10 @@ function(results) {
 
         previousY = null;
 
+        smoothX = null;
+
+        smoothY = null;
+
         hideCursor();
 
         status.innerText =
@@ -707,14 +721,52 @@ function(results) {
         hand[8];
 
 
-    const x =
+    const targetX =
         (1 - index.x) *
         canvas.width;
 
 
-    const y =
+    const targetY =
         index.y *
         canvas.height;
+
+
+
+    /* =================================
+       SMOOTH FINGER POSITION
+    ================================= */
+
+    if (smoothX === null) {
+
+        smoothX =
+            targetX;
+
+        smoothY =
+            targetY;
+
+    }
+    else {
+
+        smoothX =
+            smoothX +
+            (targetX - smoothX) *
+            smoothing;
+
+
+        smoothY =
+            smoothY +
+            (targetY - smoothY) *
+            smoothing;
+
+    }
+
+
+    const x =
+        smoothX;
+
+
+    const y =
+        smoothY;
 
 
 
@@ -902,9 +954,11 @@ function(results) {
 
 
 
-        previousX = x;
+        previousX =
+            x;
 
-        previousY = y;
+        previousY =
+            y;
 
 
         status.innerText =
