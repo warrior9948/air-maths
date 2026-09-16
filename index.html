@@ -484,7 +484,7 @@ let previousY = null;
 
 
 /* =====================================
-   ADAPTIVE SMOOTH CURSOR VARIABLES
+   FAST ADAPTIVE CURSOR
 ===================================== */
 
 let smoothX = null;
@@ -493,11 +493,13 @@ let smoothY = null;
 
 
 /*
- * Adaptive smoothing:
+ * FAST ADAPTIVE SMOOTHING
  *
- * Small movement  → more smoothing
- * Normal movement → balanced
- * Fast movement   → much faster response
+ * Small movement  → 0.35
+ * Normal movement → 0.55
+ * Fast movement   → 0.80
+ *
+ * Higher value = faster response
  */
 
 function smoothPoint(targetX, targetY) {
@@ -535,21 +537,21 @@ function smoothPoint(targetX, targetY) {
     if (distance < 5) {
 
         adaptiveSmoothing =
-            0.12;
+            0.35;
 
     }
 
     else if (distance < 20) {
 
         adaptiveSmoothing =
-            0.25;
+            0.55;
 
     }
 
     else {
 
         adaptiveSmoothing =
-            0.45;
+            0.80;
 
     }
 
@@ -799,7 +801,7 @@ function(results) {
 
 
     /* =================================
-       ADAPTIVE SMOOTHING
+       FAST ADAPTIVE SMOOTHING
     ================================= */
 
     smoothPoint(
