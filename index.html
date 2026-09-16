@@ -484,7 +484,7 @@ let previousY = null;
 
 
 /* =====================================
-   SMOOTH CURSOR VARIABLES
+   ADAPTIVE SMOOTH CURSOR VARIABLES
 ===================================== */
 
 let smoothX = null;
@@ -493,11 +493,77 @@ let smoothY = null;
 
 
 /*
- * Lower value = smoother
- * Higher value = faster
+ * Adaptive smoothing:
+ *
+ * Small movement  → more smoothing
+ * Normal movement → balanced
+ * Fast movement   → much faster response
  */
 
-const smoothing = 0.25;
+function smoothPoint(targetX, targetY) {
+
+    if (smoothX === null) {
+
+        smoothX =
+            targetX;
+
+        smoothY =
+            targetY;
+
+        return;
+
+    }
+
+
+    const dx =
+        targetX - smoothX;
+
+    const dy =
+        targetY - smoothY;
+
+
+    const distance =
+        Math.sqrt(
+            dx * dx +
+            dy * dy
+        );
+
+
+    let adaptiveSmoothing;
+
+
+    if (distance < 5) {
+
+        adaptiveSmoothing =
+            0.12;
+
+    }
+
+    else if (distance < 20) {
+
+        adaptiveSmoothing =
+            0.25;
+
+    }
+
+    else {
+
+        adaptiveSmoothing =
+            0.45;
+
+    }
+
+
+    smoothX =
+        smoothX +
+        dx * adaptiveSmoothing;
+
+
+    smoothY =
+        smoothY +
+        dy * adaptiveSmoothing;
+
+}
 
 
 
@@ -733,32 +799,13 @@ function(results) {
 
 
     /* =================================
-       SMOOTH FINGER POSITION
+       ADAPTIVE SMOOTHING
     ================================= */
 
-    if (smoothX === null) {
-
-        smoothX =
-            targetX;
-
-        smoothY =
-            targetY;
-
-    }
-    else {
-
-        smoothX =
-            smoothX +
-            (targetX - smoothX) *
-            smoothing;
-
-
-        smoothY =
-            smoothY +
-            (targetY - smoothY) *
-            smoothing;
-
-    }
+    smoothPoint(
+        targetX,
+        targetY
+    );
 
 
     const x =
