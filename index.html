@@ -568,7 +568,6 @@ function smoothPoint(targetX, targetY) {
 }
 
 
-
 /* =====================================
    CANVAS SIZE
 ===================================== */
@@ -677,6 +676,224 @@ function hideCursor() {
 
     cursor.style.display =
         "none";
+
+}
+
+
+
+/* =====================================
+   FAST INTERPOLATED DRAWING
+===================================== */
+
+function drawInterpolatedLine(
+    x1,
+    y1,
+    x2,
+    y2
+) {
+
+    const dx =
+        x2 - x1;
+
+    const dy =
+        y2 - y1;
+
+    const distanceBetweenPoints =
+        Math.sqrt(
+            dx * dx +
+            dy * dy
+        );
+
+
+    /*
+     * More distance = more
+     * intermediate points.
+     *
+     * 4 pixels gives a dense
+     * and continuous stroke.
+     */
+
+    const steps =
+        Math.max(
+            1,
+            Math.ceil(
+                distanceBetweenPoints / 4
+            )
+        );
+
+
+    /* ---------------------------------
+       OUTER GLOW
+    --------------------------------- */
+
+    ctx.beginPath();
+
+    ctx.moveTo(
+        x1,
+        y1
+    );
+
+
+    for (
+        let i = 1;
+        i <= steps;
+        i++
+    ) {
+
+        const t =
+            i / steps;
+
+        const ix =
+            x1 + dx * t;
+
+        const iy =
+            y1 + dy * t;
+
+        ctx.lineTo(
+            ix,
+            iy
+        );
+
+    }
+
+
+    ctx.lineWidth =
+        13;
+
+    ctx.lineCap =
+        "round";
+
+    ctx.lineJoin =
+        "round";
+
+    ctx.strokeStyle =
+        "rgba(255, 0, 255, 0.35)";
+
+    ctx.shadowColor =
+        "#ff00ff";
+
+    ctx.shadowBlur =
+        25;
+
+    ctx.stroke();
+
+
+
+    /* ---------------------------------
+       INNER NEON
+    --------------------------------- */
+
+    ctx.beginPath();
+
+    ctx.moveTo(
+        x1,
+        y1
+    );
+
+
+    for (
+        let i = 1;
+        i <= steps;
+        i++
+    ) {
+
+        const t =
+            i / steps;
+
+        const ix =
+            x1 + dx * t;
+
+        const iy =
+            y1 + dy * t;
+
+        ctx.lineTo(
+            ix,
+            iy
+        );
+
+    }
+
+
+    ctx.lineWidth =
+        5;
+
+    ctx.lineCap =
+        "round";
+
+    ctx.lineJoin =
+        "round";
+
+    ctx.strokeStyle =
+        "#ff66ff";
+
+    ctx.shadowColor =
+        "#ff00ff";
+
+    ctx.shadowBlur =
+        12;
+
+    ctx.stroke();
+
+
+
+    /* ---------------------------------
+       WHITE CORE
+    --------------------------------- */
+
+    ctx.beginPath();
+
+    ctx.moveTo(
+        x1,
+        y1
+    );
+
+
+    for (
+        let i = 1;
+        i <= steps;
+        i++
+    ) {
+
+        const t =
+            i / steps;
+
+        const ix =
+            x1 + dx * t;
+
+        const iy =
+            y1 + dy * t;
+
+        ctx.lineTo(
+            ix,
+            iy
+        );
+
+    }
+
+
+    ctx.lineWidth =
+        2;
+
+    ctx.lineCap =
+        "round";
+
+    ctx.lineJoin =
+        "round";
+
+    ctx.strokeStyle =
+        "white";
+
+    ctx.shadowColor =
+        "white";
+
+    ctx.shadowBlur =
+        5;
+
+    ctx.stroke();
+
+
+    ctx.shadowBlur =
+        0;
 
 }
 
@@ -889,115 +1106,12 @@ function(results) {
             previousY !== null
         ) {
 
-
-            /* -------------------------
-               OUTER GLOW
-            ------------------------- */
-
-            ctx.beginPath();
-
-            ctx.moveTo(
+            drawInterpolatedLine(
                 previousX,
-                previousY
-            );
-
-            ctx.lineTo(
+                previousY,
                 x,
                 y
             );
-
-            ctx.lineWidth =
-                13;
-
-            ctx.lineCap =
-                "round";
-
-            ctx.lineJoin =
-                "round";
-
-            ctx.strokeStyle =
-                "rgba(255, 0, 255, 0.35)";
-
-            ctx.shadowColor =
-                "#ff00ff";
-
-            ctx.shadowBlur =
-                25;
-
-            ctx.stroke();
-
-
-
-            /* -------------------------
-               INNER NEON
-            ------------------------- */
-
-            ctx.beginPath();
-
-            ctx.moveTo(
-                previousX,
-                previousY
-            );
-
-            ctx.lineTo(
-                x,
-                y
-            );
-
-            ctx.lineWidth =
-                5;
-
-            ctx.lineCap =
-                "round";
-
-            ctx.lineJoin =
-                "round";
-
-            ctx.strokeStyle =
-                "#ff66ff";
-
-            ctx.shadowColor =
-                "#ff00ff";
-
-            ctx.shadowBlur =
-                12;
-
-            ctx.stroke();
-
-
-
-            /* -------------------------
-               WHITE CORE
-            ------------------------- */
-
-            ctx.beginPath();
-
-            ctx.moveTo(
-                previousX,
-                previousY
-            );
-
-            ctx.lineTo(
-                x,
-                y
-            );
-
-            ctx.lineWidth =
-                2;
-
-            ctx.strokeStyle =
-                "white";
-
-            ctx.shadowColor =
-                "white";
-
-            ctx.shadowBlur =
-                5;
-
-            ctx.stroke();
-
-
-            ctx.shadowBlur = 0;
 
         }
 
