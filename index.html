@@ -1139,51 +1139,84 @@ const systemState =
     document.getElementById("systemState");
 
 
-let previousX = null;
-let previousY = null;
-
-
 /* =====================================
-   STABLE CURSOR SMOOTHING
+   DRAWING ENGINE V2
 ===================================== */
+
+/*
+    Three separate positions are maintained:
+
+    raw position
+        ↓
+    filtered / smoothed position
+        ↓
+    last committed drawing position
+
+    This prevents camera noise from becoming
+    unwanted marks on the canvas.
+*/
+
 
 let smoothX = null;
 let smoothY = null;
 
+let lastDrawX = null;
+let lastDrawY = null;
 
-function smoothPoint(targetX, targetY) {
-
-    if (smoothX === null) {
-
-        smoothX = targetX;
-        smoothY = targetY;
-
-        return;
-    }
-
-
-    const smoothing = 0.32;
-
-
-    smoothX =
-        smoothX +
-        (targetX - smoothX) *
-        smoothing;
-
-
-    smoothY =
-        smoothY +
-        (targetY - smoothY) *
-        smoothing;
-
-}
+let isDrawing = false;
 
 
 /* =====================================
-   DRAWING STATE
+   DRAWING ENGINE CONSTANTS
 ===================================== */
 
-let isDrawing = false;
+/*
+   Lower value:
+   more stable but slower.
+
+   Higher value:
+   faster but more sensitive.
+
+   The smoothing is also adapted according
+   to movement speed.
+*/
+
+const BASE_SMOOTHING = 0.48;
+
+
+/*
+   Ignore movements smaller than this.
+   This is the main stationary-point filter.
+*/
+
+const MOVE_THRESHOLD = 2.0;
+
+
+/*
+   A very large jump is probably a tracking
+   glitch rather than intentional handwriting.
+*/
+
+const MAX_DRAW_JUMP = 110;
+
+
+/*
+   Open hand must remain stable for several
+   frames before clearing.
+*/
+
+const CLEAR_REQUIRED_FRAMES = 5;
+
+let clearFrames = 0;
+
+
+/*
+   Prevent immediately triggering clear again.
+*/
+
+let clearCooldown = 0;
+
+const CLEAR_COOLDOWN_FRAMES = 12;
 
 
 /* =====================================
@@ -1221,6 +1254,32 @@ function clearCanvas() {
         canvas.width,
         canvas.height
     );
+
+}
+
+
+/* =====================================
+   RESET DRAWING POINT
+===================================== */
+
+function resetDrawPoint() {
+
+    lastDrawX = null;
+    lastDrawY = null;
+
+}
+
+
+/* =====================================
+   RESET TRACKING
+===================================== */
+
+function resetTracking() {
+
+    smoothX = null;
+    smoothY = null;
+
+    resetDrawPoint();
 
 }
 
@@ -1264,6 +1323,93 @@ function fingerUp(
 
 
 /* =====================================
+   RESPONSIVE SMOOTHING
+===================================== */
+
+function smoothPoint(
+    targetX,
+    targetY
+) {
+
+    if (
+        smoothX === null ||
+        smoothY === null
+    ) {
+
+        smoothX = targetX;
+        smoothY = targetY;
+
+        return;
+
+    }
+
+
+    const dx =
+        targetX - smoothX;
+
+    const dy =
+        targetY - smoothY;
+
+
+    const movement =
+        Math.sqrt(
+            dx * dx +
+            dy * dy
+        );
+
+
+    /*
+       Adaptive smoothing.
+
+       Small movement:
+       stronger stabilization.
+
+       Medium movement:
+       balanced.
+
+       Large movement:
+       follow the finger quickly.
+    */
+
+    let smoothing =
+        BASE_SMOOTHING;
+
+
+    if (movement < 5) {
+
+        smoothing = 0.32;
+
+    }
+
+    else if (movement < 15) {
+
+        smoothing = 0.48;
+
+    }
+
+    else if (movement < 40) {
+
+        smoothing = 0.62;
+
+    }
+
+    else {
+
+        smoothing = 0.76;
+
+    }
+
+
+    smoothX +=
+        dx * smoothing;
+
+    smoothY +=
+        dy * smoothing;
+
+}
+
+
+/* =====================================
    CURSOR
 ===================================== */
 
@@ -1278,12 +1424,6 @@ function showCursor(x, y) {
     cursor.style.top =
         y + "px";
 
-
-    /*
-       Normal state:
-       if the cursor is not drawing
-       and not pinching, it is READY.
-    */
 
     if (
         !cursor.classList.contains("drawing") &&
@@ -1334,10 +1474,10 @@ function setHandSearching() {
 
 
 /* =====================================
-   DRAWING
+   DRAW SMOOTH SEGMENT
 ===================================== */
 
-function drawContinuousLine(
+function drawSmoothSegment(
     x1,
     y1,
     x2,
@@ -1358,139 +1498,244 @@ function drawContinuousLine(
         );
 
 
+    /*
+       Don't draw a tracking jump.
+    */
+
+    if (
+        segmentDistance >
+        MAX_DRAW_JUMP
+    ) {
+
+        lastDrawX = x2;
+        lastDrawY = y2;
+
+        return;
+
+    }
+
+
+    /*
+       More interpolation points for
+       longer movements.
+
+       This makes the stroke continuous.
+    */
+
     const steps =
         Math.max(
-            1,
+            2,
             Math.ceil(
-                segmentDistance / 3
+                segmentDistance / 4
             )
         );
 
 
-    /* OUTER GLOW */
+    /*
+       Draw one continuous interpolated
+       path for each visual layer.
+    */
 
-    ctx.beginPath();
-
-    ctx.moveTo(x1, y1);
-
-
-    for (
-        let i = 1;
-        i <= steps;
-        i++
+    function drawLayer(
+        width,
+        color,
+        shadow,
+        blur
     ) {
 
-        const t =
-            i / steps;
+        ctx.beginPath();
 
-        ctx.lineTo(
-            x1 + dx * t,
-            y1 + dy * t
+        ctx.moveTo(
+            x1,
+            y1
         );
+
+
+        for (
+            let i = 1;
+            i <= steps;
+            i++
+        ) {
+
+            const t =
+                i / steps;
+
+
+            const px =
+                x1 + dx * t;
+
+            const py =
+                y1 + dy * t;
+
+
+            ctx.lineTo(
+                px,
+                py
+            );
+
+        }
+
+
+        ctx.lineWidth =
+            width;
+
+        ctx.lineCap =
+            "round";
+
+        ctx.lineJoin =
+            "round";
+
+        ctx.strokeStyle =
+            color;
+
+        ctx.shadowColor =
+            shadow;
+
+        ctx.shadowBlur =
+            blur;
+
+        ctx.stroke();
 
     }
 
 
-    ctx.lineWidth = 13;
+    /* OUTER GLOW */
 
-    ctx.lineCap = "round";
-
-    ctx.lineJoin = "round";
-
-    ctx.strokeStyle =
-        "rgba(255, 0, 255, 0.35)";
-
-    ctx.shadowColor =
-        "#ff00ff";
-
-    ctx.shadowBlur = 25;
-
-    ctx.stroke();
+    drawLayer(
+        13,
+        "rgba(255, 0, 255, 0.35)",
+        "#ff00ff",
+        25
+    );
 
 
     /* INNER NEON */
 
-    ctx.beginPath();
-
-    ctx.moveTo(x1, y1);
-
-
-    for (
-        let i = 1;
-        i <= steps;
-        i++
-    ) {
-
-        const t =
-            i / steps;
-
-        ctx.lineTo(
-            x1 + dx * t,
-            y1 + dy * t
-        );
-
-    }
-
-
-    ctx.lineWidth = 5;
-
-    ctx.lineCap = "round";
-
-    ctx.lineJoin = "round";
-
-    ctx.strokeStyle =
-        "#ff66ff";
-
-    ctx.shadowColor =
-        "#ff00ff";
-
-    ctx.shadowBlur = 12;
-
-    ctx.stroke();
+    drawLayer(
+        5,
+        "#ff66ff",
+        "#ff00ff",
+        12
+    );
 
 
     /* WHITE CORE */
 
-    ctx.beginPath();
+    drawLayer(
+        2,
+        "white",
+        "white",
+        5
+    );
 
-    ctx.moveTo(x1, y1);
+
+    ctx.shadowBlur =
+        0;
+
+}
 
 
-    for (
-        let i = 1;
-        i <= steps;
-        i++
+/* =====================================
+   COMMIT DRAWING MOVEMENT
+===================================== */
+
+function commitDrawingPoint(
+    x,
+    y
+) {
+
+    /*
+       First point of a new stroke.
+
+       We only store it.
+       We DON'T draw a dot.
+    */
+
+    if (
+        lastDrawX === null ||
+        lastDrawY === null
     ) {
 
-        const t =
-            i / steps;
+        lastDrawX = x;
+        lastDrawY = y;
 
-        ctx.lineTo(
-            x1 + dx * t,
-            y1 + dy * t
-        );
+        return;
 
     }
 
 
-    ctx.lineWidth = 2;
+    const dx =
+        x - lastDrawX;
 
-    ctx.lineCap = "round";
-
-    ctx.lineJoin = "round";
-
-    ctx.strokeStyle =
-        "white";
-
-    ctx.shadowColor =
-        "white";
-
-    ctx.shadowBlur = 5;
-
-    ctx.stroke();
+    const dy =
+        y - lastDrawY;
 
 
-    ctx.shadowBlur = 0;
+    const movement =
+        Math.sqrt(
+            dx * dx +
+            dy * dy
+        );
+
+
+    /*
+       Stationary hand.
+
+       Do nothing.
+       Crucially, lastDrawX/Y are NOT
+       changed here.
+
+       This prevents tiny jitter from
+       accumulating into visible marks.
+    */
+
+    if (
+        movement <
+        MOVE_THRESHOLD
+    ) {
+
+        return;
+
+    }
+
+
+    /*
+       Prevent a sudden tracking glitch
+       from creating a huge line.
+    */
+
+    if (
+        movement >
+        MAX_DRAW_JUMP
+    ) {
+
+        lastDrawX = x;
+        lastDrawY = y;
+
+        return;
+
+    }
+
+
+    /*
+       Draw the meaningful movement.
+    */
+
+    drawSmoothSegment(
+        lastDrawX,
+        lastDrawY,
+        x,
+        y
+    );
+
+
+    /*
+       Only now does this point become
+       the new committed drawing point.
+    */
+
+    lastDrawX = x;
+    lastDrawY = y;
 
 }
 
@@ -1537,20 +1782,20 @@ hands.onResults(
 function(results) {
 
 
-    /* NO HAND */
+    /* =================================
+       NO HAND
+    ================================= */
 
     if (
         !results.multiHandLandmarks ||
         results.multiHandLandmarks.length === 0
     ) {
 
-        previousX = null;
-        previousY = null;
-
-        smoothX = null;
-        smoothY = null;
-
         isDrawing = false;
+
+        resetTracking();
+
+        clearFrames = 0;
 
         hideCursor();
 
@@ -1567,7 +1812,9 @@ function(results) {
     }
 
 
-    /* HAND DETECTED */
+    /* =================================
+       HAND DETECTED
+    ================================= */
 
     setHandDetected();
 
@@ -1576,22 +1823,42 @@ function(results) {
         results.multiHandLandmarks[0];
 
 
-    /* FINGER STATES */
+    /* =================================
+       FINGER STATES
+    ================================= */
 
     const indexUp =
-        fingerUp(hand, 8, 6);
+        fingerUp(
+            hand,
+            8,
+            6
+        );
 
     const middleUp =
-        fingerUp(hand, 12, 10);
+        fingerUp(
+            hand,
+            12,
+            10
+        );
 
     const ringUp =
-        fingerUp(hand, 16, 14);
+        fingerUp(
+            hand,
+            16,
+            14
+        );
 
     const pinkyUp =
-        fingerUp(hand, 20, 18);
+        fingerUp(
+            hand,
+            20,
+            18
+        );
 
 
-    /* INDEX */
+    /* =================================
+       INDEX POSITION
+    ================================= */
 
     const index =
         hand[8];
@@ -1607,6 +1874,10 @@ function(results) {
         canvas.height;
 
 
+    /* =================================
+       SMOOTH POSITION
+    ================================= */
+
     smoothPoint(
         targetX,
         targetY
@@ -1620,39 +1891,101 @@ function(results) {
         smoothY;
 
 
-    showCursor(x, y);
+    showCursor(
+        x,
+        y
+    );
 
 
-    /* OPEN HAND */
+    /* =================================
+       OPEN HAND DETECTION
+    ================================= */
 
-    if (
+    const openHand =
         indexUp &&
         middleUp &&
         ringUp &&
-        pinkyUp
+        pinkyUp;
+
+
+    /*
+       Countdown after clear.
+    */
+
+    if (
+        clearCooldown > 0
     ) {
 
-        clearCanvas();
+        clearCooldown--;
+
+    }
+
+
+    /*
+       Stable open hand.
+
+       We do NOT clear from one
+       accidental frame.
+    */
+
+    if (openHand) {
+
+        /*
+           Open hand always has priority.
+           It also safely stops drawing.
+        */
 
         isDrawing = false;
 
-        previousX = null;
-        previousY = null;
+        resetDrawPoint();
 
-        hideCursor();
+        cursor.classList.remove("drawing");
+        cursor.classList.remove("ready");
+        cursor.classList.add("pinch");
 
-        modeState.innerText =
-            "CLEAR";
 
-        status.innerText =
-            "✋ BOARD CLEARED";
+        clearFrames++;
+
+
+        if (
+            clearFrames >=
+            CLEAR_REQUIRED_FRAMES &&
+            clearCooldown === 0
+        ) {
+
+            clearCanvas();
+
+            clearCooldown =
+                CLEAR_COOLDOWN_FRAMES;
+
+            clearFrames = 0;
+
+            hideCursor();
+
+            modeState.innerText =
+                "CLEAR";
+
+            status.innerText =
+                "✋ BOARD CLEARED";
+
+        }
 
         return;
 
     }
 
 
-    /* PINCH */
+    /*
+       Any non-open-hand frame resets
+       the clear counter.
+    */
+
+    clearFrames = 0;
+
+
+    /* =================================
+       PINCH DETECTION
+    ================================= */
 
     const thumb =
         hand[4];
@@ -1665,13 +1998,20 @@ function(results) {
         );
 
 
-    /* DRAWING HYSTERESIS */
+    /* =================================
+       DRAWING HYSTERESIS
+    ================================= */
 
-    const DRAW_START = 0.075;
-    const DRAW_STOP = 0.055;
+    const DRAW_START =
+        0.075;
+
+    const DRAW_STOP =
+        0.055;
 
 
-    /* START DRAWING */
+    /* =================================
+       START DRAWING
+    ================================= */
 
     if (
         !isDrawing &&
@@ -1681,13 +2021,23 @@ function(results) {
 
         isDrawing = true;
 
-        previousX = x;
-        previousY = y;
+
+        /*
+           Capture the current stable
+           cursor position.
+
+           No accidental connecting line.
+        */
+
+        lastDrawX = x;
+        lastDrawY = y;
+
 
         cursor.classList.add("drawing");
 
         cursor.classList.remove("pinch");
         cursor.classList.remove("ready");
+
 
         modeState.innerText =
             "DRAW";
@@ -1698,7 +2048,9 @@ function(results) {
     }
 
 
-    /* CONTINUE DRAWING */
+    /* =================================
+       CONTINUE DRAWING
+    ================================= */
 
     else if (
         isDrawing &&
@@ -1711,27 +2063,20 @@ function(results) {
         cursor.classList.remove("pinch");
         cursor.classList.remove("ready");
 
+
         modeState.innerText =
             "DRAW";
 
 
-        if (
-            previousX !== null &&
-            previousY !== null
-        ) {
+        /*
+           Only meaningful movement
+           reaches the canvas.
+        */
 
-            drawContinuousLine(
-                previousX,
-                previousY,
-                x,
-                y
-            );
-
-        }
-
-
-        previousX = x;
-        previousY = y;
+        commitDrawingPoint(
+            x,
+            y
+        );
 
 
         status.innerText =
@@ -1740,20 +2085,31 @@ function(results) {
     }
 
 
-    /* STOP / PINCH */
+    /* =================================
+       STOP / PINCH
+    ================================= */
 
     else {
 
         isDrawing = false;
 
-        cursor.classList.remove("drawing");
 
+        cursor.classList.remove("drawing");
         cursor.classList.remove("ready");
 
         cursor.classList.add("pinch");
 
-        previousX = null;
-        previousY = null;
+
+        /*
+           Completely terminate the
+           current stroke.
+
+           The next drawing gesture
+           starts from a fresh point.
+        */
+
+        resetDrawPoint();
+
 
         modeState.innerText =
             "READY";
