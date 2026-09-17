@@ -56,6 +56,144 @@ body {
 
 
 /* =========================================================
+   STAGE 2 — TASK 1
+   FUTURISTIC BACKGROUND CORE
+========================================================= */
+
+#futuristicBackground {
+    position: fixed;
+    inset: 0;
+
+    z-index: 0;
+
+    pointer-events: none;
+
+    overflow: hidden;
+
+    background:
+        radial-gradient(
+            circle at 50% 50%,
+            rgba(100, 0, 150, 0.24),
+            transparent 46%
+        ),
+        radial-gradient(
+            circle at 15% 20%,
+            rgba(255, 0, 255, 0.10),
+            transparent 34%
+        ),
+        radial-gradient(
+            circle at 85% 80%,
+            rgba(0, 150, 255, 0.08),
+            transparent 34%
+        ),
+        radial-gradient(
+            circle at 80% 15%,
+            rgba(120, 0, 255, 0.08),
+            transparent 30%
+        ),
+        #05000a;
+
+    animation:
+        futuristicBackgroundPulse
+        10s ease-in-out infinite alternate;
+}
+
+
+/* =========================================================
+   LARGE MOVING ENERGY FIELD
+========================================================= */
+
+#futuristicBackground::before {
+    content: "";
+
+    position: absolute;
+
+    inset: -25%;
+
+    background:
+        radial-gradient(
+            ellipse at 20% 35%,
+            rgba(255, 0, 255, 0.18),
+            transparent 22%
+        ),
+        radial-gradient(
+            ellipse at 78% 65%,
+            rgba(80, 0, 255, 0.16),
+            transparent 24%
+        ),
+        radial-gradient(
+            ellipse at 50% 5%,
+            rgba(0, 220, 255, 0.08),
+            transparent 18%
+        ),
+        radial-gradient(
+            ellipse at 50% 100%,
+            rgba(255, 0, 180, 0.07),
+            transparent 22%
+        );
+
+    filter: blur(45px);
+
+    opacity: 0.9;
+
+    transform-origin: center;
+
+    animation:
+        futuristicEnergyFloat
+        15s ease-in-out infinite alternate;
+}
+
+
+/* =========================================================
+   ATMOSPHERIC PARTICLE TEXTURE
+========================================================= */
+
+#futuristicBackground::after {
+    content: "";
+
+    position: absolute;
+
+    inset: 0;
+
+    opacity: 0.30;
+
+    background-image:
+
+        radial-gradient(
+            circle,
+            rgba(255, 255, 255, 0.60) 1px,
+            transparent 1.5px
+        ),
+
+        radial-gradient(
+            circle,
+            rgba(255, 0, 255, 0.42) 1px,
+            transparent 1.5px
+        ),
+
+        radial-gradient(
+            circle,
+            rgba(0, 200, 255, 0.28) 1px,
+            transparent 1.5px
+        );
+
+    background-size:
+        115px 115px,
+        175px 175px,
+        230px 230px;
+
+    background-position:
+        0 0,
+        40px 70px,
+        90px 30px;
+
+    animation:
+        atmosphericParticleDrift
+        30s linear infinite;
+}
+
+
+/* =========================================================
    GRID
 ========================================================= */
 
@@ -99,8 +237,8 @@ body {
 
 
 /* =========================================================
-   STAGE 2 — TASK 1 ADDITIONS
-   FUTURISTIC BACKGROUND
+   STAGE 2 — TASK 1
+   AMBIENT GLOW
 ========================================================= */
 
 #ambientGlow {
@@ -117,10 +255,23 @@ body {
             circle at 50% 50%,
             rgba(255, 0, 255, 0.12),
             transparent 32%
+        ),
+        radial-gradient(
+            circle at 25% 70%,
+            rgba(80, 0, 255, 0.07),
+            transparent 28%
+        ),
+        radial-gradient(
+            circle at 80% 25%,
+            rgba(0, 200, 255, 0.05),
+            transparent 25%
         );
 
+    filter: blur(4px);
+
     animation:
-        ambientPulse 7s ease-in-out infinite alternate;
+        ambientPulse
+        7s ease-in-out infinite alternate;
 }
 
 
@@ -188,6 +339,7 @@ body {
             90deg,
             transparent,
             rgba(255, 0, 255, 0.75),
+            rgba(150, 0, 255, 0.65),
             transparent
         );
 
@@ -198,7 +350,8 @@ body {
     opacity: 0.2;
 
     animation:
-        stage2Scan 9s linear infinite;
+        stage2Scan
+        9s linear infinite;
 }
 
 
@@ -218,19 +371,123 @@ body {
     background:
         radial-gradient(
             ellipse at center,
-            transparent 45%,
+            transparent 42%,
             rgba(0, 0, 0, 0.35) 100%
         );
 }
 
 
 /* =========================================================
-   STAGE 2 TASK 1 ANIMATIONS
+   FUTURISTIC BACKGROUND ANIMATIONS
 ========================================================= */
+
+@keyframes futuristicBackgroundPulse {
+
+    0% {
+
+        transform:
+            scale(1);
+
+        filter:
+            brightness(0.88);
+    }
+
+    50% {
+
+        transform:
+            scale(1.012);
+
+        filter:
+            brightness(0.98);
+    }
+
+    100% {
+
+        transform:
+            scale(1.025);
+
+        filter:
+            brightness(1.06);
+    }
+}
+
+
+@keyframes futuristicEnergyFloat {
+
+    0% {
+
+        transform:
+            translate3d(-2%, -1%, 0)
+            scale(1)
+            rotate(0deg);
+    }
+
+    25% {
+
+        transform:
+            translate3d(2%, 1%, 0)
+            scale(1.035)
+            rotate(1deg);
+    }
+
+    50% {
+
+        transform:
+            translate3d(3%, -2%, 0)
+            scale(1.06)
+            rotate(-1deg);
+    }
+
+    75% {
+
+        transform:
+            translate3d(-1%, 3%, 0)
+            scale(1.04)
+            rotate(1deg);
+    }
+
+    100% {
+
+        transform:
+            translate3d(-3%, 1%, 0)
+            scale(1.08)
+            rotate(0deg);
+    }
+}
+
+
+@keyframes atmosphericParticleDrift {
+
+    0% {
+
+        background-position:
+            0 0,
+            40px 70px,
+            90px 30px;
+    }
+
+    50% {
+
+        background-position:
+            55px 60px,
+            -30px 110px,
+            140px -20px;
+    }
+
+    100% {
+
+        background-position:
+            115px 115px,
+            -135px 175px,
+            230px -60px;
+    }
+}
+
 
 @keyframes ambientPulse {
 
     from {
+
         transform:
             scale(0.96);
 
@@ -238,6 +495,7 @@ body {
     }
 
     to {
+
         transform:
             scale(1.04);
 
@@ -249,6 +507,7 @@ body {
 @keyframes stage2ParticleFloat {
 
     0% {
+
         transform:
             translate3d(
                 0,
@@ -260,18 +519,22 @@ body {
     }
 
     15% {
+
         opacity: 0.5;
     }
 
     50% {
+
         opacity: 0.8;
     }
 
     85% {
+
         opacity: 0.35;
     }
 
     100% {
+
         transform:
             translate3d(
                 var(--particle-x),
@@ -287,42 +550,81 @@ body {
 @keyframes stage2Scan {
 
     0% {
+
         top: -5%;
+
         opacity: 0;
     }
 
     10% {
+
         opacity: 0.2;
     }
 
     90% {
+
         opacity: 0.2;
     }
 
     100% {
+
         top: 105%;
+
         opacity: 0;
     }
 }
 
 
 /* =========================================================
-   STAGE 2 TASK 1 — MOBILE ADDITION
+   STAGE 2 — TASK 1
+   MOBILE OPTIMIZATION
 ========================================================= */
 
 @media (max-width: 600px) {
 
+    #futuristicBackground::before {
+
+        filter:
+            blur(32px);
+    }
+
+    #futuristicBackground::after {
+
+        opacity: 0.22;
+    }
+
     #ambientGlow {
+
         opacity: 0.75;
     }
 
     #scanLine {
+
         opacity: 0.12;
     }
 
     .stage2Particle {
+
         width: 1.5px;
         height: 1.5px;
+    }
+}
+
+
+/* =========================================================
+   REDUCED MOTION
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    #futuristicBackground,
+    #futuristicBackground::before,
+    #futuristicBackground::after,
+    #ambientGlow,
+    #scanLine,
+    .stage2Particle {
+
+        animation: none;
     }
 }
 
@@ -665,6 +967,14 @@ body {
 
 
 <!-- =======================================================
+     STAGE 2 — TASK 1
+     FUTURISTIC BACKGROUND
+======================================================== -->
+
+<div id="futuristicBackground"></div>
+
+
+<!-- =======================================================
      CAMERA
 ======================================================== -->
 
@@ -682,7 +992,8 @@ body {
 
 
 <!-- =======================================================
-     STAGE 2 — TASK 1 ADDITIONS
+     STAGE 2 — TASK 1
+     AMBIENT EFFECTS
 ======================================================== -->
 
 <div id="ambientGlow"></div>
@@ -1107,11 +1418,6 @@ function getSmoothing(
         ratio;
 
 
-    /*
-        Extra stabilization at sharp
-        direction changes.
-    */
-
     if (
         directionChange > 1.6
     ) {
@@ -1217,10 +1523,6 @@ function getPenWidth(
         ratio;
 
 
-    /*
-        Slightly strengthen sharp corners.
-    */
-
     if (
         directionChange > 1.7
     ) {
@@ -1256,7 +1558,7 @@ function getGlowAlpha(
 
 
 /* =========================================================
-   DRAW CATMULL-ROM / BEZIER CURVE
+   DRAW CURVE
 ========================================================= */
 
 function drawCurve(
@@ -1317,10 +1619,6 @@ function drawCurve(
         );
 
 
-    /* -----------------------------------------------------
-       GLOW
-    ----------------------------------------------------- */
-
     ctx.beginPath();
 
     ctx.moveTo(
@@ -1363,10 +1661,6 @@ function drawCurve(
     ctx.stroke();
 
 
-    /* -----------------------------------------------------
-       MAIN INK
-    ----------------------------------------------------- */
-
     ctx.beginPath();
 
     ctx.moveTo(
@@ -1408,10 +1702,6 @@ function drawCurve(
 
     ctx.stroke();
 
-
-    /* -----------------------------------------------------
-       WHITE DIGITAL CORE
-    ----------------------------------------------------- */
 
     ctx.beginPath();
 
@@ -1547,16 +1837,6 @@ function addStrokePoint(
     );
 
 
-    /*
-        Four points:
-
-        A B C D
-
-        Draw A→B and B→C.
-
-        Keep B C D.
-    */
-
     if (
         strokeBuffer.length === 4
     ) {
@@ -1605,10 +1885,6 @@ function addStrokePoint(
         }
 
 
-        /*
-            Beginning segment.
-        */
-
         drawCurve(
 
             p0,
@@ -1621,10 +1897,6 @@ function addStrokePoint(
 
         );
 
-
-        /*
-            Main segment.
-        */
 
         drawCurve(
 
@@ -1662,10 +1934,6 @@ function flushStrokeBuffer() {
     }
 
 
-    /*
-        Single point.
-    */
-
     if (
         count === 1
     ) {
@@ -1677,10 +1945,6 @@ function flushStrokeBuffer() {
         return;
     }
 
-
-    /*
-        Two points.
-    */
 
     if (
         count === 2
@@ -1732,13 +1996,6 @@ function flushStrokeBuffer() {
     }
 
 
-    /*
-        Three points.
-
-        Complete both remaining curve
-        sections.
-    */
-
     if (
         count === 3
     ) {
@@ -1782,11 +2039,6 @@ function flushStrokeBuffer() {
         return;
     }
 
-
-    /*
-        Normally only the final segment
-        remains.
-    */
 
     const p0 =
         strokeBuffer[
@@ -1897,10 +2149,6 @@ function drawLine(
         performance.now();
 
 
-    /*
-        First point.
-    */
-
     if (
         previousRawX === null
     ) {
@@ -1949,10 +2197,6 @@ function drawLine(
     }
 
 
-    /*
-        Raw distance.
-    */
-
     const rawDistance =
         distanceBetween(
 
@@ -1964,10 +2208,6 @@ function drawLine(
         );
 
 
-    /*
-        Time.
-    */
-
     const deltaTime =
         Math.max(
 
@@ -1978,10 +2218,6 @@ function drawLine(
         );
 
 
-    /*
-        Instant speed.
-    */
-
     const instantSpeed =
         (
             rawDistance /
@@ -1989,10 +2225,6 @@ function drawLine(
         ) *
         1000;
 
-
-    /*
-        Smoothed speed.
-    */
 
     currentSpeed =
 
@@ -2002,11 +2234,6 @@ function drawLine(
         instantSpeed *
         0.35;
 
-
-    /*
-        Calculate direction BEFORE
-        replacing raw position.
-    */
 
     const newDirection =
         Math.atan2(
@@ -2041,10 +2268,6 @@ function drawLine(
         newDirection;
 
 
-    /*
-        Update raw position.
-    */
-
     previousRawX =
         targetX;
 
@@ -2054,10 +2277,6 @@ function drawLine(
     previousTime =
         now;
 
-
-    /*
-        Jump protection.
-    */
 
     if (
         rawDistance >
@@ -2092,10 +2311,6 @@ function drawLine(
     }
 
 
-    /*
-        Dynamic stabilization.
-    */
-
     const smoothPoint =
         getSmoothPoint(
 
@@ -2106,10 +2321,6 @@ function drawLine(
             directionChange
         );
 
-
-    /*
-        Micro-jitter suppression.
-    */
 
     if (
         previousX !== null &&
@@ -2144,10 +2355,6 @@ function drawLine(
     previousY =
         smoothPoint.y;
 
-
-    /*
-        Add filtered point.
-    */
 
     addStrokePoint({
 
@@ -2252,10 +2459,6 @@ hands.onResults(
 function(results) {
 
 
-    /*
-        Cooldown.
-    */
-
     if (
         clearCooldown > 0
     ) {
@@ -2263,10 +2466,6 @@ function(results) {
         clearCooldown--;
     }
 
-
-    /*
-        NO HAND
-    */
 
     if (
 
@@ -2309,10 +2508,6 @@ function(results) {
         results.multiHandLandmarks[0];
 
 
-    /*
-        INDEX
-    */
-
     const indexUp =
         isFingerUp(
             landmarks,
@@ -2320,10 +2515,6 @@ function(results) {
             6
         );
 
-
-    /*
-        MIDDLE
-    */
 
     const middleUp =
         isFingerUp(
@@ -2333,10 +2524,6 @@ function(results) {
         );
 
 
-    /*
-        RING
-    */
-
     const ringUp =
         isFingerUp(
             landmarks,
@@ -2345,10 +2532,6 @@ function(results) {
         );
 
 
-    /*
-        PINKY
-    */
-
     const pinkyUp =
         isFingerUp(
             landmarks,
@@ -2356,10 +2539,6 @@ function(results) {
             18
         );
 
-
-    /*
-        OPEN HAND
-    */
 
     const fingersUp =
 
@@ -2372,10 +2551,6 @@ function(results) {
     const openHand =
         fingersUp >= 3;
 
-
-    /*
-        PINCH
-    */
 
     const thumb =
         landmarks[4];
@@ -2405,10 +2580,6 @@ function(results) {
     const isPinching =
         pinchDistance < 0.055;
 
-
-    /*
-        CURSOR POSITION
-    */
 
     const x =
         (
@@ -2440,11 +2611,6 @@ function(results) {
     handDot.style.boxShadow =
         "0 0 8px #ff00ff";
 
-
-    /* =====================================================
-       CLEAR
-       HIGHEST PRIORITY
-    ===================================================== */
 
     if (
         openHand
@@ -2488,11 +2654,6 @@ function(results) {
     clearFrames = 0;
 
 
-    /* =====================================================
-       PINCH
-       STOP DRAWING
-    ===================================================== */
-
     if (
         isPinching
     ) {
@@ -2507,11 +2668,6 @@ function(results) {
         return;
     }
 
-
-    /* =====================================================
-       INDEX ONLY
-       DRAW
-    ===================================================== */
 
     if (
 
@@ -2540,10 +2696,6 @@ function(results) {
         return;
     }
 
-
-    /*
-        Unknown pose.
-    */
 
     stopDrawing();
 
@@ -2664,7 +2816,7 @@ async function() {
 
 
 /* =========================================================
-   STAGE 2 — TASK 1 ADDITION
+   STAGE 2 — TASK 1
    PARTICLE SYSTEM
 ========================================================= */
 
