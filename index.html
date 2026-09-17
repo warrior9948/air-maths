@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
 
 <meta charset="UTF-8">
@@ -13,24 +12,12 @@
 
 <title>Air Maths Board</title>
 
-
-<!-- =========================================================
-     MEDIAPIPE
-     ========================================================= -->
-
 <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js"></script>
-
 <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
-
 
 <style>
 
-/* =========================================================
-   DESIGN SYSTEM
-   ========================================================= */
-
 :root{
-
     --bg-0:#0d0f11;
     --bg-1:#121416;
     --bg-2:#181b1e;
@@ -56,32 +43,18 @@
     --bottombar:28px;
 }
 
-
-/* =========================================================
-   GLOBAL
-   ========================================================= */
-
 *{
     box-sizing:border-box;
-
     -webkit-tap-highlight-color:transparent;
 }
 
-
-html,
-body{
-
+html,body{
     margin:0;
-
     width:100%;
     height:100%;
-
     overflow:hidden;
-
     background:var(--bg-0);
-
     color:var(--text-1);
-
     font-family:
         Inter,
         ui-sans-serif,
@@ -92,9 +65,7 @@ body{
         sans-serif;
 }
 
-
 button{
-
     font:inherit;
 }
 
@@ -103,25 +74,8 @@ button{
    CAMERA
    ========================================================= */
 
-/*
-    IMPORTANT
-
-    The camera is NOT transparent.
-
-    It is a completely normal active video element.
-
-    The entire Air Maths application is simply positioned
-    above it.
-
-    This keeps the camera pipeline reliable on mobile
-    browsers while preventing the user from seeing
-    themselves.
-*/
-
 #camera{
-
     position:fixed;
-
     left:0;
     top:0;
 
@@ -129,6 +83,12 @@ button{
     height:100vh;
 
     object-fit:cover;
+
+    /*
+       IMPORTANT:
+       The camera stays fully active and rendered.
+       The application sits above it.
+    */
 
     opacity:1;
 
@@ -139,13 +99,11 @@ button{
 
 
 /* =========================================================
-   APPLICATION
+   APP
    ========================================================= */
 
 #app{
-
     position:fixed;
-
     inset:0;
 
     width:100%;
@@ -164,9 +122,7 @@ button{
    ========================================================= */
 
 .topbar{
-
     position:absolute;
-
     left:0;
     right:0;
     top:0;
@@ -183,9 +139,7 @@ button{
     z-index:20;
 }
 
-
 .brand{
-
     width:var(--rail);
     height:100%;
 
@@ -196,17 +150,11 @@ button{
     border-right:1px solid var(--line-1);
 
     font-size:12px;
-
     font-weight:700;
-
     letter-spacing:.08em;
-
-    color:var(--text-1);
 }
 
-
 .document{
-
     height:100%;
 
     display:flex;
@@ -219,17 +167,11 @@ button{
     border-right:1px solid var(--line-1);
 }
 
-
 .document-name{
-
     font-size:12px;
-
-    color:var(--text-1);
 }
 
-
 .document-type{
-
     margin-left:9px;
 
     font-size:10px;
@@ -237,31 +179,22 @@ button{
     color:var(--text-4);
 
     letter-spacing:.08em;
-
     text-transform:uppercase;
 }
 
-
 .menu{
-
     display:flex;
-
     height:100%;
-
     align-items:center;
 
     gap:2px;
-
     padding-left:8px;
 }
 
-
 .menu button{
-
     height:30px;
 
     border:0;
-
     background:transparent;
 
     color:var(--text-3);
@@ -269,29 +202,22 @@ button{
     padding:0 10px;
 
     font-size:10px;
-
     letter-spacing:.08em;
 
     cursor:pointer;
 }
 
-
 .menu button:hover{
-
     color:var(--text-1);
-
     background:var(--bg-2);
 }
 
-
 .top-right{
-
     margin-left:auto;
 
     height:100%;
 
     display:flex;
-
     align-items:center;
 
     gap:8px;
@@ -299,31 +225,24 @@ button{
     padding-right:10px;
 }
 
-
 .connection{
-
     display:flex;
-
     align-items:center;
-
     gap:6px;
 
-    padding:0 9px;
-
     height:26px;
+
+    padding:0 9px;
 
     border:1px solid var(--line-2);
 
     color:var(--text-3);
 
     font-size:9px;
-
     letter-spacing:.08em;
 }
 
-
 .connection-dot{
-
     width:5px;
     height:5px;
 
@@ -332,19 +251,13 @@ button{
     background:var(--text-4);
 }
 
-
 .connection.active .connection-dot{
-
     background:#8eaa91;
 }
 
-
 .version{
-
     color:var(--text-4);
-
     font-size:9px;
-
     letter-spacing:.08em;
 }
 
@@ -354,21 +267,16 @@ button{
    ========================================================= */
 
 .toolrail{
-
     position:absolute;
 
     left:0;
-
     top:var(--topbar);
-
     bottom:var(--bottombar);
 
     width:var(--rail);
 
     display:flex;
-
     flex-direction:column;
-
     align-items:center;
 
     border-right:1px solid var(--line-1);
@@ -378,33 +286,24 @@ button{
     z-index:20;
 }
 
-
 .tool-group{
-
     width:100%;
-
     padding:8px 0;
 
     border-bottom:1px solid var(--line-1);
 }
 
-
 .tool{
-
     position:relative;
 
     width:100%;
-
     height:38px;
 
     display:flex;
-
     align-items:center;
-
     justify-content:center;
 
     border:0;
-
     background:transparent;
 
     color:var(--text-4);
@@ -412,33 +311,23 @@ button{
     cursor:pointer;
 }
 
-
 .tool:hover{
-
     color:var(--text-2);
-
     background:var(--bg-2);
 }
 
-
 .tool.active{
-
     color:var(--accent);
-
     background:var(--accent-bg);
 }
 
-
 .tool.active::before{
-
     content:"";
 
     position:absolute;
 
     left:0;
-
     top:8px;
-
     bottom:8px;
 
     width:2px;
@@ -446,19 +335,12 @@ button{
     background:var(--accent);
 }
 
-
 .tool-symbol{
-
     font-size:11px;
-
     font-weight:600;
-
-    letter-spacing:.04em;
 }
 
-
 .tool-bottom{
-
     margin-top:auto;
 
     width:100%;
@@ -474,15 +356,12 @@ button{
    ========================================================= */
 
 .workspace{
-
     position:absolute;
 
     left:var(--rail);
-
     right:0;
 
     top:var(--topbar);
-
     bottom:var(--bottombar);
 
     overflow:hidden;
@@ -490,12 +369,10 @@ button{
     background-color:var(--bg-0);
 
     background-image:
-
         linear-gradient(
             rgba(255,255,255,.018) 1px,
             transparent 1px
         ),
-
         linear-gradient(
             90deg,
             rgba(255,255,255,.018) 1px,
@@ -513,22 +390,15 @@ button{
    ========================================================= */
 
 .board-shell{
-
     position:absolute;
 
     inset:18px;
 
+    overflow:hidden;
+
     border:1px solid var(--line-2);
 
-    background:
-        radial-gradient(
-            circle at center,
-            rgba(145,175,208,.025),
-            transparent 55%
-        ),
-        #0d0f11;
-
-    overflow:hidden;
+    background:#0d0f11;
 
     z-index:12;
 }
@@ -539,13 +409,11 @@ button{
    ========================================================= */
 
 #drawCanvas{
-
     position:absolute;
 
     inset:0;
 
     width:100%;
-
     height:100%;
 
     display:block;
@@ -561,11 +429,9 @@ button{
    ========================================================= */
 
 #cursor{
-
     position:fixed;
 
     width:18px;
-
     height:18px;
 
     border:1px solid rgba(145,175,208,.9);
@@ -581,14 +447,12 @@ button{
     z-index:50;
 
     transition:
-        opacity .15s ease,
+        opacity .12s ease,
         width .08s linear,
         height .08s linear;
 }
 
-
 #cursor::before{
-
     content:"";
 
     position:absolute;
@@ -606,9 +470,7 @@ button{
     background:var(--accent);
 }
 
-
 #cursor::after{
-
     content:"";
 
     position:absolute;
@@ -624,32 +486,25 @@ button{
     background:rgba(145,175,208,.18);
 }
 
-
 #cursor.drawing{
-
     width:14px;
     height:14px;
 }
 
-
 #cursor.pause{
-
     border-color:var(--text-3);
 }
 
-
 #cursor.clear{
-
     border-color:var(--danger);
 }
 
 
 /* =========================================================
-   BOARD LABELS
+   BOARD LABEL
    ========================================================= */
 
 .board-label{
-
     position:absolute;
 
     left:18px;
@@ -660,17 +515,12 @@ button{
     color:var(--text-4);
 
     font-size:9px;
-
     letter-spacing:.14em;
-
-    text-transform:uppercase;
 
     pointer-events:none;
 }
 
-
 .board-coordinates{
-
     position:absolute;
 
     right:18px;
@@ -682,18 +532,15 @@ button{
 
     font-size:9px;
 
-    letter-spacing:.08em;
-
     pointer-events:none;
 }
 
 
 /* =========================================================
-   INITIALIZATION PANEL
+   CENTER PANEL
    ========================================================= */
 
 .center-panel{
-
     position:absolute;
 
     left:50%;
@@ -710,41 +557,28 @@ button{
     pointer-events:none;
 }
 
-
 .center-kicker{
-
     color:var(--text-4);
 
     font-size:9px;
-
     letter-spacing:.16em;
-
-    text-transform:uppercase;
 
     margin-bottom:10px;
 }
 
-
 .center-title{
-
     color:var(--text-1);
 
     font-size:17px;
-
     font-weight:500;
-
-    letter-spacing:.01em;
 
     margin-bottom:8px;
 }
 
-
 .center-description{
-
     color:var(--text-3);
 
     font-size:11px;
-
     line-height:1.6;
 
     max-width:300px;
@@ -752,10 +586,10 @@ button{
     margin:0 auto 18px;
 }
 
-
 #startBtn{
-
     pointer-events:auto;
+
+    height:36px;
 
     border:1px solid var(--accent-line);
 
@@ -763,48 +597,20 @@ button{
 
     color:var(--accent);
 
-    height:36px;
-
     padding:0 18px;
 
     font-size:10px;
-
     letter-spacing:.12em;
 
     cursor:pointer;
-
-    transition:
-        background .15s ease,
-        border-color .15s ease;
 }
-
-
-#startBtn:hover{
-
-    background:rgba(145,175,208,.15);
-
-    border-color:rgba(145,175,208,.45);
-}
-
-
-#startBtn:active{
-
-    transform:translateY(1px);
-}
-
 
 #startBtn:disabled{
-
     opacity:.55;
-
-    cursor:default;
 }
 
-
 .center-panel.hidden{
-
     opacity:0;
-
     pointer-events:none;
 }
 
@@ -814,11 +620,9 @@ button{
    ========================================================= */
 
 .inspector{
-
     position:absolute;
 
     top:16px;
-
     right:16px;
 
     width:188px;
@@ -830,41 +634,28 @@ button{
     z-index:12;
 }
 
-
 .inspector-section{
-
     padding:11px 12px;
 
     border-bottom:1px solid var(--line-1);
 }
 
-
 .inspector-section:last-child{
-
     border-bottom:0;
 }
 
-
 .inspector-title{
-
     color:var(--text-4);
 
     font-size:8px;
-
     letter-spacing:.13em;
-
-    text-transform:uppercase;
 
     margin-bottom:10px;
 }
 
-
 .inspector-row{
-
     display:flex;
-
     align-items:center;
-
     justify-content:space-between;
 
     min-height:22px;
@@ -872,35 +663,24 @@ button{
     font-size:10px;
 }
 
-
 .inspector-name{
-
     color:var(--text-3);
 }
 
-
 .inspector-value{
-
     color:var(--text-2);
 
     font-variant-numeric:tabular-nums;
 }
 
-
 .status-value{
-
     display:flex;
-
     align-items:center;
-
     gap:6px;
 }
 
-
 .status-dot{
-
     width:5px;
-
     height:5px;
 
     border-radius:50%;
@@ -908,15 +688,11 @@ button{
     background:var(--text-4);
 }
 
-
 .status-dot.ready{
-
     background:#8eaa91;
 }
 
-
 .status-dot.warning{
-
     background:#b9a37b;
 }
 
@@ -926,7 +702,6 @@ button{
    ========================================================= */
 
 .bottombar{
-
     position:absolute;
 
     left:0;
@@ -936,7 +711,6 @@ button{
     height:var(--bottombar);
 
     display:flex;
-
     align-items:center;
 
     padding:0 10px;
@@ -948,43 +722,29 @@ button{
     z-index:20;
 }
 
-
 .bottom-left{
-
     display:flex;
-
     gap:14px;
 }
 
-
 .bottom-item{
-
     color:var(--text-4);
 
     font-size:8px;
-
     letter-spacing:.08em;
-
-    text-transform:uppercase;
 }
 
-
 .bottom-item strong{
-
     color:var(--text-3);
-
     font-weight:500;
 }
 
-
 .bottom-right{
-
     margin-left:auto;
 
     color:var(--text-4);
 
     font-size:8px;
-
     letter-spacing:.1em;
 }
 
@@ -996,99 +756,51 @@ button{
 @media(max-width:700px){
 
     :root{
-
         --topbar:44px;
-
         --rail:42px;
-
         --bottombar:25px;
     }
 
-
     .document{
-
         min-width:0;
-
         padding:0 10px;
     }
 
-
-    .document-type{
-
-        display:none;
-    }
-
-
-    .menu{
-
-        display:none;
-    }
-
-
-    .top-right{
-
-        gap:4px;
-    }
-
-
-    .connection{
-
-        padding:0 7px;
-    }
-
-
+    .document-type,
+    .menu,
     .version{
-
         display:none;
     }
-
 
     .workspace{
-
         left:var(--rail);
     }
 
-
     .board-shell{
-
         inset:8px;
     }
 
-
     .inspector{
-
         top:10px;
-
         right:10px;
-
         width:160px;
     }
 
-
     .board-label{
-
         left:12px;
-
         top:10px;
     }
-
 
     .board-coordinates{
-
         right:12px;
-
         top:10px;
     }
 
-
     .center-panel{
-
         width:min(320px,82vw);
     }
 
-
     .center-title{
-
         font-size:15px;
     }
 }
@@ -1105,69 +817,47 @@ button{
 ){
 
     :root{
-
         --topbar:40px;
-
         --rail:40px;
-
         --bottombar:24px;
     }
 
-
     .board-shell{
-
         inset:6px;
     }
 
-
     .inspector{
-
         top:8px;
-
         right:8px;
-
         width:150px;
     }
 
-
     .inspector-section{
-
         padding:7px 9px;
     }
 
-
     .inspector-title{
-
         margin-bottom:5px;
     }
 
-
     .inspector-row{
-
         min-height:18px;
     }
 
-
     .center-description{
-
         margin-bottom:10px;
     }
 
-
     #startBtn{
-
         height:31px;
     }
 
-
     .bottom-left{
-
         gap:8px;
     }
 }
 
 </style>
-
 </head>
 
 
@@ -1182,453 +872,365 @@ button{
     id="camera"
     autoplay
     muted
-    playsinline
-></video>
+    playsinline>
+</video>
 
 
 <!-- =========================================================
-     APPLICATION
+     APP
      ========================================================= -->
 
 <div id="app">
 
 
+<header class="topbar">
+
+    <div class="brand">AM</div>
+
+    <div class="document">
+
+        <span class="document-name">
+            Untitled Board
+        </span>
+
+        <span class="document-type">
+            Mathematics
+        </span>
+
+    </div>
+
+    <nav class="menu">
+
+        <button>FILE</button>
+        <button>EDIT</button>
+        <button>VIEW</button>
+        <button>TOOLS</button>
+
+    </nav>
+
+    <div class="top-right">
+
+        <div
+            class="connection"
+            id="connectionStatus">
+
+            <span
+                class="connection-dot"
+                id="connectionDot">
+            </span>
+
+            <span id="connectionText">
+                OFFLINE
+            </span>
+
+        </div>
+
+        <div class="version">
+            V5
+        </div>
+
+    </div>
+
+</header>
+
+
+<!-- =========================================================
+     TOOL RAIL
+     ========================================================= -->
+
+<aside class="toolrail">
+
+    <div class="tool-group">
+
+        <button
+            class="tool active"
+            id="penTool">
+
+            <span class="tool-symbol">P</span>
+
+        </button>
+
+        <button
+            class="tool"
+            id="selectTool">
+
+            <span class="tool-symbol">S</span>
+
+        </button>
+
+        <button
+            class="tool"
+            id="measureTool">
+
+            <span class="tool-symbol">M</span>
+
+        </button>
+
+    </div>
+
+
+    <div class="tool-group">
+
+        <button
+            class="tool"
+            id="undoBtn">
+
+            <span class="tool-symbol">↶</span>
+
+        </button>
+
+        <button
+            class="tool"
+            id="redoBtn">
+
+            <span class="tool-symbol">↷</span>
+
+        </button>
+
+        <button
+            class="tool"
+            id="clearBtn">
+
+            <span class="tool-symbol">×</span>
+
+        </button>
+
+    </div>
+
+
+    <div class="tool-bottom">
+
+        <button
+            class="tool"
+            id="gridBtn">
+
+            <span class="tool-symbol">⊞</span>
+
+        </button>
+
+        <button
+            class="tool"
+            id="zoomBtn">
+
+            <span class="tool-symbol">⌕</span>
+
+        </button>
+
+    </div>
+
+</aside>
+
+
+<!-- =========================================================
+     WORKSPACE
+     ========================================================= -->
+
+<main class="workspace">
+
+    <div class="board-shell">
+
+        <div class="board-label">
+            AIR MATHS / WORKSPACE
+        </div>
+
+        <div
+            class="board-coordinates"
+            id="coordinates">
+            0, 0
+        </div>
+
+
+        <canvas id="drawCanvas"></canvas>
+
+
+        <div
+            class="center-panel"
+            id="centerPanel">
+
+            <div class="center-kicker">
+                HAND TRACKING SYSTEM
+            </div>
+
+            <div class="center-title">
+                Initialize camera
+            </div>
+
+            <p
+                class="center-description"
+                id="centerDescription">
+
+                Camera tracking is used only for
+                hand detection. Your camera view
+                remains behind the board interface.
+
+            </p>
+
+            <button id="startBtn">
+                INITIALIZE CAMERA
+            </button>
+
+        </div>
+
+    </div>
+
+
     <!-- =====================================================
-         TOP BAR
+         INSPECTOR
          ===================================================== -->
 
-    <header class="topbar">
+    <aside class="inspector">
 
-        <div class="brand">
-            AM
-        </div>
+        <section class="inspector-section">
 
+            <div class="inspector-title">
+                Tracking
+            </div>
 
-        <div class="document">
+            <div class="inspector-row">
 
-            <span class="document-name">
-                Untitled Board
-            </span>
-
-            <span class="document-type">
-                Mathematics
-            </span>
-
-        </div>
-
-
-        <nav class="menu">
-
-            <button>FILE</button>
-
-            <button>EDIT</button>
-
-            <button>VIEW</button>
-
-            <button>TOOLS</button>
-
-        </nav>
-
-
-        <div class="top-right">
-
-            <div
-                class="connection"
-                id="connectionStatus"
-            >
+                <span class="inspector-name">
+                    Camera
+                </span>
 
                 <span
-                    class="connection-dot"
-                    id="connectionDot"
-                ></span>
-
-                <span id="connectionText">
-                    OFFLINE
+                    class="inspector-value"
+                    id="cameraState">
+                    OFF
                 </span>
 
             </div>
 
+            <div class="inspector-row">
 
-            <div class="version">
-                V5
+                <span class="inspector-name">
+                    Hand
+                </span>
+
+                <span
+                    class="inspector-value"
+                    id="handState">
+                    NONE
+                </span>
+
             </div>
 
-        </div>
-
-    </header>
+        </section>
 
 
+        <section class="inspector-section">
 
-    <!-- =====================================================
-         TOOL RAIL
-         ===================================================== -->
+            <div class="inspector-title">
+                System
+            </div>
 
-    <aside class="toolrail">
+            <div class="inspector-row">
 
-
-        <div class="tool-group">
-
-            <button
-                class="tool active"
-                id="penTool"
-                title="Pen"
-            >
-                <span class="tool-symbol">
-                    P
+                <span class="inspector-name">
+                    Engine
                 </span>
-            </button>
 
-
-            <button
-                class="tool"
-                id="selectTool"
-                title="Select"
-            >
-                <span class="tool-symbol">
-                    S
+                <span class="inspector-value">
+                    V5
                 </span>
-            </button>
 
+            </div>
 
-            <button
-                class="tool"
-                id="measureTool"
-                title="Measure"
-            >
-                <span class="tool-symbol">
-                    M
+            <div class="inspector-row">
+
+                <span class="inspector-name">
+                    Mode
                 </span>
-            </button>
 
-        </div>
-
-
-
-        <div class="tool-group">
-
-            <button
-                class="tool"
-                id="undoBtn"
-                title="Undo"
-            >
-                <span class="tool-symbol">
-                    ↶
+                <span
+                    class="inspector-value"
+                    id="modeState">
+                    READY
                 </span>
-            </button>
+
+            </div>
+
+        </section>
 
 
-            <button
-                class="tool"
-                id="redoBtn"
-                title="Redo"
-            >
-                <span class="tool-symbol">
-                    ↷
+        <section class="inspector-section">
+
+            <div class="inspector-title">
+                Input
+            </div>
+
+            <div class="inspector-row">
+
+                <span class="inspector-name">
+                    Gesture
                 </span>
-            </button>
 
-
-            <button
-                class="tool"
-                id="clearBtn"
-                title="Clear"
-            >
-                <span class="tool-symbol">
-                    ×
+                <span
+                    class="inspector-value"
+                    id="gestureState">
+                    NONE
                 </span>
-            </button>
 
-        </div>
+            </div>
 
+            <div class="inspector-row">
 
-
-        <div class="tool-bottom">
-
-            <button
-                class="tool"
-                id="gridBtn"
-                title="Grid"
-            >
-                <span class="tool-symbol">
-                    ⊞
+                <span class="inspector-name">
+                    Tracking
                 </span>
-            </button>
 
+                <span class="inspector-value status-value">
 
-            <button
-                class="tool"
-                id="zoomBtn"
-                title="Zoom"
-            >
-                <span class="tool-symbol">
-                    ⌕
+                    <span
+                        class="status-dot"
+                        id="trackingDot">
+                    </span>
+
+                    <span id="trackingState">
+                        WAITING
+                    </span>
+
                 </span>
-            </button>
 
-        </div>
+            </div>
+
+        </section>
 
     </aside>
 
+</main>
 
 
-    <!-- =====================================================
-         WORKSPACE
-         ===================================================== -->
-
-    <main class="workspace">
+<div id="cursor"></div>
 
 
-        <div class="board-shell">
+<footer class="bottombar">
 
+    <div class="bottom-left">
 
-            <div class="board-label">
-                AIR MATHS / WORKSPACE
-            </div>
-
-
-            <div
-                class="board-coordinates"
-                id="coordinates"
-            >
-                0, 0
-            </div>
-
-
-            <canvas id="drawCanvas"></canvas>
-
-
-
-            <!-- =============================================
-                 INITIALIZATION PANEL
-                 ============================================= -->
-
-            <div
-                class="center-panel"
-                id="centerPanel"
-            >
-
-                <div class="center-kicker">
-                    HAND TRACKING SYSTEM
-                </div>
-
-
-                <div class="center-title">
-                    Initialize camera
-                </div>
-
-
-                <p
-                    class="center-description"
-                    id="centerDescription"
-                >
-                    Camera tracking is used only for
-                    hand detection. Your camera view
-                    remains behind the board interface.
-                </p>
-
-
-                <button id="startBtn">
-                    INITIALIZE CAMERA
-                </button>
-
-            </div>
-
+        <div class="bottom-item">
+            <strong>INDEX</strong> Draw
         </div>
 
-
-
-        <!-- =================================================
-             INSPECTOR
-             ================================================= -->
-
-        <aside class="inspector">
-
-
-            <section class="inspector-section">
-
-                <div class="inspector-title">
-                    Tracking
-                </div>
-
-
-                <div class="inspector-row">
-
-                    <span class="inspector-name">
-                        Camera
-                    </span>
-
-                    <span
-                        class="inspector-value"
-                        id="cameraState"
-                    >
-                        OFF
-                    </span>
-
-                </div>
-
-
-                <div class="inspector-row">
-
-                    <span class="inspector-name">
-                        Hand
-                    </span>
-
-                    <span
-                        class="inspector-value"
-                        id="handState"
-                    >
-                        NONE
-                    </span>
-
-                </div>
-
-            </section>
-
-
-
-            <section class="inspector-section">
-
-                <div class="inspector-title">
-                    System
-                </div>
-
-
-                <div class="inspector-row">
-
-                    <span class="inspector-name">
-                        Engine
-                    </span>
-
-                    <span class="inspector-value">
-                        V5
-                    </span>
-
-                </div>
-
-
-                <div class="inspector-row">
-
-                    <span class="inspector-name">
-                        Mode
-                    </span>
-
-                    <span
-                        class="inspector-value"
-                        id="modeState"
-                    >
-                        READY
-                    </span>
-
-                </div>
-
-            </section>
-
-
-
-            <section class="inspector-section">
-
-                <div class="inspector-title">
-                    Input
-                </div>
-
-
-                <div class="inspector-row">
-
-                    <span class="inspector-name">
-                        Gesture
-                    </span>
-
-                    <span
-                        class="inspector-value"
-                        id="gestureState"
-                    >
-                        NONE
-                    </span>
-
-                </div>
-
-
-                <div class="inspector-row">
-
-                    <span class="inspector-name">
-                        Tracking
-                    </span>
-
-                    <span class="inspector-value status-value">
-
-                        <span
-                            class="status-dot"
-                            id="trackingDot"
-                        ></span>
-
-                        <span id="trackingState">
-                            WAITING
-                        </span>
-
-                    </span>
-
-                </div>
-
-            </section>
-
-        </aside>
-
-    </main>
-
-
-
-    <!-- =====================================================
-         CURSOR
-         ===================================================== -->
-
-    <div id="cursor"></div>
-
-
-
-    <!-- =====================================================
-         BOTTOM BAR
-         ===================================================== -->
-
-    <footer class="bottombar">
-
-
-        <div class="bottom-left">
-
-            <div class="bottom-item">
-                <strong>INDEX</strong> Draw
-            </div>
-
-
-            <div class="bottom-item">
-                <strong>PINCH</strong> Pause
-            </div>
-
-
-            <div class="bottom-item">
-                <strong>OPEN</strong> Clear
-            </div>
-
+        <div class="bottom-item">
+            <strong>PINCH</strong> Pause
         </div>
 
-
-        <div class="bottom-right">
-            AIR MATHS BOARD
+        <div class="bottom-item">
+            <strong>OPEN</strong> Clear
         </div>
 
-    </footer>
+    </div>
+
+    <div class="bottom-right">
+        AIR MATHS BOARD
+    </div>
+
+</footer>
 
 </div>
 
 
-
-<!-- =========================================================
-     JAVASCRIPT
-     ========================================================= -->
-
 <script>
-
-"use strict";
-
 
 /* ============================================================
    DOM
@@ -1637,10 +1239,8 @@ button{
 const video =
     document.getElementById("camera");
 
-
 const canvas =
     document.getElementById("drawCanvas");
-
 
 const ctx =
     canvas.getContext(
@@ -1651,92 +1251,66 @@ const ctx =
         }
     );
 
-
 const cursor =
     document.getElementById("cursor");
-
 
 const startBtn =
     document.getElementById("startBtn");
 
-
 const centerPanel =
     document.getElementById("centerPanel");
-
 
 const centerDescription =
     document.getElementById("centerDescription");
 
-
 const connectionStatus =
     document.getElementById("connectionStatus");
-
 
 const connectionText =
     document.getElementById("connectionText");
 
-
 const cameraState =
     document.getElementById("cameraState");
-
 
 const handState =
     document.getElementById("handState");
 
-
 const modeState =
     document.getElementById("modeState");
-
 
 const gestureState =
     document.getElementById("gestureState");
 
-
 const trackingDot =
     document.getElementById("trackingDot");
 
-
 const trackingState =
     document.getElementById("trackingState");
-
 
 const coordinates =
     document.getElementById("coordinates");
 
 
 /* ============================================================
-   CAMERA STATE
+   CAMERA
    ============================================================ */
 
 let stream = null;
-
 let cameraRunning = false;
-
 let mediapipeCamera = null;
 
 
 /* ============================================================
-   CANVAS STATE
+   CANVAS
    ============================================================ */
 
 let viewWidth = 1;
-
 let viewHeight = 1;
-
 let dpr = 1;
 
 
 /* ============================================================
-   VIDEO DIMENSIONS
-   ============================================================ */
-
-let lastVideoWidth = 0;
-
-let lastVideoHeight = 0;
-
-
-/* ============================================================
-   CANVAS RESIZE
+   RESIZE
    ============================================================ */
 
 function resizeCanvas(){
@@ -1744,20 +1318,11 @@ function resizeCanvas(){
     const rect =
         canvas.getBoundingClientRect();
 
-
     viewWidth =
-        Math.max(
-            1,
-            rect.width
-        );
-
+        Math.max(1, rect.width);
 
     viewHeight =
-        Math.max(
-            1,
-            rect.height
-        );
-
+        Math.max(1, rect.height);
 
     dpr =
         Math.min(
@@ -1765,18 +1330,15 @@ function resizeCanvas(){
             2
         );
 
-
     canvas.width =
         Math.round(
             viewWidth * dpr
         );
 
-
     canvas.height =
         Math.round(
             viewHeight * dpr
         );
-
 
     ctx.setTransform(
         dpr,
@@ -1787,21 +1349,9 @@ function resizeCanvas(){
         0
     );
 
+    resetPenState();
 
-    lastVideoWidth =
-        video.videoWidth || 0;
-
-
-    lastVideoHeight =
-        video.videoHeight || 0;
-
-
-    /*
-       Prevent a partially completed stroke from
-       continuing after orientation changes.
-    */
-
-    resetDrawingState();
+    resetLandmarkSmoothing();
 }
 
 
@@ -1809,86 +1359,54 @@ function resizeCanvas(){
    CAMERA GEOMETRY
    ============================================================ */
 
-/*
-    CSS uses:
-
-        object-fit: cover
-
-    We reproduce that exact calculation mathematically.
-
-    This is extremely important on mobile because:
-
-        portrait ≠ landscape
-
-    and the camera aspect ratio is normally different
-    from the phone's screen aspect ratio.
-*/
-
 function getCameraGeometry(){
 
-    const cameraWidth =
+    const cw =
         video.videoWidth || 1280;
 
-
-    const cameraHeight =
+    const ch =
         video.videoHeight || 720;
 
-
-    const viewportWidth =
+    const vw =
         window.innerWidth;
 
-
-    const viewportHeight =
+    const vh =
         window.innerHeight;
 
 
+    /*
+       EXACT object-fit:cover calculation.
+    */
+
     const scale =
         Math.max(
-            viewportWidth / cameraWidth,
-            viewportHeight / cameraHeight
+            vw / cw,
+            vh / ch
         );
 
+    const rw =
+        cw * scale;
 
-    const renderedWidth =
-        cameraWidth * scale;
+    const rh =
+        ch * scale;
 
+    const cropX =
+        (rw - vw) / 2;
 
-    const renderedHeight =
-        cameraHeight * scale;
-
-
-    const offsetX =
-        (
-            renderedWidth -
-            viewportWidth
-        ) / 2;
-
-
-    const offsetY =
-        (
-            renderedHeight -
-            viewportHeight
-        ) / 2;
+    const cropY =
+        (rh - vh) / 2;
 
 
     return {
-
-        cameraWidth,
-
-        cameraHeight,
-
-        renderedWidth,
-
-        renderedHeight,
-
-        offsetX,
-
-        offsetY,
-
-        viewportWidth,
-
-        viewportHeight
-
+        cw,
+        ch,
+        vw,
+        vh,
+        scale,
+        rw,
+        rh,
+        cropX,
+        cropY
     };
 }
 
@@ -1897,98 +1415,72 @@ function getCameraGeometry(){
    CAMERA → SCREEN
    ============================================================ */
 
-function mapCameraToScreen(
-    normalizedX,
-    normalizedY
-){
+function cameraToScreen(x,y){
 
-    const geometry =
+    const g =
         getCameraGeometry();
 
 
     /*
-       MediaPipe gives normalized coordinates.
+       MediaPipe coordinates are normalized.
 
-       Convert them into native camera pixels.
+       Convert to native camera pixels.
     */
 
-    let cameraX =
-        normalizedX *
-        geometry.cameraWidth;
+    let px =
+        x * g.cw;
 
-
-    let cameraY =
-        normalizedY *
-        geometry.cameraHeight;
+    let py =
+        y * g.ch;
 
 
     /*
-       Mirror front-facing camera.
-
-       This makes the board behave naturally:
-       move hand right → cursor moves right.
+       Mirror the front camera.
     */
 
-    cameraX =
-        geometry.cameraWidth -
-        cameraX;
+    px =
+        g.cw - px;
 
 
     /*
-       Apply the exact same scaling and cropping
-       used by object-fit:cover.
+       Apply cover transform.
     */
 
-    const scaleX =
-        geometry.renderedWidth /
-        geometry.cameraWidth;
+    let sx =
+        px * g.scale -
+        g.cropX;
 
-
-    const scaleY =
-        geometry.renderedHeight /
-        geometry.cameraHeight;
-
-
-    let screenX =
-        cameraX * scaleX -
-        geometry.offsetX;
-
-
-    let screenY =
-        cameraY * scaleY -
-        geometry.offsetY;
+    let sy =
+        py * g.scale -
+        g.cropY;
 
 
     /*
-       Clamp to the physical phone viewport.
+       Clamp.
     */
 
-    screenX =
+    sx =
         Math.max(
             0,
             Math.min(
-                geometry.viewportWidth,
-                screenX
+                g.vw,
+                sx
             )
         );
 
-
-    screenY =
+    sy =
         Math.max(
             0,
             Math.min(
-                geometry.viewportHeight,
-                screenY
+                g.vh,
+                sy
             )
         );
 
 
     return {
-
-        x:screenX,
-
-        y:screenY
-
+        x:sx,
+        y:sy
     };
 }
 
@@ -1997,27 +1489,20 @@ function mapCameraToScreen(
    SCREEN → BOARD
    ============================================================ */
 
-function mapScreenToBoard(
-    screenPoint
-){
+function screenToBoard(point){
 
     const rect =
         canvas.getBoundingClientRect();
 
 
     let x =
-        screenPoint.x -
+        point.x -
         rect.left;
 
-
     let y =
-        screenPoint.y -
+        point.y -
         rect.top;
 
-
-    /*
-       Clamp against the actual board.
-    */
 
     x =
         Math.max(
@@ -2027,7 +1512,6 @@ function mapScreenToBoard(
                 x
             )
         );
-
 
     y =
         Math.max(
@@ -2040,10 +1524,8 @@ function mapScreenToBoard(
 
 
     return {
-
         x,
         y
-
     };
 }
 
@@ -2052,94 +1534,704 @@ function mapScreenToBoard(
    CAMERA → BOARD
    ============================================================ */
 
-function mapHandToBoard(
-    normalizedX,
-    normalizedY
-){
+function cameraToBoard(x,y){
 
-    const screenPoint =
-        mapCameraToScreen(
-            normalizedX,
-            normalizedY
-        );
-
-
-    return mapScreenToBoard(
-        screenPoint
+    return screenToBoard(
+        cameraToScreen(x,y)
     );
 }
 
 
 /* ============================================================
-   CURSOR
+   ============================================================
+   LANDMARK STABILIZATION
+   ============================================================
    ============================================================ */
 
-function updateCursor(
-    boardPoint
-){
+const LANDMARK_SMOOTHING_SLOW =
+    0.28;
 
-    const rect =
-        canvas.getBoundingClientRect();
+const LANDMARK_SMOOTHING_FAST =
+    0.72;
 
-
-    const screenX =
-        rect.left +
-        boardPoint.x;
+const LANDMARK_FAST_SPEED =
+    1.25;
 
 
-    const screenY =
-        rect.top +
-        boardPoint.y;
+let stableLandmarks = null;
+
+let previousRawTip = null;
+
+let previousLandmarkTime = 0;
 
 
-    cursor.style.left =
-        `${screenX}px`;
+function resetLandmarkSmoothing(){
 
+    stableLandmarks =
+        null;
 
-    cursor.style.top =
-        `${screenY}px`;
+    previousRawTip =
+        null;
 
-
-    cursor.style.opacity =
-        "1";
+    previousLandmarkTime =
+        0;
 }
 
 
 /* ============================================================
-   V5 DRAWING ENGINE
+   STABILIZE LANDMARKS
+   ============================================================ */
+
+function stabilizeLandmarks(
+    landmarks
+){
+
+    const now =
+        performance.now();
+
+
+    if(!stableLandmarks){
+
+        stableLandmarks =
+            landmarks.map(
+                p => ({
+                    x:p.x,
+                    y:p.y,
+                    z:p.z || 0
+                })
+            );
+
+        previousRawTip = {
+            x:landmarks[8].x,
+            y:landmarks[8].y
+        };
+
+        previousLandmarkTime =
+            now;
+
+        return stableLandmarks;
+    }
+
+
+    const dt =
+        Math.max(
+            .001,
+            (now - previousLandmarkTime) /
+            1000
+        );
+
+
+    const rawTip =
+        landmarks[8];
+
+
+    const rawSpeed =
+        Math.hypot(
+            rawTip.x -
+            previousRawTip.x,
+
+            rawTip.y -
+            previousRawTip.y
+        ) / dt;
+
+
+    const speedRatio =
+        Math.min(
+            1,
+            rawSpeed /
+            LANDMARK_FAST_SPEED
+        );
+
+
+    /*
+       Slow movement:
+       stronger stabilization.
+
+       Fast movement:
+       less stabilization so the cursor
+       doesn't lag behind.
+    */
+
+    const alpha =
+        LANDMARK_SMOOTHING_SLOW +
+        (
+            LANDMARK_SMOOTHING_FAST -
+            LANDMARK_SMOOTHING_SLOW
+        ) *
+        speedRatio;
+
+
+    for(
+        let i = 0;
+        i < landmarks.length;
+        i++
+    ){
+
+        stableLandmarks[i].x +=
+            (
+                landmarks[i].x -
+                stableLandmarks[i].x
+            ) *
+            alpha;
+
+
+        stableLandmarks[i].y +=
+            (
+                landmarks[i].y -
+                stableLandmarks[i].y
+            ) *
+            alpha;
+
+
+        stableLandmarks[i].z +=
+            (
+                (landmarks[i].z || 0) -
+                stableLandmarks[i].z
+            ) *
+            alpha;
+    }
+
+
+    previousRawTip = {
+        x:rawTip.x,
+        y:rawTip.y
+    };
+
+
+    previousLandmarkTime =
+        now;
+
+
+    return stableLandmarks;
+}
+
+
+/* ============================================================
+   ============================================================
+   ROTATION-INDEPENDENT HAND GEOMETRY
+   ============================================================
+   ============================================================ */
+
+function distance2D(a,b){
+
+    return Math.hypot(
+        a.x - b.x,
+        a.y - b.y
+    );
+}
+
+
+function fingerExtended(
+    landmarks,
+    tip,
+    pip,
+    mcp
+){
+
+    const wrist =
+        landmarks[0];
+
+    const tipPoint =
+        landmarks[tip];
+
+    const pipPoint =
+        landmarks[pip];
+
+    const mcpPoint =
+        landmarks[mcp];
+
+
+    /*
+       Distance from wrist is mostly
+       invariant to hand rotation.
+    */
+
+    const tipDistance =
+        distance2D(
+            wrist,
+            tipPoint
+        );
+
+    const pipDistance =
+        distance2D(
+            wrist,
+            pipPoint
+        );
+
+
+    /*
+       Also check MCP → tip.
+
+       Combining both makes the test
+       more stable than comparing Y values.
+    */
+
+    const fingerLength =
+        distance2D(
+            mcpPoint,
+            tipPoint
+        );
+
+
+    const palmLength =
+        distance2D(
+            wrist,
+            mcpPoint
+        );
+
+
+    return (
+
+        tipDistance >
+        pipDistance * 1.14
+
+        &&
+
+        fingerLength >
+        palmLength * 0.75
+
+    );
+}
+
+
+/* ============================================================
+   PINCH
+   ============================================================ */
+
+function getPinchRatio(
+    landmarks
+){
+
+    const thumb =
+        landmarks[4];
+
+    const index =
+        landmarks[8];
+
+
+    /*
+       Palm size makes pinch threshold adaptive
+       to distance from camera.
+    */
+
+    const palm =
+        distance2D(
+            landmarks[0],
+            landmarks[9]
+        );
+
+
+    const pinchDistance =
+        distance2D(
+            thumb,
+            index
+        );
+
+
+    return pinchDistance /
+           Math.max(
+               palm,
+               .0001
+           );
+}
+
+
+function isPinching(
+    landmarks
+){
+
+    return (
+        getPinchRatio(
+            landmarks
+        ) < .48
+    );
+}
+
+
+/* ============================================================
+   GESTURE RAW CLASSIFIER
+   ============================================================ */
+
+function classifyRawGesture(
+    landmarks
+){
+
+    const indexUp =
+        fingerExtended(
+            landmarks,
+            8,
+            6,
+            5
+        );
+
+
+    const middleUp =
+        fingerExtended(
+            landmarks,
+            12,
+            10,
+            9
+        );
+
+
+    const ringUp =
+        fingerExtended(
+            landmarks,
+            16,
+            14,
+            13
+        );
+
+
+    const pinkyUp =
+        fingerExtended(
+            landmarks,
+            20,
+            18,
+            17
+        );
+
+
+    const pinch =
+        isPinching(
+            landmarks
+        );
+
+
+    const extendedCount =
+        [
+            indexUp,
+            middleUp,
+            ringUp,
+            pinkyUp
+        ]
+        .filter(Boolean)
+        .length;
+
+
+    /*
+       OPEN HAND
+
+       Requires at least 3 fingers extended
+       AND no pinch.
+    */
+
+    if(
+        !pinch &&
+        extendedCount >= 3
+    ){
+
+        return "OPEN";
+    }
+
+
+    /*
+       PINCH has priority over DRAW.
+    */
+
+    if(pinch){
+
+        return "PINCH";
+    }
+
+
+    /*
+       Drawing:
+       index extended,
+       other fingers folded.
+    */
+
+    if(
+        indexUp &&
+        !middleUp &&
+        !ringUp &&
+        !pinkyUp
+    ){
+
+        return "DRAW";
+    }
+
+
+    return "NONE";
+}
+
+
+/* ============================================================
+   ============================================================
+   GESTURE STATE MACHINE
+   ============================================================
+   ============================================================ */
+
+const GESTURE_CONFIRM_FRAMES = 3;
+
+const GESTURE_RELEASE_FRAMES = 3;
+
+const OPEN_CLEAR_FRAMES = 8;
+
+const OPEN_CLEAR_COOLDOWN = 25;
+
+
+let committedGesture =
+    "NONE";
+
+let candidateGesture =
+    "NONE";
+
+let candidateFrames =
+    0;
+
+let releaseFrames =
+    0;
+
+let openFrames =
+    0;
+
+let clearCooldown =
+    0;
+
+let clearLatched =
+    false;
+
+
+/* ============================================================
+   RESET GESTURE ENGINE
+   ============================================================ */
+
+function resetGestureEngine(){
+
+    committedGesture =
+        "NONE";
+
+    candidateGesture =
+        "NONE";
+
+    candidateFrames =
+        0;
+
+    releaseFrames =
+        0;
+
+    openFrames =
+        0;
+
+    clearCooldown =
+        0;
+
+    clearLatched =
+        false;
+}
+
+
+/* ============================================================
+   UPDATE GESTURE STATE
+   ============================================================ */
+
+function updateGesture(
+    rawGesture
+){
+
+    if(clearCooldown > 0){
+
+        clearCooldown--;
+    }
+
+
+    /*
+       NONE is treated as a release state.
+
+       We don't immediately switch to NONE because
+       MediaPipe can briefly produce uncertain frames.
+    */
+
+    if(
+        rawGesture ===
+        committedGesture
+    ){
+
+        candidateGesture =
+            rawGesture;
+
+        candidateFrames =
+            0;
+
+        releaseFrames =
+            0;
+
+    }else{
+
+
+        /*
+           Candidate changed.
+        */
+
+        if(
+            candidateGesture !==
+            rawGesture
+        ){
+
+            candidateGesture =
+                rawGesture;
+
+            candidateFrames =
+                1;
+
+        }else{
+
+            candidateFrames++;
+
+        }
+
+
+        /*
+           New gesture needs several
+           consecutive frames.
+        */
+
+        if(
+            rawGesture !== "NONE" &&
+            candidateFrames >=
+            GESTURE_CONFIRM_FRAMES
+        ){
+
+            committedGesture =
+                rawGesture;
+
+            candidateFrames =
+                0;
+
+            releaseFrames =
+                0;
+        }
+
+
+        /*
+           NONE requires several frames
+           before releasing an active gesture.
+        */
+
+        if(
+            rawGesture === "NONE"
+        ){
+
+            releaseFrames++;
+
+
+            if(
+                releaseFrames >=
+                GESTURE_RELEASE_FRAMES
+            ){
+
+                committedGesture =
+                    "NONE";
+
+                releaseFrames =
+                    0;
+            }
+        }
+
+    }
+
+
+    /*
+       OPEN hand event.
+
+       It must remain open for several frames.
+    */
+
+    if(
+        committedGesture ===
+        "OPEN"
+    ){
+
+        openFrames++;
+
+    }else{
+
+        openFrames = 0;
+
+        /*
+           Once the hand leaves OPEN,
+           another OPEN gesture can be used.
+        */
+
+        clearLatched =
+            false;
+    }
+
+
+    /*
+       Generate CLEAR only once.
+    */
+
+    if(
+
+        committedGesture ===
+        "OPEN"
+
+        &&
+
+        openFrames >=
+        OPEN_CLEAR_FRAMES
+
+        &&
+
+        !clearLatched
+
+        &&
+
+        clearCooldown === 0
+
+    ){
+
+        clearLatched =
+            true;
+
+        clearCooldown =
+            OPEN_CLEAR_COOLDOWN;
+
+        return {
+            gesture:"OPEN",
+            clear:true
+        };
+    }
+
+
+    return {
+        gesture:committedGesture,
+        clear:false
+    };
+}
+
+
+/* ============================================================
+   ============================================================
+   V5 PEN ENGINE
+   ============================================================
    ============================================================ */
 
 const SLOW_SMOOTHING =
-    0.20;
-
+    .20;
 
 const FAST_SMOOTHING =
-    0.88;
-
+    .88;
 
 const FAST_SPEED =
     850;
 
-
 const MAX_REASONABLE_JUMP =
     400;
 
-
 const MICRO_JITTER_DISTANCE =
-    0.65;
-
+    .65;
 
 const MIN_POINT_DISTANCE =
     1.0;
 
-
 const MIN_INK_WIDTH =
     2.6;
 
-
 const MAX_INK_WIDTH =
     5.4;
-
 
 const CURVE_TENSION =
     1 / 6;
@@ -2147,88 +2239,42 @@ const CURVE_TENSION =
 
 let drawing = false;
 
-
-let hasPreviousPoint =
-    false;
-
+let hasPreviousPoint = false;
 
 let lastPoint = {
-
     x:0,
     y:0
-
 };
-
 
 let smoothedPoint = {
-
     x:0,
     y:0
-
 };
 
+let lastTime = 0;
 
-let lastTime =
-    0;
-
-
-let lastSpeed =
-    0;
-
+let lastSpeed = 0;
 
 let strokePoints = [];
 
 
-let clearFrames =
-    0;
-
-
-let clearCooldown =
-    0;
-
-
 /* ============================================================
-   DISTANCE
+   RESET PEN
    ============================================================ */
 
-function distance(a,b){
-
-    const dx =
-        b.x - a.x;
-
-
-    const dy =
-        b.y - a.y;
-
-
-    return Math.sqrt(
-        dx * dx +
-        dy * dy
-    );
-}
-
-
-/* ============================================================
-   RESET DRAWING STATE
-   ============================================================ */
-
-function resetDrawingState(){
+function resetPenState(){
 
     drawing =
         false;
 
-
     hasPreviousPoint =
         false;
-
 
     strokePoints =
         [];
 
-
     lastSpeed =
         0;
-
 
     lastTime =
         performance.now();
@@ -2249,44 +2295,33 @@ function smoothPoint(
         smoothedPoint.x =
             target.x;
 
-
         smoothedPoint.y =
             target.y;
-
 
         lastPoint.x =
             target.x;
 
-
         lastPoint.y =
             target.y;
-
 
         lastTime =
             now;
 
-
         hasPreviousPoint =
             true;
 
-
         return {
-
             x:target.x,
-
             y:target.y
-
         };
     }
 
 
     const dt =
         Math.max(
-            0.001,
-            (
-                now -
-                lastTime
-            ) / 1000
+            .001,
+            (now - lastTime) /
+            1000
         );
 
 
@@ -2294,21 +2329,21 @@ function smoothPoint(
         target.x -
         lastPoint.x;
 
-
     const dy =
         target.y -
         lastPoint.y;
 
 
     const rawDistance =
-        Math.sqrt(
-            dx * dx +
-            dy * dy
+        Math.hypot(
+            dx,
+            dy
         );
 
 
     const speed =
-        rawDistance / dt;
+        rawDistance /
+        dt;
 
 
     lastSpeed =
@@ -2326,15 +2361,17 @@ function smoothPoint(
 
     const smoothing =
         SLOW_SMOOTHING +
+
         (
             FAST_SMOOTHING -
             SLOW_SMOOTHING
         ) *
+
         speedRatio;
 
 
     /*
-       Reject impossible tracking jumps.
+       Reject extreme tracking jumps.
     */
 
     if(
@@ -2345,35 +2382,27 @@ function smoothPoint(
         smoothedPoint.x =
             target.x;
 
-
         smoothedPoint.y =
             target.y;
-
 
         lastPoint.x =
             target.x;
 
-
         lastPoint.y =
             target.y;
-
 
         lastTime =
             now;
 
-
         return {
-
             x:target.x,
-
             y:target.y
-
         };
     }
 
 
     /*
-       Ignore microscopic jitter.
+       Micro jitter filter.
     */
 
     if(
@@ -2384,13 +2413,9 @@ function smoothPoint(
         lastTime =
             now;
 
-
         return {
-
             x:smoothedPoint.x,
-
             y:smoothedPoint.y
-
         };
     }
 
@@ -2414,21 +2439,16 @@ function smoothPoint(
     lastPoint.x =
         target.x;
 
-
     lastPoint.y =
         target.y;
-
 
     lastTime =
         now;
 
 
     return {
-
         x:smoothedPoint.x,
-
         y:smoothedPoint.y
-
     };
 }
 
@@ -2459,7 +2479,7 @@ function getPenWidth(){
 
 
 /* ============================================================
-   BEZIER SEGMENT
+   SMOOTH SEGMENT
    ============================================================ */
 
 function drawSmoothSegment(){
@@ -2479,37 +2499,22 @@ function drawSmoothSegment(){
 
     const p0 =
         strokePoints[
-            Math.max(
-                0,
-                len - 4
-            )
+            Math.max(0,len-4)
         ];
-
 
     const p1 =
         strokePoints[
-            Math.max(
-                0,
-                len - 3
-            )
+            Math.max(0,len-3)
         ];
-
 
     const p2 =
         strokePoints[
-            Math.max(
-                0,
-                len - 2
-            )
+            Math.max(0,len-2)
         ];
-
 
     const p3 =
         strokePoints[
-            Math.max(
-                0,
-                len - 1
-            )
+            Math.max(0,len-1)
         ];
 
 
@@ -2551,31 +2556,23 @@ function drawSmoothSegment(){
 
     ctx.save();
 
-
     ctx.lineCap =
         "round";
-
 
     ctx.lineJoin =
         "round";
 
 
-    ctx.globalCompositeOperation =
-        "source-over";
-
-
     /*
-       Main ink.
+       Outer ink.
     */
 
     ctx.beginPath();
-
 
     ctx.moveTo(
         p1.x,
         p1.y
     );
-
 
     ctx.bezierCurveTo(
 
@@ -2594,34 +2591,28 @@ function drawSmoothSegment(){
     ctx.lineWidth =
         getPenWidth();
 
-
     ctx.strokeStyle =
         "rgba(145,175,208,.96)";
-
 
     ctx.shadowBlur =
         7;
 
-
     ctx.shadowColor =
         "rgba(145,175,208,.18)";
-
 
     ctx.stroke();
 
 
     /*
-       Inner pass.
+       Inner ink.
     */
 
     ctx.beginPath();
-
 
     ctx.moveTo(
         p1.x,
         p1.y
     );
-
 
     ctx.bezierCurveTo(
 
@@ -2643,17 +2634,13 @@ function drawSmoothSegment(){
             getPenWidth() * .45
         );
 
-
     ctx.strokeStyle =
         "rgba(220,230,240,.30)";
-
 
     ctx.shadowBlur =
         0;
 
-
     ctx.stroke();
-
 
     ctx.restore();
 }
@@ -2667,53 +2654,43 @@ function drawDot(point){
 
     ctx.save();
 
-
     ctx.beginPath();
-
 
     ctx.arc(
 
         point.x,
-
         point.y,
 
-        getPenWidth() / 2,
+        getPenWidth()/2,
 
         0,
-
-        Math.PI * 2
+        Math.PI*2
 
     );
-
 
     ctx.fillStyle =
         "rgba(145,175,208,.96)";
 
-
     ctx.shadowBlur =
         7;
-
 
     ctx.shadowColor =
         "rgba(145,175,208,.18)";
 
-
     ctx.fill();
-
 
     ctx.restore();
 }
 
 
 /* ============================================================
-   START STROKE
+   DRAW
    ============================================================ */
 
 function startStroke(point){
 
     drawing =
         true;
-
 
     strokePoints = [
 
@@ -2724,14 +2701,9 @@ function startStroke(point){
 
     ];
 
-
     drawDot(point);
 }
 
-
-/* ============================================================
-   DRAW LINE
-   ============================================================ */
 
 function drawLine(point){
 
@@ -2763,9 +2735,14 @@ function drawLine(point){
 
 
     const d =
-        distance(
-            previous,
-            smooth
+        Math.hypot(
+
+            smooth.x -
+            previous.x,
+
+            smooth.y -
+            previous.y
+
         );
 
 
@@ -2809,14 +2786,11 @@ function stopDrawing(){
     drawing =
         false;
 
-
     strokePoints =
         [];
 
-
     hasPreviousPoint =
         false;
-
 
     lastSpeed =
         0;
@@ -2824,223 +2798,37 @@ function stopDrawing(){
 
 
 /* ============================================================
-   CLEAR BOARD
+   CLEAR
    ============================================================ */
 
 function clearBoard(){
 
-    clearFrames =
-        0;
-
-
-    clearCooldown =
-        15;
-
-
     ctx.save();
 
-
     ctx.clearRect(
-
         0,
         0,
-
         viewWidth,
         viewHeight
-
     );
-
 
     ctx.restore();
 
-
-    resetDrawingState();
+    resetPenState();
 }
 
 
 /* ============================================================
-   FINGER DETECTION
-   ============================================================ */
-
-function fingerUp(
-    landmarks,
-    tip,
-    pip
-){
-
-    return (
-        landmarks[tip].y <
-        landmarks[pip].y
-    );
-}
-
-
-/* ============================================================
-   GESTURE CLASSIFICATION
-   ============================================================ */
-
-function classifyGesture(
-    landmarks
-){
-
-    const indexUp =
-        fingerUp(
-            landmarks,
-            8,
-            6
-        );
-
-
-    const middleUp =
-        fingerUp(
-            landmarks,
-            12,
-            10
-        );
-
-
-    const ringUp =
-        fingerUp(
-            landmarks,
-            16,
-            14
-        );
-
-
-    const pinkyUp =
-        fingerUp(
-            landmarks,
-            20,
-            18
-        );
-
-
-    /*
-       Thumb/index pinch.
-    */
-
-    const thumb =
-        landmarks[4];
-
-
-    const index =
-        landmarks[8];
-
-
-    const pinchDistance =
-        Math.sqrt(
-
-            Math.pow(
-                thumb.x -
-                index.x,
-                2
-            )
-
-            +
-
-            Math.pow(
-                thumb.y -
-                index.y,
-                2
-            )
-
-        );
-
-
-    const pinch =
-        pinchDistance <
-        .055;
-
-
-    /*
-       Open hand.
-    */
-
-    const openCount =
-        [
-            indexUp,
-            middleUp,
-            ringUp,
-            pinkyUp
-        ]
-        .filter(Boolean)
-        .length;
-
-
-    const openHand =
-        openCount >= 3;
-
-
-    /*
-       Drawing gesture.
-
-       Only index finger up.
-    */
-
-    const draw =
-        indexUp &&
-        !middleUp &&
-        !ringUp &&
-        !pinkyUp &&
-        !pinch;
-
-
-    if(openHand){
-
-        return {
-
-            name:"OPEN",
-
-            type:"clear"
-
-        };
-    }
-
-
-    if(pinch){
-
-        return {
-
-            name:"PINCH",
-
-            type:"pause"
-
-        };
-    }
-
-
-    if(draw){
-
-        return {
-
-            name:"DRAW",
-
-            type:"draw"
-
-        };
-    }
-
-
-    return {
-
-        name:"NONE",
-
-        type:"none"
-
-    };
-}
-
-
-/* ============================================================
+   ============================================================
    MEDIAPIPE
+   ============================================================
    ============================================================ */
 
 const hands =
     new Hands({
 
-        locateFile:
-            file =>
-                `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`
+        locateFile:file =>
+            `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`
 
     });
 
@@ -3051,9 +2839,9 @@ hands.setOptions({
 
     modelComplexity:1,
 
-    minDetectionConfidence:.60,
+    minDetectionConfidence:.65,
 
-    minTrackingConfidence:.60
+    minTrackingConfidence:.65
 
 });
 
@@ -3064,7 +2852,7 @@ hands.onResults(
 
 
 /* ============================================================
-   MEDIAPIPE RESULTS
+   RESULTS
    ============================================================ */
 
 function onHandsResults(results){
@@ -3075,39 +2863,49 @@ function onHandsResults(results){
     }
 
 
-    const landmarks =
+    const rawLandmarks =
         results.multiHandLandmarks &&
         results.multiHandLandmarks[0];
 
 
     /*
-       No hand.
+       Hand lost.
     */
 
-    if(!landmarks){
+    if(!rawLandmarks){
 
         handState.textContent =
             "NONE";
 
-
         trackingState.textContent =
             "SEARCHING";
-
 
         trackingDot.className =
             "status-dot warning";
 
-
         gestureState.textContent =
             "NONE";
 
+        modeState.textContent =
+            "SEARCHING";
 
         cursor.style.opacity =
             "0";
 
+        resetLandmarkSmoothing();
+
+        /*
+           Don't keep drawing if tracking is lost.
+        */
 
         stopDrawing();
 
+        /*
+           Gesture engine needs a release,
+           but not an instant gesture change.
+        */
+
+        updateGesture("NONE");
 
         return;
     }
@@ -3120,17 +2918,26 @@ function onHandsResults(results){
     handState.textContent =
         "DETECTED";
 
-
     trackingState.textContent =
         "ACTIVE";
-
 
     trackingDot.className =
         "status-dot ready";
 
 
     /*
-       Index fingertip.
+       Stabilize ALL landmarks before
+       calculating gestures.
+    */
+
+    const landmarks =
+        stabilizeLandmarks(
+            rawLandmarks
+        );
+
+
+    /*
+       Stable index fingertip.
     */
 
     const indexTip =
@@ -3138,31 +2945,34 @@ function onHandsResults(results){
 
 
     /*
-       NEW:
-
-       Camera
-          ↓
-       screen
-          ↓
-       board
+       Camera → board.
     */
 
     const point =
-        mapHandToBoard(
+        cameraToBoard(
 
             indexTip.x,
-
             indexTip.y
 
         );
 
 
     /*
-       Cursor and drawing use the
-       exact same point.
+       Cursor uses same point as drawing.
     */
 
-    updateCursor(point);
+    const rect =
+        canvas.getBoundingClientRect();
+
+
+    cursor.style.left =
+        `${rect.left + point.x}px`;
+
+    cursor.style.top =
+        `${rect.top + point.y}px`;
+
+    cursor.style.opacity =
+        "1";
 
 
     coordinates.textContent =
@@ -3170,17 +2980,51 @@ function onHandsResults(results){
 
 
     /*
-       Gesture.
+       Raw gesture.
     */
 
-    const gesture =
-        classifyGesture(
+    const rawGesture =
+        classifyRawGesture(
             landmarks
         );
 
 
+    /*
+       Stabilized gesture.
+    */
+
+    const state =
+        updateGesture(
+            rawGesture
+        );
+
+
     gestureState.textContent =
-        gesture.name;
+        state.gesture;
+
+
+    /* ========================================================
+       CLEAR EVENT
+       ======================================================== */
+
+    if(state.clear){
+
+        clearBoard();
+
+        modeState.textContent =
+            "CLEARED";
+
+        cursor.classList.add(
+            "clear"
+        );
+
+        cursor.classList.remove(
+            "drawing",
+            "pause"
+        );
+
+        return;
+    }
 
 
     /* ========================================================
@@ -3188,27 +3032,23 @@ function onHandsResults(results){
        ======================================================== */
 
     if(
-        gesture.type ===
-        "draw"
+        state.gesture ===
+        "DRAW"
     ){
 
         modeState.textContent =
             "DRAWING";
 
-
         cursor.classList.add(
             "drawing"
         );
-
 
         cursor.classList.remove(
             "pause",
             "clear"
         );
 
-
         drawLine(point);
-
 
         return;
     }
@@ -3219,113 +3059,76 @@ function onHandsResults(results){
        ======================================================== */
 
     if(
-        gesture.type ===
-        "pause"
+        state.gesture ===
+        "PINCH"
     ){
 
         modeState.textContent =
             "PAUSED";
 
-
         cursor.classList.add(
             "pause"
         );
-
 
         cursor.classList.remove(
             "drawing",
             "clear"
         );
 
-
         stopDrawing();
-
 
         return;
     }
 
 
     /* ========================================================
-       OPEN HAND
+       OPEN
        ======================================================== */
 
     if(
-        gesture.type ===
-        "clear"
+        state.gesture ===
+        "OPEN"
     ){
 
         modeState.textContent =
-            "CLEAR";
-
+            "OPEN HAND";
 
         cursor.classList.add(
             "clear"
         );
-
 
         cursor.classList.remove(
             "drawing",
             "pause"
         );
 
-
         stopDrawing();
-
-
-        /*
-           Multiple consecutive frames required.
-        */
-
-        if(clearCooldown > 0){
-
-            clearCooldown--;
-
-            return;
-        }
-
-
-        clearFrames++;
-
-
-        if(clearFrames >= 5){
-
-            clearBoard();
-        }
-
 
         return;
     }
 
 
-    /*
-       No active gesture.
-    */
+    /* ========================================================
+       NONE
+       ======================================================== */
 
     modeState.textContent =
         "READY";
 
-
     cursor.classList.remove(
-
         "drawing",
-
         "pause",
-
         "clear"
-
     );
-
-
-    clearFrames =
-        0;
-
 
     stopDrawing();
 }
 
 
 /* ============================================================
+   ============================================================
    CAMERA INITIALIZATION
+   ============================================================
    ============================================================ */
 
 async function initializeCamera(){
@@ -3351,17 +3154,15 @@ async function initializeCamera(){
     startBtn.disabled =
         true;
 
-
     startBtn.textContent =
         "INITIALIZING";
 
 
     try{
 
-
-        /* ====================================================
-           GET CAMERA
-           ==================================================== */
+        /*
+           Request a stable front camera stream.
+        */
 
         stream =
             await navigator.mediaDevices.getUserMedia({
@@ -3392,28 +3193,18 @@ async function initializeCamera(){
             });
 
 
-        /*
-           Give the stream to the video.
-        */
-
         video.srcObject =
             stream;
 
 
         /*
-           IMPORTANT:
-
            Wait for metadata.
-
-           This prevents coordinate mapping from running
-           before videoWidth/videoHeight exist.
         */
 
         await new Promise(
             resolve => {
 
                 if(
-                    video.readyState >= 1 &&
                     video.videoWidth > 0
                 ){
 
@@ -3424,25 +3215,22 @@ async function initializeCamera(){
 
 
                 video.onloadedmetadata =
-                    () => {
-
-                        resolve();
-
-                    };
+                    () => resolve();
 
             }
         );
 
 
         /*
-           Start actual playback.
+           Start playback.
         */
 
         await video.play();
 
 
         /*
-           Wait one browser frame.
+           Let Android finish laying out
+           the current orientation.
         */
 
         await new Promise(
@@ -3453,28 +3241,32 @@ async function initializeCamera(){
         );
 
 
-        /*
-           Now dimensions are trustworthy.
-        */
+        await new Promise(
+            resolve =>
+                setTimeout(
+                    resolve,
+                    100
+                )
+        );
+
 
         resizeCanvas();
+
+
+        resetGestureEngine();
+
+        resetLandmarkSmoothing();
 
 
         cameraRunning =
             true;
 
 
-        /* ====================================================
-           UI STATE
-           ==================================================== */
-
         cameraState.textContent =
             "ON";
 
-
         connectionText.textContent =
             "ONLINE";
-
 
         connectionStatus.classList.add(
             "active"
@@ -3483,7 +3275,6 @@ async function initializeCamera(){
 
         trackingState.textContent =
             "SEARCHING";
-
 
         trackingDot.className =
             "status-dot warning";
@@ -3498,9 +3289,9 @@ async function initializeCamera(){
             "CAMERA ACTIVE";
 
 
-        /* ====================================================
-           MEDIAPIPE CAMERA
-           ==================================================== */
+        /*
+           MediaPipe camera loop.
+        */
 
         mediapipeCamera =
             new Camera(
@@ -3513,37 +3304,32 @@ async function initializeCamera(){
                         async () => {
 
                             if(
-
-                                cameraRunning &&
-
-                                video.readyState >= 2
-
+                                !cameraRunning ||
+                                video.readyState < 2
                             ){
 
-                                try{
+                                return;
+                            }
 
-                                    await hands.send({
 
-                                        image:video
+                            try{
 
-                                    });
+                                await hands.send({
+                                    image:video
+                                });
 
-                                }catch(error){
+                            }catch(error){
 
-                                    console.error(
-                                        "MediaPipe frame error:",
-                                        error
-                                    );
-
-                                }
+                                console.error(
+                                    "MediaPipe:",
+                                    error
+                                );
 
                             }
 
                         },
 
-
                     width:1280,
-
                     height:720
 
                 }
@@ -3557,7 +3343,7 @@ async function initializeCamera(){
     }catch(error){
 
         console.error(
-            "Camera initialization failed:",
+            "Camera error:",
             error
         );
 
@@ -3587,35 +3373,24 @@ async function initializeCamera(){
         cameraState.textContent =
             "ERROR";
 
-
         connectionText.textContent =
             "OFFLINE";
-
 
         connectionStatus.classList.remove(
             "active"
         );
 
 
-        trackingState.textContent =
-            "ERROR";
+        startBtn.disabled =
+            false;
 
-
-        trackingDot.className =
-            "status-dot warning";
+        startBtn.textContent =
+            "RETRY CAMERA";
 
 
         centerPanel.classList.remove(
             "hidden"
         );
-
-
-        startBtn.disabled =
-            false;
-
-
-        startBtn.textContent =
-            "RETRY CAMERA";
 
 
         if(
@@ -3632,7 +3407,7 @@ async function initializeCamera(){
         ){
 
             centerDescription.textContent =
-                "No usable camera was found on this device.";
+                "No usable camera was found.";
 
         }else if(
             error.name ===
@@ -3640,7 +3415,7 @@ async function initializeCamera(){
         ){
 
             centerDescription.textContent =
-                "The camera is being used by another application.";
+                "The camera is currently being used by another application.";
 
         }else{
 
@@ -3672,7 +3447,6 @@ function stopCamera(){
                     track.stop()
             );
 
-
         stream =
             null;
     }
@@ -3685,10 +3459,8 @@ function stopCamera(){
     cameraState.textContent =
         "OFF";
 
-
     connectionText.textContent =
         "OFFLINE";
-
 
     connectionStatus.classList.remove(
         "active"
@@ -3698,7 +3470,6 @@ function stopCamera(){
     trackingState.textContent =
         "WAITING";
 
-
     trackingDot.className =
         "status-dot";
 
@@ -3707,16 +3478,17 @@ function stopCamera(){
         "0";
 
 
-    stopDrawing();
+    resetPenState();
+    resetLandmarkSmoothing();
+    resetGestureEngine();
 }
 
 
 /* ============================================================
-   RESIZE HANDLING
+   RESIZE / ORIENTATION
    ============================================================ */
 
-let resizeTimer =
-    null;
+let resizeTimer = null;
 
 
 function handleResize(){
@@ -3733,7 +3505,7 @@ function handleResize(){
                 resizeCanvas();
 
             },
-            120
+            150
         );
 }
 
@@ -3744,70 +3516,30 @@ window.addEventListener(
 );
 
 
-/* ============================================================
-   ORIENTATION CHANGE
-   ============================================================ */
-
 window.addEventListener(
-
     "orientationchange",
-
     () => {
 
-        /*
-           Android needs a little time to update
-           viewport dimensions after rotation.
-        */
-
         setTimeout(
-
             () => {
 
                 resizeCanvas();
 
             },
-
-            350
-
+            400
         );
 
     }
-
 );
 
 
 /* ============================================================
-   VIDEO DIMENSION MONITOR
+   START
    ============================================================ */
 
-setInterval(
-
-    () => {
-
-        if(!cameraRunning){
-
-            return;
-        }
-
-
-        if(
-
-            video.videoWidth !==
-            lastVideoWidth ||
-
-            video.videoHeight !==
-            lastVideoHeight
-
-        ){
-
-            resizeCanvas();
-
-        }
-
-    },
-
-    500
-
+startBtn.addEventListener(
+    "click",
+    initializeCamera
 );
 
 
@@ -3818,100 +3550,24 @@ setInterval(
 document
     .getElementById("clearBtn")
     .addEventListener(
-
         "click",
-
-        () => {
-
-            clearBoard();
-
-        }
-
+        clearBoard
     );
 
 
 /* ============================================================
-   START BUTTON
+   TOOLS
    ============================================================ */
-
-startBtn.addEventListener(
-
-    "click",
-
-    initializeCamera
-
-);
-
-
-/* ============================================================
-   TOOL SELECTION
-   ============================================================ */
-
-document
-    .getElementById("penTool")
-    .addEventListener(
-
-        "click",
-
-        () => {
-
-            setActiveTool(
-                "penTool"
-            );
-
-        }
-
-    );
-
-
-document
-    .getElementById("selectTool")
-    .addEventListener(
-
-        "click",
-
-        () => {
-
-            setActiveTool(
-                "selectTool"
-            );
-
-        }
-
-    );
-
-
-document
-    .getElementById("measureTool")
-    .addEventListener(
-
-        "click",
-
-        () => {
-
-            setActiveTool(
-                "measureTool"
-            );
-
-        }
-
-    );
-
 
 function setActiveTool(id){
 
     document
         .querySelectorAll(".tool")
         .forEach(
-
-            button => {
-
+            button =>
                 button.classList.remove(
                     "active"
-                );
-
-            }
-
+                )
         );
 
 
@@ -3923,12 +3579,35 @@ function setActiveTool(id){
 }
 
 
+document
+    .getElementById("penTool")
+    .addEventListener(
+        "click",
+        () => setActiveTool("penTool")
+    );
+
+
+document
+    .getElementById("selectTool")
+    .addEventListener(
+        "click",
+        () => setActiveTool("selectTool")
+    );
+
+
+document
+    .getElementById("measureTool")
+    .addEventListener(
+        "click",
+        () => setActiveTool("measureTool")
+    );
+
+
 /* ============================================================
    GRID
    ============================================================ */
 
-let gridEnabled =
-    true;
+let gridEnabled = true;
 
 
 document
@@ -3951,10 +3630,6 @@ document
 
             if(gridEnabled){
 
-                workspace.style.backgroundColor =
-                    "var(--bg-0)";
-
-
                 workspace.style.backgroundImage =
 
                     `
@@ -3972,10 +3647,8 @@ document
 
                     `;
 
-
                 workspace.style.backgroundSize =
                     "32px 32px";
-
 
             }else{
 
@@ -3990,51 +3663,10 @@ document
 
 
 /* ============================================================
-   UNDO / REDO
-   ============================================================ */
-
-document
-    .getElementById("undoBtn")
-    .addEventListener(
-
-        "click",
-
-        () => {
-
-            /*
-               History engine reserved for the
-               next system stage.
-            */
-
-        }
-
-    );
-
-
-document
-    .getElementById("redoBtn")
-    .addEventListener(
-
-        "click",
-
-        () => {
-
-            /*
-               History engine reserved for the
-               next system stage.
-            */
-
-        }
-
-    );
-
-
-/* ============================================================
    ZOOM
    ============================================================ */
 
-let zoomLevel =
-    1;
+let zoomLevel = 1;
 
 
 document
@@ -4052,15 +3684,13 @@ document
                 zoomLevel > 2
             ){
 
-                zoomLevel =
-                    1;
+                zoomLevel = 1;
 
             }
 
 
             canvas.style.transform =
                 `scale(${zoomLevel})`;
-
 
             canvas.style.transformOrigin =
                 "center center";
@@ -4071,7 +3701,27 @@ document
 
 
 /* ============================================================
-   PREVENT TOUCH SCROLL
+   UNDO / REDO PLACEHOLDERS
+   ============================================================ */
+
+document
+    .getElementById("undoBtn")
+    .addEventListener(
+        "click",
+        () => {}
+    );
+
+
+document
+    .getElementById("redoBtn")
+    .addEventListener(
+        "click",
+        () => {}
+    );
+
+
+/* ============================================================
+   TOUCH SCROLL PREVENTION
    ============================================================ */
 
 document.addEventListener(
@@ -4099,7 +3749,7 @@ document.addEventListener(
 
 
 /* ============================================================
-   VISIBILITY CHANGE
+   VISIBILITY
    ============================================================ */
 
 document.addEventListener(
@@ -4108,10 +3758,7 @@ document.addEventListener(
 
     () => {
 
-        if(
-            document.hidden &&
-            cameraRunning
-        ){
+        if(document.hidden){
 
             stopDrawing();
 
@@ -4123,34 +3770,16 @@ document.addEventListener(
 
 
 /* ============================================================
-   INITIAL CANVAS
+   INITIALIZE
    ============================================================ */
 
 resizeCanvas();
 
+resetGestureEngine();
 
-/* ============================================================
-   INITIAL UI STATE
-   ============================================================ */
+resetLandmarkSmoothing();
 
-cameraState.textContent =
-    "OFF";
-
-
-handState.textContent =
-    "NONE";
-
-
-modeState.textContent =
-    "READY";
-
-
-gestureState.textContent =
-    "NONE";
-
-
-trackingState.textContent =
-    "WAITING";
+resetPenState();
 
 </script>
 
