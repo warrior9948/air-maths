@@ -605,7 +605,7 @@ body {
 
 
 /* =====================================
-   CURSOR
+   CURSOR — BASIC STATE SYSTEM
 ===================================== */
 
 #cursor {
@@ -616,7 +616,7 @@ body {
     height: 42px;
 
     border:
-        3px solid #ff00ff;
+        2px solid #ff00ff;
 
     border-radius: 50%;
 
@@ -630,44 +630,109 @@ body {
         translate(-50%, -50%);
 
     background:
-        rgba(255, 0, 255, 0.08);
+        rgba(255, 0, 255, 0.06);
 
     box-shadow:
         0 0 8px #ff00ff,
-        0 0 18px #ff00ff,
-        0 0 35px #ff00ff,
-        inset 0 0 12px #ff00ff;
+        0 0 18px #ff00ff;
 
     transition:
-        border-color 0.10s,
-        box-shadow 0.10s;
+        width 0.12s ease,
+        height 0.12s ease,
+        border-color 0.12s ease,
+        box-shadow 0.12s ease,
+        background 0.12s ease;
 }
 
 
-/* DRAWING */
+/* =====================================
+   READY STATE
+===================================== */
+
+#cursor.ready {
+
+    width: 42px;
+    height: 42px;
+
+    border-color:
+        #ff00ff;
+
+    background:
+        rgba(255, 0, 255, 0.07);
+
+    box-shadow:
+        0 0 8px #ff00ff,
+        0 0 20px #ff00ff,
+        inset 0 0 10px rgba(255, 0, 255, 0.25);
+}
+
+
+/* =====================================
+   DRAWING STATE
+===================================== */
 
 #cursor.drawing {
 
-    border-color: white;
+    width: 48px;
+    height: 48px;
+
+    border-color:
+        white;
+
+    background:
+        rgba(255, 0, 255, 0.12);
 
     box-shadow:
         0 0 8px white,
         0 0 18px #ff00ff,
-        0 0 40px #ff00ff,
+        0 0 38px #ff00ff,
         inset 0 0 15px #ff00ff;
+
+    animation:
+        drawingPulse 0.8s ease-in-out infinite;
 }
 
 
-/* PINCH */
+@keyframes drawingPulse {
+
+    0%, 100% {
+
+        transform:
+            translate(-50%, -50%)
+            scale(1);
+
+    }
+
+    50% {
+
+        transform:
+            translate(-50%, -50%)
+            scale(1.08);
+
+    }
+
+}
+
+
+/* =====================================
+   PINCH / STOP STATE
+===================================== */
 
 #cursor.pinch {
 
-    border-color: #ff66ff;
+    width: 30px;
+    height: 30px;
+
+    border-color:
+        #ff66ff;
+
+    background:
+        rgba(255, 0, 255, 0.18);
 
     box-shadow:
         0 0 8px #ff66ff,
-        0 0 22px #ff00ff,
-        0 0 45px #ff00ff;
+        0 0 20px #ff00ff,
+        inset 0 0 10px #ff00ff;
 }
 
 
@@ -684,9 +749,11 @@ body {
     width: 7px;
     height: 7px;
 
-    background: white;
+    background:
+        white;
 
-    border-radius: 50%;
+    border-radius:
+        50%;
 
     top: 50%;
     left: 50%;
@@ -708,7 +775,8 @@ body {
 
     position: absolute;
 
-    background: #ff66ff;
+    background:
+        #ff66ff;
 
     box-shadow:
         0 0 8px #ff00ff;
@@ -716,35 +784,54 @@ body {
 
 
 #markTop {
+
     width: 3px;
     height: 10px;
+
     left: 50%;
     top: -13px;
-    transform: translateX(-50%);
+
+    transform:
+        translateX(-50%);
 }
+
 
 #markBottom {
+
     width: 3px;
     height: 10px;
+
     left: 50%;
     bottom: -13px;
-    transform: translateX(-50%);
+
+    transform:
+        translateX(-50%);
 }
+
 
 #markLeft {
+
     width: 10px;
     height: 3px;
+
     left: -13px;
     top: 50%;
-    transform: translateY(-50%);
+
+    transform:
+        translateY(-50%);
 }
 
+
 #markRight {
+
     width: 10px;
     height: 3px;
+
     right: -13px;
     top: 50%;
-    transform: translateY(-50%);
+
+    transform:
+        translateY(-50%);
 }
 
 
@@ -871,6 +958,24 @@ body {
 
         width: 38px;
         height: 38px;
+    }
+
+    #cursor.ready {
+
+        width: 38px;
+        height: 38px;
+    }
+
+    #cursor.drawing {
+
+        width: 44px;
+        height: 44px;
+    }
+
+    #cursor.pinch {
+
+        width: 28px;
+        height: 28px;
     }
 
     #startButton {
@@ -1325,6 +1430,22 @@ function showCursor(x, y) {
     cursor.style.top =
         y + "px";
 
+
+    /*
+       Normal state:
+       if the cursor is not drawing
+       and not pinching, it is READY.
+    */
+
+    if (
+        !cursor.classList.contains("drawing") &&
+        !cursor.classList.contains("pinch")
+    ) {
+
+        cursor.classList.add("ready");
+
+    }
+
 }
 
 
@@ -1335,6 +1456,7 @@ function hideCursor() {
 
     cursor.classList.remove("drawing");
     cursor.classList.remove("pinch");
+    cursor.classList.remove("ready");
 
 }
 
@@ -1509,9 +1631,11 @@ function drawContinuousLine(
 
     ctx.lineJoin = "round";
 
-    ctx.strokeStyle = "white";
+    ctx.strokeStyle =
+        "white";
 
-    ctx.shadowColor = "white";
+    ctx.shadowColor =
+        "white";
 
     ctx.shadowBlur = 5;
 
@@ -1699,6 +1823,7 @@ function(results) {
         cursor.classList.add("drawing");
 
         cursor.classList.remove("pinch");
+        cursor.classList.remove("ready");
 
         modeState.innerText =
             "DRAW";
@@ -1728,11 +1853,13 @@ function(results) {
     }
 
 
-    /* STOP */
+    /* STOP / PINCH */
 
     else {
 
         cursor.classList.remove("drawing");
+
+        cursor.classList.remove("ready");
 
         cursor.classList.add("pinch");
 
