@@ -6,43 +6,77 @@
 
 <meta name="viewport"
       content="width=device-width,
-      initial-scale=1.0,
-      maximum-scale=1.0,
-      user-scalable=no">
+               initial-scale=1.0,
+               maximum-scale=1.0,
+               user-scalable=no">
 
 <title>Air Maths Board</title>
 
 <style>
 
 /* =========================================================
-   PROFESSIONAL ENGINEERING UI
+   01 — DESIGN SYSTEM
 ========================================================= */
 
 :root {
 
-    --bg: #111315;
-    --surface: #181a1d;
-    --surface-2: #1d2023;
+    /* Background */
+    --bg-0: #0d0f11;
+    --bg-1: #121416;
+    --bg-2: #181b1e;
+    --bg-3: #1d2024;
 
-    --border: #2a2e32;
-    --border-light: #34383d;
+    /* Borders */
+    --line-1: #24282c;
+    --line-2: #2c3136;
+    --line-3: #383e44;
 
-    --text: #e7e9eb;
-    --text-secondary: #a3a8ae;
-    --text-muted: #6f757c;
+    /* Text */
+    --text-1: #e6e9ec;
+    --text-2: #b0b6bd;
+    --text-3: #7c838a;
+    --text-4: #5d646b;
 
-    --accent: #8eaed3;
-    --accent-soft: rgba(142,174,211,0.12);
+    /* Accent */
+    --accent: #91afd0;
+    --accent-bg: rgba(145,175,208,0.10);
+    --accent-line: rgba(145,175,208,0.28);
 
-    --danger: #c97979;
+    /* States */
+    --success: #8eaa95;
+    --warning: #b5a074;
+    --danger: #b87878;
 
-    --toolbar-height: 46px;
-    --status-height: 28px;
+    /* Geometry */
+    --topbar: 48px;
+    --bottombar: 28px;
+
+    --rail: 48px;
+
+    --radius-xs: 3px;
+    --radius-sm: 5px;
+    --radius-md: 7px;
+
+    /* Typography */
+    --font:
+        Inter,
+        "Segoe UI",
+        Roboto,
+        Helvetica,
+        Arial,
+        sans-serif;
 }
 
+
+/* =========================================================
+   02 — RESET
+========================================================= */
+
 * {
+
     margin: 0;
     padding: 0;
+
     box-sizing: border-box;
 }
 
@@ -54,24 +88,34 @@ body {
 
     overflow: hidden;
 
-    background: var(--bg);
+    background: var(--bg-0);
 
-    color: var(--text);
+    color: var(--text-1);
 
-    font-family:
-        Inter,
-        "Segoe UI",
-        Roboto,
-        Helvetica,
-        Arial,
-        sans-serif;
+    font-family: var(--font);
 
     -webkit-font-smoothing: antialiased;
 }
 
 
 /* =========================================================
-   CAMERA
+   03 — APPLICATION SHELL
+========================================================= */
+
+#app {
+
+    position: fixed;
+
+    inset: 0;
+
+    background: var(--bg-0);
+
+    overflow: hidden;
+}
+
+
+/* =========================================================
+   04 — CAMERA
 ========================================================= */
 
 #video {
@@ -87,7 +131,7 @@ body {
 
     transform: scaleX(-1);
 
-    opacity: 0.055;
+    opacity: 0.045;
 
     z-index: 0;
 
@@ -96,38 +140,39 @@ body {
 
 
 /* =========================================================
-   WORKSPACE
+   05 — WORKSPACE
 ========================================================= */
 
 #workspace {
 
     position: fixed;
 
-    inset: 0;
+    top: var(--topbar);
+    left: var(--rail);
+    right: 0;
+    bottom: var(--bottombar);
 
-    background: #111315;
+    background: var(--bg-1);
 
-    z-index: 0;
+    z-index: 1;
 
-    pointer-events: none;
+    overflow: hidden;
 }
 
 
 /* =========================================================
-   TECHNICAL GRID
+   06 — TECHNICAL GRID
 ========================================================= */
 
 #grid {
 
-    position: fixed;
+    position: absolute;
 
     inset: 0;
 
-    z-index: 1;
+    opacity: 0.085;
 
     pointer-events: none;
-
-    opacity: 0.11;
 
     background-image:
 
@@ -147,7 +192,7 @@ body {
 
 
 /* =========================================================
-   CANVAS
+   07 — CANVAS
 ========================================================= */
 
 #canvas {
@@ -156,17 +201,17 @@ body {
 
     inset: 0;
 
-    z-index: 3;
+    z-index: 5;
 
     pointer-events: none;
 }
 
 
 /* =========================================================
-   TOP APPLICATION BAR
+   08 — TOP APPLICATION BAR
 ========================================================= */
 
-#appBar {
+#topbar {
 
     position: fixed;
 
@@ -174,139 +219,141 @@ body {
     left: 0;
 
     width: 100%;
+    height: var(--topbar);
 
-    height: var(--toolbar-height);
-
-    z-index: 20;
+    z-index: 30;
 
     display: flex;
 
     align-items: center;
 
-    background: #181a1d;
+    background: var(--bg-2);
 
     border-bottom:
-        1px solid var(--border);
+        1px solid var(--line-1);
 }
 
 
 /* =========================================================
-   APPLICATION NAME
+   BRAND
 ========================================================= */
 
-#appIdentity {
+#brand {
+
+    width: var(--rail);
 
     height: 100%;
-
-    min-width: 190px;
-
-    padding: 0 16px;
 
     display: flex;
 
     align-items: center;
+    justify-content: center;
 
     border-right:
-        1px solid var(--border);
-}
+        1px solid var(--line-1);
 
-#appName {
+    color: var(--text-1);
 
     font-size: 12px;
 
-    font-weight: 600;
+    font-weight: 700;
 
-    letter-spacing: 0.25px;
-
-    color: #e5e7e9;
-}
-
-#appVersion {
-
-    margin-left: 8px;
-
-    color: var(--text-muted);
-
-    font-size: 10px;
-
-    font-weight: 400;
+    letter-spacing: -0.4px;
 }
 
 
 /* =========================================================
-   TOOLBAR
+   DOCUMENT AREA
 ========================================================= */
 
-#toolbar {
+#document {
 
     height: 100%;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 9px;
+
+    padding: 0 14px;
+}
+
+#documentName {
+
+    color: var(--text-1);
+
+    font-size: 11px;
+
+    font-weight: 600;
+}
+
+#documentType {
+
+    color: var(--text-4);
+
+    font-size: 9px;
+
+    padding-left: 9px;
+
+    border-left:
+        1px solid var(--line-2);
+}
+
+
+/* =========================================================
+   TOP ACTIONS
+========================================================= */
+
+#topActions {
+
+    margin-left: 14px;
 
     display: flex;
 
     align-items: center;
 
     gap: 2px;
-
-    padding: 0 8px;
 }
 
-.tool {
+.topButton {
 
-    height: 30px;
-
-    min-width: 30px;
+    height: 28px;
 
     padding: 0 9px;
 
-    border: 1px solid transparent;
+    border:
+        1px solid transparent;
 
     background: transparent;
 
-    color: var(--text-secondary);
+    color: var(--text-3);
 
-    border-radius: 4px;
+    border-radius:
+        var(--radius-xs);
 
-    font-size: 10px;
+    font-family: var(--font);
+
+    font-size: 9px;
 
     cursor: default;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    transition:
-        background 120ms ease,
-        border-color 120ms ease,
-        color 120ms ease;
 }
 
-.tool:hover {
+.topButton:hover {
 
-    background: var(--surface-2);
+    color: var(--text-1);
 
-    border-color: var(--border);
+    background: var(--bg-3);
 
-    color: var(--text);
-}
-
-.tool.active {
-
-    background: var(--accent-soft);
-
-    border-color:
-        rgba(142,174,211,0.25);
-
-    color: #c8d8e9;
+    border-color: var(--line-2);
 }
 
 
 /* =========================================================
-   TOP RIGHT
+   TOP STATUS
 ========================================================= */
 
-#appStatus {
+#topStatus {
 
     margin-left: auto;
 
@@ -316,12 +363,12 @@ body {
 
     align-items: center;
 
-    gap: 12px;
+    gap: 16px;
 
     padding: 0 14px;
 }
 
-.statusItem {
+.topStatusItem {
 
     display: flex;
 
@@ -329,11 +376,11 @@ body {
 
     gap: 6px;
 
-    color: var(--text-muted);
+    color: var(--text-4);
 
-    font-size: 9px;
+    font-size: 8px;
 
-    letter-spacing: 0.2px;
+    letter-spacing: 0.35px;
 }
 
 .statusDot {
@@ -343,134 +390,164 @@ body {
 
     border-radius: 50%;
 
-    background: #5d6369;
+    background: var(--text-4);
 }
 
 .statusDot.online {
 
-    background: #8cae91;
+    background: var(--success);
 }
 
 
 /* =========================================================
-   LEFT TOOL PANEL
+   09 — LEFT TOOL RAIL
 ========================================================= */
 
-#sidePanel {
+#rail {
 
     position: fixed;
 
-    top: 58px;
+    top: var(--topbar);
+    left: 0;
+    bottom: var(--bottombar);
 
-    left: 12px;
+    width: var(--rail);
 
-    width: 42px;
-
-    z-index: 15;
+    z-index: 30;
 
     display: flex;
 
     flex-direction: column;
 
-    background: rgba(24,26,29,0.92);
+    align-items: center;
 
-    border:
-        1px solid var(--border);
+    padding-top: 8px;
 
-    border-radius: 5px;
+    background: var(--bg-2);
 
-    overflow: hidden;
-
-    backdrop-filter: blur(10px);
+    border-right:
+        1px solid var(--line-1);
 }
 
-.sideTool {
 
-    width: 40px;
-    height: 40px;
+/* =========================================================
+   TOOL GROUP
+========================================================= */
+
+.toolGroup {
+
+    width: 100%;
+
+    padding-bottom: 8px;
+
+    margin-bottom: 8px;
+
+    border-bottom:
+        1px solid var(--line-1);
+}
+
+.toolGroup:last-child {
+
+    border-bottom: none;
+}
+
+
+/* =========================================================
+   TOOL
+========================================================= */
+
+.tool {
+
+    position: relative;
+
+    width: 36px;
+    height: 36px;
+
+    margin: 2px auto;
 
     display: flex;
 
     align-items: center;
     justify-content: center;
 
-    color: var(--text-muted);
+    border:
+        1px solid transparent;
 
-    font-size: 13px;
+    border-radius:
+        var(--radius-sm);
 
-    border-bottom:
-        1px solid var(--border);
+    background: transparent;
 
+    color: var(--text-4);
+
+    font-size: 12px;
 }
 
-.sideTool:last-child {
+.tool.active {
 
-    border-bottom: none;
-}
+    background: var(--accent-bg);
 
-.sideTool.active {
+    border-color:
+        var(--accent-line);
 
     color: var(--accent);
+}
 
-    background:
-        rgba(142,174,211,0.07);
+.tool.active::before {
+
+    content: "";
+
+    position: absolute;
+
+    left: -7px;
+
+    width: 2px;
+    height: 16px;
+
+    background: var(--accent);
+
+    border-radius: 2px;
 }
 
 
 /* =========================================================
-   INFORMATION PANEL
+   10 — RIGHT INSPECTOR
 ========================================================= */
 
-#infoPanel {
+#inspector {
 
     position: fixed;
 
-    top: 58px;
+    top: calc(var(--topbar) + 12px);
 
     right: 12px;
 
-    width: 205px;
+    width: 220px;
 
-    z-index: 15;
+    z-index: 25;
 
     background:
-        rgba(24,26,29,0.94);
+        rgba(24,27,30,0.96);
 
     border:
-        1px solid var(--border);
+        1px solid var(--line-2);
 
-    border-radius: 5px;
+    border-radius:
+        var(--radius-md);
 
-    backdrop-filter: blur(10px);
+    overflow: hidden;
 }
 
-.panelHeader {
 
-    height: 31px;
+/* =========================================================
+   INSPECTOR HEADER
+========================================================= */
+
+.inspectorHeader {
+
+    height: 34px;
 
     padding: 0 11px;
-
-    display: flex;
-
-    align-items: center;
-
-    border-bottom:
-        1px solid var(--border);
-
-    color: var(--text-secondary);
-
-    font-size: 9px;
-
-    font-weight: 600;
-
-    letter-spacing: 0.5px;
-
-    text-transform: uppercase;
-}
-
-.infoRow {
-
-    height: 27px;
 
     display: flex;
 
@@ -478,236 +555,208 @@ body {
 
     justify-content: space-between;
 
-    padding: 0 11px;
-
     border-bottom:
-        1px solid
-        rgba(255,255,255,0.035);
+        1px solid var(--line-1);
+
+    color: var(--text-2);
 
     font-size: 9px;
+
+    font-weight: 600;
+
+    letter-spacing: 0.4px;
+
+    text-transform: uppercase;
 }
 
-.infoRow:last-child {
+.closeInspector {
 
-    border-bottom: none;
-}
+    color: var(--text-4);
 
-.infoLabel {
-
-    color: var(--text-muted);
-}
-
-.infoValue {
-
-    color: var(--text-secondary);
-}
-
-.infoValue.active {
-
-    color: #b8cbbd;
+    font-size: 12px;
 }
 
 
 /* =========================================================
-   CENTER STATUS
+   INSPECTOR SECTION
 ========================================================= */
 
-#status {
+.inspectorSection {
+
+    padding: 10px 11px;
+
+    border-bottom:
+        1px solid var(--line-1);
+}
+
+.inspectorSection:last-child {
+
+    border-bottom: none;
+}
+
+.sectionTitle {
+
+    margin-bottom: 8px;
+
+    color: var(--text-4);
+
+    font-size: 8px;
+
+    font-weight: 600;
+
+    letter-spacing: 0.7px;
+
+    text-transform: uppercase;
+}
+
+
+/* =========================================================
+   PROPERTY ROW
+========================================================= */
+
+.property {
+
+    min-height: 25px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+}
+
+.propertyLabel {
+
+    color: var(--text-3);
+
+    font-size: 9px;
+}
+
+.propertyValue {
+
+    color: var(--text-2);
+
+    font-size: 9px;
+
+    font-variant-numeric:
+        tabular-nums;
+}
+
+
+/* =========================================================
+   11 — CENTER STATUS
+========================================================= */
+
+#workspaceStatus {
 
     position: fixed;
 
-    top: 58px;
+    top: calc(var(--topbar) + 10px);
 
-    left: 50%;
+    left: calc(
+        var(--rail) + 50%
+    );
 
     transform:
         translateX(-50%);
 
-    z-index: 15;
+    z-index: 20;
 
-    height: 25px;
+    height: 24px;
 
-    padding: 0 10px;
+    padding: 0 9px;
 
     display: flex;
 
     align-items: center;
 
     background:
-        rgba(24,26,29,0.82);
+        rgba(18,20,22,0.88);
 
     border:
-        1px solid var(--border);
+        1px solid var(--line-1);
 
-    border-radius: 4px;
+    border-radius:
+        var(--radius-xs);
 
-    color: var(--text-muted);
+    color: var(--text-4);
 
-    font-size: 9px;
+    font-size: 8px;
 
-    letter-spacing: 0.3px;
+    letter-spacing: 0.35px;
 }
 
 
 /* =========================================================
-   CAMERA BUTTON
+   12 — START BUTTON
 ========================================================= */
 
 #startButton {
 
     position: fixed;
 
-    left: 50%;
+    left: calc(
+        var(--rail) +
+        (100% - var(--rail)) / 2
+    );
 
     top: 50%;
 
     transform:
         translate(-50%, -50%);
 
-    z-index: 30;
+    z-index: 50;
 
     height: 34px;
 
     padding: 0 18px;
 
+    background: var(--bg-3);
+
     border:
-        1px solid #3a4046;
+        1px solid var(--line-3);
 
-    border-radius: 4px;
+    border-radius:
+        var(--radius-sm);
 
-    background: #1d2023;
+    color: var(--text-1);
 
-    color: #dfe3e6;
+    font-family: var(--font);
 
-    font-family: inherit;
-
-    font-size: 10px;
+    font-size: 9px;
 
     font-weight: 600;
 
     letter-spacing: 0.5px;
 
     cursor: pointer;
-
-    transition:
-        background 120ms ease,
-        border-color 120ms ease;
 }
 
 #startButton:hover {
 
     background: #23272b;
-
-    border-color: #4a5057;
 }
 
 
 /* =========================================================
-   BOTTOM STATUS BAR
-========================================================= */
-
-#bottomBar {
-
-    position: fixed;
-
-    bottom: 0;
-
-    left: 0;
-
-    width: 100%;
-
-    height: var(--status-height);
-
-    z-index: 20;
-
-    display: flex;
-
-    align-items: center;
-
-    padding: 0 10px;
-
-    background: #181a1d;
-
-    border-top:
-        1px solid var(--border);
-
-    color: var(--text-muted);
-
-    font-size: 9px;
-}
-
-.bottomSection {
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 7px;
-
-    padding-right: 14px;
-
-    margin-right: 14px;
-
-    border-right:
-        1px solid var(--border);
-}
-
-.bottomSection:last-child {
-
-    margin-left: auto;
-
-    margin-right: 0;
-
-    padding-right: 0;
-
-    border-right: none;
-}
-
-.key {
-
-    min-width: 18px;
-
-    height: 16px;
-
-    padding: 0 4px;
-
-    display: inline-flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    border:
-        1px solid #34383d;
-
-    border-radius: 3px;
-
-    background: #202327;
-
-    color: #a4a9ae;
-
-    font-size: 8px;
-}
-
-
-/* =========================================================
-   CURSOR
+   13 — CURSOR
 ========================================================= */
 
 #cursor {
 
     position: fixed;
 
-    width: 22px;
-    height: 22px;
-
-    z-index: 12;
+    width: 20px;
+    height: 20px;
 
     transform:
         translate(-50%, -50%);
 
+    z-index: 15;
+
     border:
-        1px solid rgba(220,228,236,0.88);
+        1px solid
+        rgba(225,232,238,0.9);
 
     border-radius: 50%;
 
@@ -715,8 +764,7 @@ body {
 
     box-shadow:
         0 0 0 1px
-        rgba(0,0,0,0.35);
-
+        rgba(0,0,0,0.4);
 }
 
 #cursor::before {
@@ -728,170 +776,195 @@ body {
     left: 50%;
     top: 50%;
 
-    width: 4px;
-    height: 4px;
+    width: 3px;
+    height: 3px;
 
     transform:
         translate(-50%, -50%);
 
-    background: #e8edf1;
+    background:
+        #edf2f6;
 
     border-radius: 50%;
 }
 
 
 /* =========================================================
-   CURSOR CROSSHAIR
+   14 — BOTTOM STATUS BAR
 ========================================================= */
 
-#cursor::after {
-
-    content: "";
-
-    position: absolute;
-
-    left: 50%;
-    top: 50%;
-
-    width: 30px;
-    height: 1px;
-
-    transform:
-        translate(-50%, -50%);
-
-    background:
-        rgba(220,228,236,0.22);
-}
-
-
-/* =========================================================
-   CORNER MARKERS
-========================================================= */
-
-.cursorMark {
+#bottomBar {
 
     position: fixed;
 
-    width: 5px;
-    height: 5px;
+    left: 0;
+    bottom: 0;
 
-    z-index: 12;
+    width: 100%;
+    height: var(--bottombar);
 
-    border-color:
-        rgba(220,228,236,0.5);
+    z-index: 30;
 
-    pointer-events: none;
-}
+    display: flex;
 
-#markTop {
+    align-items: center;
 
-    border-top: 1px solid;
-    border-left: 1px solid;
-}
+    padding: 0 10px;
 
-#markBottom {
+    background: var(--bg-2);
 
-    border-bottom: 1px solid;
-    border-right: 1px solid;
-}
+    border-top:
+        1px solid var(--line-1);
 
-#markLeft {
+    color: var(--text-4);
 
-    border-left: 1px solid;
-    border-bottom: 1px solid;
-}
-
-#markRight {
-
-    border-right: 1px solid;
-    border-top: 1px solid;
+    font-size: 8px;
 }
 
 
 /* =========================================================
-   REMOVE OLD DECORATIVE LAYERS
+   BOTTOM GROUP
 ========================================================= */
 
-#ambientGlow,
-#particles,
-#scanLine {
+.bottomGroup {
+
+    height: 100%;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 7px;
+
+    padding: 0 12px;
+
+    border-right:
+        1px solid var(--line-1);
+}
+
+.bottomGroup:first-child {
+
+    padding-left: 2px;
+}
+
+.bottomGroup:last-child {
+
+    margin-left: auto;
+
+    padding-right: 2px;
+
+    border-right: none;
+}
+
+
+/* =========================================================
+   KEY
+========================================================= */
+
+.key {
+
+    min-width: 18px;
+
+    height: 15px;
+
+    padding: 0 4px;
+
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    background: var(--bg-3);
+
+    border:
+        1px solid var(--line-2);
+
+    border-radius: 3px;
+
+    color: var(--text-3);
+
+    font-size: 7px;
+}
+
+
+/* =========================================================
+   15 — HIDDEN
+========================================================= */
+
+.hidden {
 
     display: none !important;
 }
 
 
 /* =========================================================
-   MOBILE
+   16 — MOBILE
 ========================================================= */
 
 @media (max-width: 700px) {
 
     :root {
 
-        --toolbar-height: 44px;
-        --status-height: 25px;
+        --topbar: 44px;
+        --bottombar: 25px;
+        --rail: 42px;
     }
 
-    #appIdentity {
-
-        min-width: auto;
-
-        border-right: none;
-
-        padding: 0 11px;
-    }
-
-    #appVersion {
+    #documentType,
+    #topActions {
 
         display: none;
     }
 
-    #toolbar {
+    #document {
 
-        display: none;
+        padding-left: 12px;
     }
 
-    #appStatus {
+    #topStatus {
 
-        padding-right: 10px;
+        gap: 8px;
+
+        padding-right: 9px;
     }
 
-    #sidePanel {
+    #topStatus .topStatusItem {
 
-        left: 8px;
-
-        top: 53px;
-
-        width: 38px;
+        font-size: 7px;
     }
 
-    .sideTool {
-
-        width: 36px;
-        height: 36px;
-    }
-
-    #infoPanel {
-
-        right: 8px;
-
-        top: 53px;
+    #inspector {
 
         width: 175px;
+
+        top: calc(
+            var(--topbar) + 8px
+        );
+
+        right: 8px;
     }
 
-    #status {
+    #workspaceStatus {
 
-        top: 52px;
-
-        font-size: 8px;
+        top: calc(
+            var(--topbar) + 8px
+        );
     }
 
-    .bottomSection {
+    .tool {
 
-        padding-right: 8px;
+        width: 32px;
+        height: 32px;
+    }
 
-        margin-right: 8px;
+    .tool.active::before {
+
+        left: -5px;
+    }
+
+    .bottomGroup {
+
+        padding: 0 7px;
     }
 
     .hideMobile {
@@ -901,15 +974,9 @@ body {
 
     #cursor {
 
-        width: 19px;
-        height: 19px;
+        width: 18px;
+        height: 18px;
     }
-}
-
-
-.hidden {
-
-    display: none !important;
 }
 
 </style>
@@ -919,13 +986,7 @@ body {
 <body>
 
 
-<!-- =======================================================
-     WORKSPACE
-======================================================== -->
-
-<div id="workspace"></div>
-
-<div id="grid"></div>
+<div id="app">
 
 
 <!-- =======================================================
@@ -940,6 +1001,17 @@ body {
 
 
 <!-- =======================================================
+     WORKSPACE
+======================================================== -->
+
+<div id="workspace">
+
+    <div id="grid"></div>
+
+</div>
+
+
+<!-- =======================================================
      DRAWING CANVAS
 ======================================================== -->
 
@@ -947,48 +1019,53 @@ body {
 
 
 <!-- =======================================================
-     APPLICATION BAR
+     TOP BAR
 ======================================================== -->
 
-<div id="appBar">
+<header id="topbar">
 
-    <div id="appIdentity">
+    <div id="brand">
+        AM
+    </div>
 
-        <span id="appName">
-            AIR MATHS
+
+    <div id="document">
+
+        <span id="documentName">
+            Untitled Board
         </span>
 
-        <span id="appVersion">
-            V5
+        <span id="documentType">
+            Mathematics
         </span>
 
     </div>
 
 
-    <div id="toolbar">
+    <div id="topActions">
 
-        <div class="tool active">
-            PEN
-        </div>
+        <button class="topButton">
+            FILE
+        </button>
 
-        <div class="tool">
-            SELECT
-        </div>
+        <button class="topButton">
+            EDIT
+        </button>
 
-        <div class="tool">
+        <button class="topButton">
             VIEW
-        </div>
+        </button>
 
-        <div class="tool">
-            GRID
-        </div>
+        <button class="topButton">
+            TOOLS
+        </button>
 
     </div>
 
 
-    <div id="appStatus">
+    <div id="topStatus">
 
-        <div class="statusItem">
+        <div class="topStatusItem">
 
             <span
                 id="systemIndicator"
@@ -1001,104 +1078,241 @@ body {
 
         </div>
 
+        <div class="topStatusItem hideMobile">
+            V5
+        </div>
+
     </div>
 
+</header>
+
+
+<!-- =======================================================
+     LEFT TOOL RAIL
+======================================================== -->
+
+<aside id="rail">
+
+
+    <div class="toolGroup">
+
+        <div
+            class="tool active"
+            title="Pen">
+            P
+        </div>
+
+        <div
+            class="tool"
+            title="Select">
+            S
+        </div>
+
+        <div
+            class="tool"
+            title="Move">
+            M
+        </div>
+
+    </div>
+
+
+    <div class="toolGroup">
+
+        <div
+            class="tool"
+            title="Undo">
+            ↶
+        </div>
+
+        <div
+            class="tool"
+            title="Redo">
+            ↷
+        </div>
+
+        <div
+            class="tool"
+            title="Clear">
+            C
+        </div>
+
+    </div>
+
+
+    <div class="toolGroup">
+
+        <div
+            class="tool"
+            title="Grid">
+            #
+        </div>
+
+        <div
+            class="tool"
+            title="Zoom">
+            Z
+        </div>
+
+    </div>
+
+</aside>
+
+
+<!-- =======================================================
+     WORKSPACE STATUS
+======================================================== -->
+
+<div id="workspaceStatus">
+    PRESS INITIALIZE CAMERA
 </div>
 
 
 <!-- =======================================================
-     LEFT TOOL STRIP
+     RIGHT INSPECTOR
 ======================================================== -->
 
-<div id="sidePanel">
-
-    <div class="sideTool active">
-        +
-    </div>
-
-    <div class="sideTool">
-        −
-    </div>
-
-    <div class="sideTool">
-        ⌫
-    </div>
-
-    <div class="sideTool">
-        ↶
-    </div>
-
-    <div class="sideTool">
-        ↷
-    </div>
-
-</div>
+<aside id="inspector">
 
 
-<!-- =======================================================
-     INFORMATION PANEL
-======================================================== -->
+    <div class="inspectorHeader">
 
-<div id="infoPanel">
-
-    <div class="panelHeader">
-        System
-    </div>
-
-    <div class="infoRow">
-
-        <span class="infoLabel">
-            Hand tracking
+        <span>
+            Inspector
         </span>
 
-        <span
-            id="handState"
-            class="infoValue">
-            Searching
+        <span class="closeInspector">
+            •••
         </span>
 
     </div>
 
 
-    <div class="infoRow">
+    <section class="inspectorSection">
 
-        <span class="infoLabel">
-            Mode
-        </span>
-
-        <span
-            id="modeState"
-            class="infoValue">
-            Standby
-        </span>
-
-    </div>
+        <div class="sectionTitle">
+            Tracking
+        </div>
 
 
-    <div class="infoRow">
+        <div class="property">
 
-        <span class="infoLabel">
+            <span class="propertyLabel">
+                Hand
+            </span>
+
+            <span
+                id="handState"
+                class="propertyValue">
+                Searching
+            </span>
+
+        </div>
+
+
+        <div class="property">
+
+            <span class="propertyLabel">
+                Gesture
+            </span>
+
+            <span
+                id="modeState"
+                class="propertyValue">
+                Standby
+            </span>
+
+        </div>
+
+    </section>
+
+
+    <section class="inspectorSection">
+
+        <div class="sectionTitle">
             System
-        </span>
-
-        <span
-            id="systemState"
-            class="infoValue">
-            Offline
-        </span>
-
-    </div>
-
-</div>
+        </div>
 
 
-<!-- =======================================================
-     CENTER STATUS
-======================================================== -->
+        <div class="property">
 
-<div id="status">
-    PRESS START TO INITIALIZE
-</div>
+            <span class="propertyLabel">
+                Camera
+            </span>
+
+            <span
+                id="systemState"
+                class="propertyValue">
+                Offline
+            </span>
+
+        </div>
+
+
+        <div class="property">
+
+            <span class="propertyLabel">
+                Tracking
+            </span>
+
+            <span
+                class="propertyValue">
+                MediaPipe
+            </span>
+
+        </div>
+
+    </section>
+
+
+    <section class="inspectorSection">
+
+        <div class="sectionTitle">
+            Input
+        </div>
+
+
+        <div class="property">
+
+            <span class="propertyLabel">
+                Draw
+            </span>
+
+            <span class="propertyValue">
+                Index
+            </span>
+
+        </div>
+
+
+        <div class="property">
+
+            <span class="propertyLabel">
+                Pause
+            </span>
+
+            <span class="propertyValue">
+                Pinch
+            </span>
+
+        </div>
+
+
+        <div class="property">
+
+            <span class="propertyLabel">
+                Clear
+            </span>
+
+            <span class="propertyValue">
+                Open hand
+            </span>
+
+        </div>
+
+    </section>
+
+</aside>
 
 
 <!-- =======================================================
@@ -1108,31 +1322,6 @@ body {
 <div
     id="cursor"
     class="hidden">
-</div>
-
-
-<!-- =======================================================
-     CORNER MARKERS
-======================================================== -->
-
-<div
-    id="markTop"
-    class="cursorMark hidden">
-</div>
-
-<div
-    id="markBottom"
-    class="cursorMark hidden">
-</div>
-
-<div
-    id="markLeft"
-    class="cursorMark hidden">
-</div>
-
-<div
-    id="markRight"
-    class="cursorMark hidden">
 </div>
 
 
@@ -1149,9 +1338,10 @@ body {
      BOTTOM BAR
 ======================================================== -->
 
-<div id="bottomBar">
+<footer id="bottomBar">
 
-    <div class="bottomSection">
+
+    <div class="bottomGroup">
 
         <span class="key">
             INDEX
@@ -1164,7 +1354,7 @@ body {
     </div>
 
 
-    <div class="bottomSection">
+    <div class="bottomGroup">
 
         <span class="key">
             PINCH
@@ -1177,7 +1367,7 @@ body {
     </div>
 
 
-    <div class="bottomSection hideMobile">
+    <div class="bottomGroup hideMobile">
 
         <span class="key">
             OPEN
@@ -1190,10 +1380,14 @@ body {
     </div>
 
 
-    <div class="bottomSection">
+    <div class="bottomGroup">
 
-        Air Maths Board
+        AIR MATHS BOARD
+
     </div>
+
+</footer>
+
 
 </div>
 
@@ -1228,17 +1422,25 @@ const cursor =
 const startButton =
     document.getElementById("startButton");
 
-const statusText =
-    document.getElementById("status");
+const workspaceStatus =
+    document.getElementById(
+        "workspaceStatus"
+    );
 
 const handState =
-    document.getElementById("handState");
+    document.getElementById(
+        "handState"
+    );
 
 const modeState =
-    document.getElementById("modeState");
+    document.getElementById(
+        "modeState"
+    );
 
 const systemState =
-    document.getElementById("systemState");
+    document.getElementById(
+        "systemState"
+    );
 
 const systemIndicator =
     document.getElementById(
@@ -1273,7 +1475,7 @@ window.addEventListener(
 
 
 /* =========================================================
-   DRAWING STATE
+   V5 DRAWING ENGINE
 ========================================================= */
 
 let isDrawing = false;
@@ -1295,10 +1497,6 @@ let currentDirection = null;
 
 let strokeBuffer = [];
 
-
-/* =========================================================
-   V5 SETTINGS
-========================================================= */
 
 const SLOW_SMOOTHING = 0.20;
 
@@ -1352,7 +1550,7 @@ function distanceBetween(
 
 
 /* =========================================================
-   ANGLE DIFFERENCE
+   ANGLE
 ========================================================= */
 
 function angleDifference(
@@ -1410,7 +1608,7 @@ function getDirection(
 
 
 /* =========================================================
-   ADAPTIVE SMOOTHING
+   SMOOTHING
 ========================================================= */
 
 function getSmoothing(
@@ -1946,15 +2144,7 @@ function flushStrokeBuffer() {
         ctx.lineJoin =
             "round";
 
-        ctx.shadowColor =
-            "rgba(100,180,230,0.50)";
-
-        ctx.shadowBlur =
-            8;
-
         ctx.stroke();
-
-        ctx.shadowBlur = 0;
 
         return;
     }
@@ -2081,7 +2271,7 @@ function clearCanvas() {
 
 
 /* =========================================================
-   DRAW
+   DRAW LINE
 ========================================================= */
 
 function drawLine(
@@ -2117,9 +2307,6 @@ function drawLine(
         previousY =
             targetY;
 
-        currentDirection =
-            null;
-
         strokeBuffer = [
             {
                 x: targetX,
@@ -2132,6 +2319,7 @@ function drawLine(
         return;
     }
 
+
     const rawDistance =
         distanceBetween(
             previousRawX,
@@ -2140,6 +2328,7 @@ function drawLine(
             targetY
         );
 
+
     const deltaTime =
         Math.max(
             now -
@@ -2147,15 +2336,18 @@ function drawLine(
             1
         );
 
+
     const instantSpeed =
         (
             rawDistance /
             deltaTime
         ) * 1000;
 
+
     currentSpeed =
         currentSpeed * 0.65 +
         instantSpeed * 0.35;
+
 
     const newDirection =
         Math.atan2(
@@ -2165,7 +2357,9 @@ function drawLine(
             previousRawX
         );
 
+
     let directionChange = 0;
+
 
     if (
         currentDirection !== null
@@ -2178,8 +2372,10 @@ function drawLine(
             );
     }
 
+
     currentDirection =
         newDirection;
+
 
     previousRawX =
         targetX;
@@ -2189,6 +2385,7 @@ function drawLine(
 
     previousTime =
         now;
+
 
     if (
         rawDistance >
@@ -2217,6 +2414,7 @@ function drawLine(
         return;
     }
 
+
     const smoothPoint =
         getSmoothPoint(
             targetX,
@@ -2224,6 +2422,7 @@ function drawLine(
             currentSpeed,
             directionChange
         );
+
 
     if (
         previousX !== null &&
@@ -2247,16 +2446,19 @@ function drawLine(
         }
     }
 
+
     previousX =
         smoothPoint.x;
 
     previousY =
         smoothPoint.y;
 
+
     addStrokePoint({
         x: smoothPoint.x,
         y: smoothPoint.y
     });
+
 
     isDrawing = true;
 }
@@ -2342,7 +2544,7 @@ hands.setOptions({
 
 
 /* =========================================================
-   RESULTS
+   HAND RESULTS
 ========================================================= */
 
 hands.onResults(
@@ -2366,9 +2568,6 @@ function(results) {
 
         modeState.textContent =
             "Standby";
-
-        handState.className =
-            "infoValue";
 
         stopDrawing();
 
@@ -2475,9 +2674,6 @@ function(results) {
     handState.textContent =
         "Detected";
 
-    handState.className =
-        "infoValue active";
-
 
     if (
         openHand
@@ -2560,7 +2756,7 @@ function(results) {
 
 
 /* =========================================================
-   CAMERA START
+   START CAMERA
 ========================================================= */
 
 startButton.addEventListener(
@@ -2569,7 +2765,7 @@ async function() {
 
     try {
 
-        statusText.textContent =
+        workspaceStatus.textContent =
             "INITIALIZING CAMERA";
 
         systemState.textContent =
@@ -2585,7 +2781,10 @@ async function() {
             .getUserMedia({
 
                 video: {
-                    facingMode: "user"
+
+                    facingMode:
+                        "user"
+
                 },
 
                 audio: false
@@ -2599,9 +2798,7 @@ async function() {
 
         const camera =
             new Camera(
-
                 video,
-
                 {
 
                     onFrame:
@@ -2618,21 +2815,21 @@ async function() {
                     height: 720
 
                 }
-
             );
 
 
         camera.start();
 
 
-        statusText.textContent =
-            "SYSTEM READY";
+        workspaceStatus.textContent =
+            "READY";
 
         systemState.textContent =
             "Online";
 
         topStatusText.textContent =
-            "READY";
+            "ONLINE";
+
 
         systemIndicator.classList.add(
             "online"
@@ -2649,7 +2846,7 @@ async function() {
         console.error(error);
 
 
-        statusText.textContent =
+        workspaceStatus.textContent =
             "CAMERA INITIALIZATION FAILED";
 
         systemState.textContent =
