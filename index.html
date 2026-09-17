@@ -635,14 +635,48 @@ window.addEventListener(
 
 
 /* =========================================================
-   DRAWING STATE
+   V2 DRAWING STATE
 ========================================================= */
 
 let previousX = null;
-
 let previousY = null;
 
+let smoothX = null;
+let smoothY = null;
+
 let isDrawing = false;
+
+
+/*
+    V2 tuning values.
+
+    Smaller smoothing value:
+    more stable but more lag.
+
+    Larger value:
+    faster but less smooth.
+*/
+
+const MIN_SMOOTHING = 0.32;
+
+const MAX_SMOOTHING = 0.88;
+
+
+/*
+    Distance at which we consider
+    movement to be very fast.
+*/
+
+const FAST_MOVEMENT = 80;
+
+
+/*
+    Distance between generated
+    bridge points during very fast
+    movement.
+*/
+
+const BRIDGE_STEP = 12;
 
 
 /* =========================================================
@@ -659,10 +693,83 @@ const CLEAR_COOLDOWN_FRAMES = 15;
 
 
 /* =========================================================
-   DRAWING
+   RESET DRAWING STATE
 ========================================================= */
 
-function drawLine(x, y) {
+function resetDrawingState() {
+
+    previousX = null;
+    previousY = null;
+
+    smoothX = null;
+    smoothY = null;
+
+    isDrawing = false;
+
+}
+
+
+/* =========================================================
+   GET SMOOTHING
+========================================================= */
+
+function getSmoothing(distance) {
+
+    /*
+        Slow movement:
+        more smoothing.
+
+        Fast movement:
+        less smoothing / more responsive.
+    */
+
+
+    if (distance <= 3) {
+
+        return MIN_SMOOTHING;
+
+    }
+
+
+    if (distance >= FAST_MOVEMENT) {
+
+        return MAX_SMOOTHING;
+
+    }
+
+
+    /*
+        Convert distance into
+        a 0 → 1 range.
+    */
+
+    const ratio =
+        distance /
+        FAST_MOVEMENT;
+
+
+    return (
+        MIN_SMOOTHING +
+
+        (
+            MAX_SMOOTHING -
+            MIN_SMOOTHING
+        ) *
+
+        ratio
+    );
+
+}
+
+
+/* =========================================================
+   SMOOTH POINT
+========================================================= */
+
+function getSmoothPoint(
+    targetX,
+    targetY
+) {
 
 
     /*
@@ -670,56 +777,67 @@ function drawLine(x, y) {
     */
 
     if (
-        previousX === null ||
-        previousY === null
+        smoothX === null ||
+        smoothY === null
     ) {
 
-        previousX = x;
+        smoothX = targetX;
 
-        previousY = y;
+        smoothY = targetY;
 
         return;
 
     }
+
+
+    const dx =
+        targetX - smoothX;
+
+    const dy =
+        targetY - smoothY;
 
 
     const distance =
         Math.sqrt(
-
-            Math.pow(
-                x - previousX,
-                2
-            )
-
-            +
-
-            Math.pow(
-                y - previousY,
-                2
-            )
-
+            dx * dx +
+            dy * dy
         );
 
 
-    if (distance < 1) {
-
-        return;
-
-    }
+    const smoothing =
+        getSmoothing(distance);
 
 
-    /* GLOW */
+    smoothX +=
+        dx * smoothing;
+
+    smoothY +=
+        dy * smoothing;
+
+}
+
+
+/* =========================================================
+   DRAW BASIC SEGMENT
+========================================================= */
+
+function drawSegment(
+    x1,
+    y1,
+    x2,
+    y2
+) {
 
     ctx.beginPath();
 
     ctx.moveTo(
-        previousX,
-        previousY
+        x1,
+        y1
     );
 
     ctx.lineTo(
-        x,
-        y
+        x2,
+        y2
     );
 
     ctx.strokeStyle =
@@ -739,18 +857,18 @@ function drawLine(x, y) {
     ctx.stroke();
 
 
-    /* NEON */
+    /* NEON CORE */
 
     ctx.beginPath();
 
     ctx.moveTo(
-        previousX,
-        previousY
+        x1,
+        y1
     );
 
     ctx.lineTo(
-        x,
-        y
+        x2,
+        y2
     );
 
     ctx.strokeStyle =
@@ -775,13 +893,13 @@ function drawLine(x, y) {
     ctx.beginPath();
 
     ctx.moveTo(
-        previousX,
-        previousY
+        x1,
+        y1
     );
 
     ctx.lineTo(
-        x,
-        y
+        x2,
+        y2
     );
 
     ctx.strokeStyle =
@@ -803,10 +921,194 @@ function drawLine(x, y) {
 
     ctx.shadowBlur = 0;
 
+}
 
-    previousX = x;
 
-    previousY = y;
+/* =========================================================
+   V2 DRAWING
+========================================================= */
+
+function drawLine(
+    targetX,
+    targetY
+) {
+
+
+    /*
+        Initialize the filtered point.
+    */
+
+    if (
+        smoothX === null ||
+        smoothY === null
+    ) {
+
+        smoothX = targetX;
+
+        smoothY = targetY;
+
+        previousX = targetX;
+
+        previousY = targetY;
+
+        return;
+
+    }
+
+
+    /*
+        Measure raw movement from
+        the current filtered point.
+    */
+
+    const rawDX =
+        targetX - smoothX;
+
+    const rawDY =
+        targetY - smoothY;
+
+    const rawDistance =
+        Math.sqrt(
+            rawDX * rawDX +
+            rawDY * rawDY
+        );
+
+
+    /*
+        Update the filtered point.
+    */
+
+    getSmoothPoint(
+        targetX,
+        targetY
+    );
+
+
+    /*
+        New filtered position.
+    */
+
+    const newX = smoothX;
+    const newY = smoothY;
+
+
+    /*
+        Distance from previous
+        drawn position.
+    */
+
+    const drawDX =
+        newX - previousX;
+
+    const drawDY =
+        newY - previousY;
+
+    const drawDistance =
+        Math.sqrt(
+            drawDX * drawDX +
+            drawDY * drawDY
+        );
+
+
+    if (drawDistance < 0.8) {
+
+        return;
+
+    }
+
+
+    /* =====================================================
+       FAST MOVEMENT BRIDGE
+
+       If the filtered point has moved
+       a long distance in one frame,
+       divide the movement into smaller
+       segments.
+
+       This reduces broken straight lines.
+    ===================================================== */
+
+    if (
+        rawDistance > FAST_MOVEMENT &&
+        drawDistance > BRIDGE_STEP
+    ) {
+
+
+        const steps =
+            Math.ceil(
+                drawDistance /
+                BRIDGE_STEP
+            );
+
+
+        let lastX =
+            previousX;
+
+        let lastY =
+            previousY;
+
+
+        for (
+            let i = 1;
+            i <= steps;
+            i++
+        ) {
+
+
+            const progress =
+                i / steps;
+
+
+            const bridgeX =
+                previousX +
+                (
+                    newX -
+                    previousX
+                ) *
+                progress;
+
+
+            const bridgeY =
+                previousY +
+                (
+                    newY -
+                    previousY
+                ) *
+                progress;
+
+
+            drawSegment(
+                lastX,
+                lastY,
+                bridgeX,
+                bridgeY
+            );
+
+
+            lastX = bridgeX;
+
+            lastY = bridgeY;
+
+        }
+
+
+    }
+    else {
+
+
+        drawSegment(
+            previousX,
+            previousY,
+            newX,
+            newY
+        );
+
+    }
+
+
+    previousX = newX;
+
+    previousY = newY;
 
 }
 
@@ -817,11 +1119,7 @@ function drawLine(x, y) {
 
 function stopDrawing() {
 
-    isDrawing = false;
-
-    previousX = null;
-
-    previousY = null;
+    resetDrawingState();
 
 }
 
@@ -840,7 +1138,7 @@ function clearCanvas() {
     );
 
 
-    stopDrawing();
+    resetDrawingState();
 
 
     modeState.textContent =
@@ -1021,12 +1319,6 @@ function(results) {
 
     /* =====================================================
        OPEN HAND
-
-       3 OR MORE FINGERS UP
-       = CLEAR
-
-       This is deliberately checked BEFORE
-       drawing.
     ===================================================== */
 
     const fingersUp =
@@ -1072,18 +1364,12 @@ function(results) {
         );
 
 
-    /*
-        Smaller threshold makes pinch
-        less likely to interfere with
-        the CLEAR gesture.
-    */
-
     const isPinching =
         pinchDistance < 0.055;
 
 
     /* =====================================================
-       INDEX POSITION
+       RAW INDEX POSITION
     ===================================================== */
 
     const x =
@@ -1096,7 +1382,16 @@ function(results) {
         window.innerHeight;
 
 
-    updateCursor(x, y);
+    /*
+        Cursor deliberately uses RAW position.
+
+        This keeps the cursor responsive.
+    */
+
+    updateCursor(
+        x,
+        y
+    );
 
 
     /* =====================================================
@@ -1115,13 +1410,6 @@ function(results) {
 
     if (openHand) {
 
-
-        /*
-            ABSOLUTE RULE:
-
-            If openHand is true,
-            drawing stops immediately.
-        */
 
         stopDrawing();
 
@@ -1162,10 +1450,6 @@ function(results) {
     }
 
 
-    /* =====================================================
-       NO LONGER OPEN HAND
-    ===================================================== */
-
     clearFrames = 0;
 
 
@@ -1199,14 +1483,6 @@ function(results) {
 
     /* =====================================================
        3. DRAW
-       
-       Drawing is allowed ONLY when:
-
-       INDEX = UP
-       MIDDLE = DOWN
-       RING = DOWN
-       PINKY = DOWN
-       PINCH = FALSE
     ===================================================== */
 
     if (
@@ -1228,14 +1504,21 @@ function(results) {
             "DRAWING";
 
 
-        /*
-            Start a completely new stroke.
-        */
-
         if (!isDrawing) {
 
 
             isDrawing = true;
+
+
+            /*
+                Reset V2 smoothing
+                at the beginning of
+                every stroke.
+            */
+
+            smoothX = x;
+
+            smoothY = y;
 
 
             previousX = x;
@@ -1262,7 +1545,7 @@ function(results) {
 
 
     /* =====================================================
-       4. EVERYTHING ELSE
+       4. READY
     ===================================================== */
 
     stopDrawing();
