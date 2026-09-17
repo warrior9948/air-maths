@@ -1,16 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
 <meta charset="UTF-8">
+
 <meta name="viewport"
       content="width=device-width,
                initial-scale=1.0,
                maximum-scale=1.0,
                user-scalable=no">
 
-<title>Air Maths Board V5</title>
+<title>Air Maths Board — V5 Advanced</title>
 
 <style>
+
+/* =========================================================
+   BASE
+========================================================= */
+
 * {
     margin: 0;
     padding: 0;
@@ -26,7 +33,11 @@ body {
     font-family: Arial, sans-serif;
 }
 
-/* CAMERA */
+
+/* =========================================================
+   CAMERA
+========================================================= */
+
 #video {
     position: fixed;
     inset: 0;
@@ -43,12 +54,17 @@ body {
     z-index: 0;
 }
 
-/* GRID */
+
+/* =========================================================
+   GRID
+========================================================= */
+
 #grid {
     position: fixed;
     inset: 0;
 
     z-index: 1;
+
     pointer-events: none;
 
     opacity: 0.45;
@@ -81,7 +97,11 @@ body {
         );
 }
 
-/* DRAWING CANVAS */
+
+/* =========================================================
+   DRAWING CANVAS
+========================================================= */
+
 #canvas {
     position: fixed;
     inset: 0;
@@ -94,7 +114,11 @@ body {
     pointer-events: none;
 }
 
-/* TITLE */
+
+/* =========================================================
+   TITLE
+========================================================= */
+
 #title {
     position: fixed;
 
@@ -118,7 +142,11 @@ body {
         0 0 30px rgba(255, 0, 255, 0.7);
 }
 
-/* STATUS */
+
+/* =========================================================
+   STATUS
+========================================================= */
+
 #status {
     position: fixed;
 
@@ -136,7 +164,11 @@ body {
     letter-spacing: 2px;
 }
 
-/* HUD */
+
+/* =========================================================
+   SYSTEM HUD
+========================================================= */
+
 #hud {
     position: fixed;
 
@@ -149,7 +181,9 @@ body {
 
     padding: 14px 16px;
 
-    border: 1px solid rgba(255, 0, 255, 0.35);
+    border:
+        1px solid
+        rgba(255, 0, 255, 0.35);
 
     border-radius: 12px;
 
@@ -159,7 +193,8 @@ body {
     backdrop-filter: blur(10px);
 
     box-shadow:
-        0 0 20px rgba(255, 0, 255, 0.12);
+        0 0 20px
+        rgba(255, 0, 255, 0.12);
 
     color: white;
 }
@@ -213,7 +248,11 @@ body {
     box-shadow: 0 0 5px #555;
 }
 
-/* GESTURE PANEL */
+
+/* =========================================================
+   GESTURE PANEL
+========================================================= */
+
 #gesture {
     position: fixed;
 
@@ -227,7 +266,8 @@ body {
     padding: 12px 18px;
 
     border:
-        1px solid rgba(255, 0, 255, 0.35);
+        1px solid
+        rgba(255, 0, 255, 0.35);
 
     border-radius: 12px;
 
@@ -257,7 +297,11 @@ body {
     margin-bottom: 7px;
 }
 
-/* START BUTTON */
+
+/* =========================================================
+   START BUTTON
+========================================================= */
+
 #startButton {
     position: fixed;
 
@@ -271,7 +315,8 @@ body {
     padding: 12px 24px;
 
     border:
-        1px solid rgba(255, 0, 255, 0.6);
+        1px solid
+        rgba(255, 0, 255, 0.6);
 
     border-radius: 30px;
 
@@ -287,10 +332,15 @@ body {
     cursor: pointer;
 
     box-shadow:
-        0 0 12px rgba(255, 0, 255, 0.25);
+        0 0 12px
+        rgba(255, 0, 255, 0.25);
 }
 
-/* CURSOR */
+
+/* =========================================================
+   CURSOR
+========================================================= */
+
 #cursor {
     position: fixed;
 
@@ -336,7 +386,11 @@ body {
         0 0 8px #ffffff;
 }
 
-/* CORNER MARKERS */
+
+/* =========================================================
+   CURSOR MARKERS
+========================================================= */
+
 .cursorMark {
     position: fixed;
 
@@ -373,43 +427,85 @@ body {
 .hidden {
     display: none !important;
 }
+
 </style>
 </head>
 
+
 <body>
+
+
+<!-- =======================================================
+     CAMERA
+======================================================== -->
 
 <video id="video"
        autoplay
        playsinline>
 </video>
 
+
+<!-- =======================================================
+     GRID
+======================================================== -->
+
 <div id="grid"></div>
 
+
+<!-- =======================================================
+     DRAWING CANVAS
+======================================================== -->
+
 <canvas id="canvas"></canvas>
+
+
+<!-- =======================================================
+     CURSOR
+======================================================== -->
 
 <div id="cursor"
      class="hidden">
 </div>
 
+
+<!-- =======================================================
+     CORNER MARKERS
+======================================================== -->
+
 <div id="markTop"
-     class="cursorMark hidden"></div>
+     class="cursorMark hidden">
+</div>
 
 <div id="markBottom"
-     class="cursorMark hidden"></div>
+     class="cursorMark hidden">
+</div>
 
 <div id="markLeft"
-     class="cursorMark hidden"></div>
+     class="cursorMark hidden">
+</div>
 
 <div id="markRight"
-     class="cursorMark hidden"></div>
+     class="cursorMark hidden">
+</div>
+
+
+<!-- =======================================================
+     TITLE
+======================================================== -->
 
 <div id="title">
     ✨ AIR MATHS BOARD
 </div>
 
+
 <div id="status">
     Press START
 </div>
+
+
+<!-- =======================================================
+     HUD
+======================================================== -->
 
 <div id="hud">
 
@@ -420,10 +516,13 @@ body {
     <div class="hudLine">
 
         <span>
+
             <span id="handDot"></span>
+
             <span class="hudLabel">
                 HAND
             </span>
+
         </span>
 
         <span id="handState"
@@ -432,6 +531,7 @@ body {
         </span>
 
     </div>
+
 
     <div class="hudLine">
 
@@ -445,6 +545,7 @@ body {
         </span>
 
     </div>
+
 
     <div class="hudLine">
 
@@ -461,6 +562,11 @@ body {
 
 </div>
 
+
+<!-- =======================================================
+     GESTURE GUIDE
+======================================================== -->
+
 <div id="gesture">
 
     <div id="instructionHeader">
@@ -475,12 +581,24 @@ body {
 
 </div>
 
+
+<!-- =======================================================
+     START
+======================================================== -->
+
 <button id="startButton">
     START CAMERA
 </button>
 
+
+<!-- =======================================================
+     MEDIAPIPE
+======================================================== -->
+
 <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js"></script>
+
 <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
+
 
 <script>
 
@@ -520,7 +638,7 @@ const handDot =
 
 
 /* =========================================================
-   CANVAS
+   CANVAS SETUP
 ========================================================= */
 
 function resizeCanvas() {
@@ -541,7 +659,7 @@ window.addEventListener(
 
 
 /* =========================================================
-   V5 DRAWING ENGINE
+   DRAWING STATE
 ========================================================= */
 
 let isDrawing = false;
@@ -559,78 +677,50 @@ let previousTime = null;
 
 let currentSpeed = 0;
 
-
-/*
-    Recent curve points.
-
-    V5 uses the V4 Catmull-Rom style
-    curve engine, but renders the stroke
-    with a more natural pen model.
-*/
+let currentDirection = null;
 
 let strokeBuffer = [];
 
 
 /* =========================================================
-   V5 SETTINGS
+   ADVANCED SETTINGS
 ========================================================= */
 
-/*
-    Slow movement:
-    More stabilization.
-*/
 
-const SLOW_SMOOTHING = 0.22;
+/* Dynamic stabilization */
 
+const SLOW_SMOOTHING = 0.20;
 
-/*
-    Fast movement:
-    Less stabilization = lower latency.
-*/
-
-const FAST_SMOOTHING = 0.86;
-
-
-/*
-    Speed at which maximum responsiveness
-    is reached.
-*/
+const FAST_SMOOTHING = 0.88;
 
 const FAST_SPEED = 850;
 
 
-/*
-    Prevents huge tracking jumps.
-*/
+/* Jump protection */
 
-const MAX_REASONABLE_JUMP = 380;
+const MAX_REASONABLE_JUMP = 400;
 
 
-/*
-    Ignore microscopic movement.
-*/
+/* Noise filtering */
 
-const MIN_POINT_DISTANCE = 1.15;
+const MICRO_JITTER_DISTANCE = 0.65;
 
-
-/*
-    Dynamic pen width.
-*/
-
-const MIN_INK_WIDTH = 2.8;
-const MAX_INK_WIDTH = 5.2;
+const MIN_POINT_DISTANCE = 1.0;
 
 
-/*
-    Glow width relative to ink.
-*/
+/* Ink */
 
-const GLOW_MULTIPLIER = 2.5;
+const MIN_INK_WIDTH = 2.6;
+
+const MAX_INK_WIDTH = 5.4;
 
 
-/* =========================================================
-   GESTURE SETTINGS
-========================================================= */
+/* Catmull-Rom → Bezier */
+
+const CURVE_TENSION = 1 / 6;
+
+
+/* Clear */
 
 let clearFrames = 0;
 
@@ -666,29 +756,134 @@ function distanceBetween(
 
 
 /* =========================================================
-   DYNAMIC SMOOTHING
+   ANGLE DIFFERENCE
 ========================================================= */
 
-function getSmoothing(speed) {
+function angleDifference(
+    a,
+    b
+) {
 
-    if (speed <= 50) {
+    let difference =
+        a - b;
+
+
+    while (
+        difference > Math.PI
+    ) {
+
+        difference -=
+            Math.PI * 2;
+    }
+
+
+    while (
+        difference < -Math.PI
+    ) {
+
+        difference +=
+            Math.PI * 2;
+    }
+
+
+    return Math.abs(
+        difference
+    );
+}
+
+
+/* =========================================================
+   DIRECTION
+========================================================= */
+
+function getDirection(
+    p1,
+    p2
+) {
+
+    if (
+        !p1 ||
+        !p2
+    ) {
+
+        return null;
+    }
+
+
+    return Math.atan2(
+
+        p2.y - p1.y,
+
+        p2.x - p1.x
+
+    );
+}
+
+
+/* =========================================================
+   ADAPTIVE SMOOTHING
+========================================================= */
+
+function getSmoothing(
+    speed,
+    directionChange
+) {
+
+    if (
+        speed <= 50
+    ) {
+
         return SLOW_SMOOTHING;
     }
 
-    if (speed >= FAST_SPEED) {
+
+    if (
+        speed >= FAST_SPEED
+    ) {
+
         return FAST_SMOOTHING;
     }
 
-    const ratio =
-        (speed - 50) /
-        (FAST_SPEED - 50);
 
-    return (
+    const ratio =
+        (
+            speed - 50
+        ) /
+        (
+            FAST_SPEED - 50
+        );
+
+
+    let smoothing =
         SLOW_SMOOTHING +
+
         (
             FAST_SMOOTHING -
             SLOW_SMOOTHING
-        ) * ratio
+        ) *
+
+        ratio;
+
+
+    /*
+        Extra stabilization at sharp
+        direction changes.
+    */
+
+    if (
+        directionChange > 1.6
+    ) {
+
+        smoothing *= 0.78;
+    }
+
+
+    return Math.max(
+        0.15,
+        Math.min(
+            smoothing,
+            0.90
+        )
     );
 }
 
@@ -700,7 +895,8 @@ function getSmoothing(speed) {
 function getSmoothPoint(
     targetX,
     targetY,
-    speed
+    speed,
+    directionChange
 ) {
 
     if (
@@ -708,8 +904,12 @@ function getSmoothPoint(
         smoothY === null
     ) {
 
-        smoothX = targetX;
-        smoothY = targetY;
+        smoothX =
+            targetX;
+
+        smoothY =
+            targetY;
+
 
         return {
             x: smoothX,
@@ -717,16 +917,29 @@ function getSmoothPoint(
         };
     }
 
+
     const smoothing =
-        getSmoothing(speed);
+        getSmoothing(
+            speed,
+            directionChange
+        );
+
 
     smoothX +=
-        (targetX - smoothX) *
+        (
+            targetX -
+            smoothX
+        ) *
         smoothing;
 
+
     smoothY +=
-        (targetY - smoothY) *
+        (
+            targetY -
+            smoothY
+        ) *
         smoothing;
+
 
     return {
         x: smoothX,
@@ -739,13 +952,10 @@ function getSmoothPoint(
    DYNAMIC PEN WIDTH
 ========================================================= */
 
-function getPenWidth(speed) {
-
-    /*
-        Slow = slightly thicker and stable.
-
-        Fast = slightly thinner and cleaner.
-    */
+function getPenWidth(
+    speed,
+    directionChange
+) {
 
     const ratio =
         Math.min(
@@ -753,30 +963,41 @@ function getPenWidth(speed) {
             1
         );
 
-    return (
+
+    let width =
         MAX_INK_WIDTH -
+
         (
             MAX_INK_WIDTH -
             MIN_INK_WIDTH
-        ) * ratio
-    );
+        ) *
+
+        ratio;
+
+
+    /*
+        Slightly strengthen sharp corners.
+    */
+
+    if (
+        directionChange > 1.7
+    ) {
+
+        width *= 1.06;
+    }
+
+
+    return width;
 }
 
 
 /* =========================================================
-   NATURAL GLOW STRENGTH
+   NATURAL GLOW
 ========================================================= */
 
-function getGlowAlpha(speed) {
-
-    /*
-        Slow writing:
-        stronger visible glow.
-
-        Fast writing:
-        slightly reduced glow,
-        making it feel more like ink.
-    */
+function getGlowAlpha(
+    speed
+) {
 
     const ratio =
         Math.min(
@@ -784,16 +1005,16 @@ function getGlowAlpha(speed) {
             1
         );
 
+
     return (
-        0.22 -
-        ratio * 0.08
+        0.23 -
+        ratio * 0.09
     );
 }
 
 
 /* =========================================================
-   NATURAL CURVE
-   Catmull-Rom → Cubic Bezier
+   DRAW CATMULL-ROM / BEZIER CURVE
 ========================================================= */
 
 function drawCurve(
@@ -801,39 +1022,62 @@ function drawCurve(
     p1,
     p2,
     p3,
-    speed
+    speed,
+    directionChange
 ) {
 
     const cp1x =
         p1.x +
-        (p2.x - p0.x) / 6;
+        (
+            p2.x -
+            p0.x
+        ) *
+        CURVE_TENSION;
+
 
     const cp1y =
         p1.y +
-        (p2.y - p0.y) / 6;
+        (
+            p2.y -
+            p0.y
+        ) *
+        CURVE_TENSION;
+
 
     const cp2x =
         p2.x -
-        (p3.x - p1.x) / 6;
+        (
+            p3.x -
+            p1.x
+        ) *
+        CURVE_TENSION;
+
 
     const cp2y =
         p2.y -
-        (p3.y - p1.y) / 6;
+        (
+            p3.y -
+            p1.y
+        ) *
+        CURVE_TENSION;
 
 
-    const inkWidth =
-        getPenWidth(speed);
+    const width =
+        getPenWidth(
+            speed,
+            directionChange
+        );
+
 
     const glowAlpha =
-        getGlowAlpha(speed);
+        getGlowAlpha(
+            speed
+        );
 
 
-    /*
-        --------------------------------------------------
-        LAYER 1
-        Soft atmospheric glow
-        --------------------------------------------------
-    */
+    /* -----------------------------------------------------
+       GLOW
+    ----------------------------------------------------- */
 
     ctx.beginPath();
 
@@ -843,20 +1087,24 @@ function drawCurve(
     );
 
     ctx.bezierCurveTo(
+
         cp1x,
         cp1y,
+
         cp2x,
         cp2y,
+
         p2.x,
         p2.y
+
     );
+
 
     ctx.strokeStyle =
         `rgba(255,0,255,${glowAlpha})`;
 
     ctx.lineWidth =
-        inkWidth *
-        GLOW_MULTIPLIER;
+        width * 2.6;
 
     ctx.lineCap =
         "round";
@@ -865,20 +1113,17 @@ function drawCurve(
         "round";
 
     ctx.shadowColor =
-        "rgba(255,0,255,0.65)";
+        "rgba(255,0,255,0.60)";
 
     ctx.shadowBlur =
-        22;
+        20;
 
     ctx.stroke();
 
 
-    /*
-        --------------------------------------------------
-        LAYER 2
-        Main neon ink
-        --------------------------------------------------
-    */
+    /* -----------------------------------------------------
+       MAIN INK
+    ----------------------------------------------------- */
 
     ctx.beginPath();
 
@@ -888,19 +1133,24 @@ function drawCurve(
     );
 
     ctx.bezierCurveTo(
+
         cp1x,
         cp1y,
+
         cp2x,
         cp2y,
+
         p2.x,
         p2.y
+
     );
 
+
     ctx.strokeStyle =
-        "rgba(255,70,255,0.96)";
+        "rgba(255,65,255,0.96)";
 
     ctx.lineWidth =
-        inkWidth;
+        width;
 
     ctx.lineCap =
         "round";
@@ -912,17 +1162,14 @@ function drawCurve(
         "rgba(255,0,255,0.85)";
 
     ctx.shadowBlur =
-        10;
+        9;
 
     ctx.stroke();
 
 
-    /*
-        --------------------------------------------------
-        LAYER 3
-        Fine digital-ink core
-        --------------------------------------------------
-    */
+    /* -----------------------------------------------------
+       WHITE DIGITAL CORE
+    ----------------------------------------------------- */
 
     ctx.beginPath();
 
@@ -932,21 +1179,26 @@ function drawCurve(
     );
 
     ctx.bezierCurveTo(
+
         cp1x,
         cp1y,
+
         cp2x,
         cp2y,
+
         p2.x,
         p2.y
+
     );
 
+
     ctx.strokeStyle =
-        "rgba(255,255,255,0.90)";
+        "rgba(255,255,255,0.88)";
 
     ctx.lineWidth =
         Math.max(
-            1.2,
-            inkWidth * 0.32
+            1.15,
+            width * 0.30
         );
 
     ctx.lineCap =
@@ -959,47 +1211,42 @@ function drawCurve(
         "rgba(255,255,255,0.45)";
 
     ctx.shadowBlur =
-        4;
+        3;
 
     ctx.stroke();
 
-
-    /*
-        Reset shadow so UI/canvas rendering
-        doesn't inherit it.
-    */
 
     ctx.shadowBlur = 0;
 }
 
 
 /* =========================================================
-   SMALL STROKE / DOT
+   DOT
 ========================================================= */
 
 function drawDot(
-    x,
-    y
+    point
 ) {
 
     ctx.beginPath();
 
     ctx.arc(
-        x,
-        y,
-        MIN_INK_WIDTH / 2,
+        point.x,
+        point.y,
+        MAX_INK_WIDTH / 2,
         0,
         Math.PI * 2
     );
 
+
     ctx.fillStyle =
-        "#ffffff";
+        "rgba(255,255,255,0.92)";
 
     ctx.shadowColor =
         "#ff00ff";
 
     ctx.shadowBlur =
-        8;
+        9;
 
     ctx.fill();
 
@@ -1008,220 +1255,11 @@ function drawDot(
 
 
 /* =========================================================
-   FLUSH STROKE
-========================================================= */
-
-function flushStrokeBuffer() {
-
-    const count =
-        strokeBuffer.length;
-
-
-    if (count === 0) {
-        return;
-    }
-
-
-    /*
-        One point:
-        make a tiny natural pen mark.
-    */
-
-    if (count === 1) {
-
-        drawDot(
-            strokeBuffer[0].x,
-            strokeBuffer[0].y
-        );
-
-        return;
-    }
-
-
-    /*
-        Two points:
-        simple rounded line.
-    */
-
-    if (count === 2) {
-
-        const p0 =
-            strokeBuffer[0];
-
-        const p1 =
-            strokeBuffer[1];
-
-        ctx.beginPath();
-
-        ctx.moveTo(
-            p0.x,
-            p0.y
-        );
-
-        ctx.lineTo(
-            p1.x,
-            p1.y
-        );
-
-        ctx.strokeStyle =
-            "rgba(255,70,255,0.96)";
-
-        ctx.lineWidth =
-            MAX_INK_WIDTH;
-
-        ctx.lineCap =
-            "round";
-
-        ctx.lineJoin =
-            "round";
-
-        ctx.shadowColor =
-            "rgba(255,0,255,0.8)";
-
-        ctx.shadowBlur =
-            10;
-
-        ctx.stroke();
-
-        ctx.shadowBlur = 0;
-
-        return;
-    }
-
-
-    /*
-        Three points:
-        complete the short curve.
-    */
-
-    if (count === 3) {
-
-        const p0 =
-            strokeBuffer[0];
-
-        const p1 =
-            strokeBuffer[1];
-
-        const p2 =
-            strokeBuffer[2];
-
-
-        drawCurve(
-            p0,
-            p0,
-            p1,
-            p2,
-            currentSpeed
-        );
-
-        drawCurve(
-            p0,
-            p1,
-            p2,
-            p2,
-            currentSpeed
-        );
-
-        return;
-    }
-
-
-    /*
-        Normal V5 stroke.
-
-        Streaming drawing has already rendered
-        everything except the final segment.
-    */
-
-    const p0 =
-        strokeBuffer[count - 3];
-
-    const p1 =
-        strokeBuffer[count - 2];
-
-    const p2 =
-        strokeBuffer[count - 1];
-
-
-    drawCurve(
-        p0,
-        p1,
-        p2,
-        p2,
-        currentSpeed
-    );
-}
-
-
-/* =========================================================
-   RESET DRAWING STATE
-========================================================= */
-
-function resetDrawingState() {
-
-    isDrawing = false;
-
-    previousX = null;
-    previousY = null;
-
-    smoothX = null;
-    smoothY = null;
-
-    previousRawX = null;
-    previousRawY = null;
-
-    previousTime = null;
-
-    currentSpeed = 0;
-
-    strokeBuffer = [];
-}
-
-
-/* =========================================================
-   STOP DRAWING
-========================================================= */
-
-function stopDrawing() {
-
-    if (isDrawing) {
-
-        /*
-            Finish the final curve segment
-            before resetting.
-        */
-
-        flushStrokeBuffer();
-    }
-
-    resetDrawingState();
-}
-
-
-/* =========================================================
-   CLEAR CANVAS
-========================================================= */
-
-function clearCanvas() {
-
-    ctx.clearRect(
-        0,
-        0,
-        canvas.width,
-        canvas.height
-    );
-
-    resetDrawingState();
-}
-
-
-/* =========================================================
-   ADD POINT TO V5 BUFFER
+   ADD POINT
 ========================================================= */
 
 function addStrokePoint(
-    x,
-    y
+    point
 ) {
 
     const last =
@@ -1230,51 +1268,51 @@ function addStrokePoint(
         ];
 
 
-    /*
-        Ignore microscopic movements.
-    */
-
     if (last) {
 
         const d =
             distanceBetween(
+
                 last.x,
                 last.y,
-                x,
-                y
+
+                point.x,
+                point.y
             );
+
+
+        if (
+            d <
+            MICRO_JITTER_DISTANCE
+        ) {
+
+            return;
+        }
+
 
         if (
             d <
             MIN_POINT_DISTANCE
         ) {
+
             return;
         }
     }
 
 
-    strokeBuffer.push({
-        x: x,
-        y: y
-    });
+    strokeBuffer.push(
+        point
+    );
 
 
     /*
-        Once we have four points:
+        Four points:
 
         A B C D
 
-        Draw:
-        A → B
-        B → C
+        Draw A→B and B→C.
 
-        Then retain:
-        B C D
-
-        The next point produces:
-        B C D E
-
-        and draws C → D.
+        Keep B C D.
     */
 
     if (
@@ -1294,35 +1332,70 @@ function addStrokePoint(
             strokeBuffer[3];
 
 
+        const direction1 =
+            getDirection(
+                p0,
+                p1
+            );
+
+
+        const direction2 =
+            getDirection(
+                p1,
+                p2
+            );
+
+
+        let corner =
+            0;
+
+
+        if (
+            direction1 !== null &&
+            direction2 !== null
+        ) {
+
+            corner =
+                angleDifference(
+                    direction1,
+                    direction2
+                );
+        }
+
+
         /*
-            Start of stroke.
+            Beginning segment.
         */
 
         drawCurve(
+
             p0,
             p0,
             p1,
             p2,
-            currentSpeed
+
+            currentSpeed,
+            corner
+
         );
 
 
         /*
-            Main curve.
+            Main segment.
         */
 
         drawCurve(
+
             p0,
             p1,
             p2,
             p3,
-            currentSpeed
+
+            currentSpeed,
+            corner
+
         );
 
-
-        /*
-            Keep the last three points.
-        */
 
         strokeBuffer.shift();
     }
@@ -1330,7 +1403,247 @@ function addStrokePoint(
 
 
 /* =========================================================
-   MAIN V5 DRAW FUNCTION
+   FLUSH FINAL POINTS
+========================================================= */
+
+function flushStrokeBuffer() {
+
+    const count =
+        strokeBuffer.length;
+
+
+    if (
+        count === 0
+    ) {
+
+        return;
+    }
+
+
+    /*
+        Single point.
+    */
+
+    if (
+        count === 1
+    ) {
+
+        drawDot(
+            strokeBuffer[0]
+        );
+
+        return;
+    }
+
+
+    /*
+        Two points.
+    */
+
+    if (
+        count === 2
+    ) {
+
+        const p0 =
+            strokeBuffer[0];
+
+        const p1 =
+            strokeBuffer[1];
+
+
+        ctx.beginPath();
+
+        ctx.moveTo(
+            p0.x,
+            p0.y
+        );
+
+        ctx.lineTo(
+            p1.x,
+            p1.y
+        );
+
+
+        ctx.strokeStyle =
+            "rgba(255,65,255,0.96)";
+
+        ctx.lineWidth =
+            MAX_INK_WIDTH;
+
+        ctx.lineCap =
+            "round";
+
+        ctx.lineJoin =
+            "round";
+
+        ctx.shadowColor =
+            "rgba(255,0,255,0.80)";
+
+        ctx.shadowBlur =
+            9;
+
+        ctx.stroke();
+
+        ctx.shadowBlur = 0;
+
+        return;
+    }
+
+
+    /*
+        Three points.
+
+        Complete both remaining curve
+        sections.
+    */
+
+    if (
+        count === 3
+    ) {
+
+        const p0 =
+            strokeBuffer[0];
+
+        const p1 =
+            strokeBuffer[1];
+
+        const p2 =
+            strokeBuffer[2];
+
+
+        drawCurve(
+
+            p0,
+            p0,
+            p1,
+            p2,
+
+            currentSpeed,
+            0
+
+        );
+
+
+        drawCurve(
+
+            p0,
+            p1,
+            p2,
+            p2,
+
+            currentSpeed,
+            0
+
+        );
+
+
+        return;
+    }
+
+
+    /*
+        Normally only the final segment
+        remains.
+    */
+
+    const p0 =
+        strokeBuffer[
+            count - 3
+        ];
+
+    const p1 =
+        strokeBuffer[
+            count - 2
+        ];
+
+    const p2 =
+        strokeBuffer[
+            count - 1
+        ];
+
+
+    drawCurve(
+
+        p0,
+        p1,
+        p2,
+        p2,
+
+        currentSpeed,
+        0
+
+    );
+}
+
+
+/* =========================================================
+   RESET
+========================================================= */
+
+function resetDrawingState() {
+
+    isDrawing = false;
+
+    previousX = null;
+    previousY = null;
+
+    smoothX = null;
+    smoothY = null;
+
+    previousRawX = null;
+    previousRawY = null;
+
+    previousTime = null;
+
+    currentSpeed = 0;
+
+    currentDirection = null;
+
+    strokeBuffer = [];
+}
+
+
+/* =========================================================
+   STOP
+========================================================= */
+
+function stopDrawing() {
+
+    if (
+        isDrawing
+    ) {
+
+        flushStrokeBuffer();
+    }
+
+
+    resetDrawingState();
+}
+
+
+/* =========================================================
+   CLEAR CANVAS
+========================================================= */
+
+function clearCanvas() {
+
+    ctx.clearRect(
+
+        0,
+        0,
+
+        canvas.width,
+        canvas.height
+
+    );
+
+
+    resetDrawingState();
+}
+
+
+/* =========================================================
+   MAIN DRAW FUNCTION
 ========================================================= */
 
 function drawLine(
@@ -1343,12 +1656,11 @@ function drawLine(
 
 
     /*
-        First point of a stroke.
+        First point.
     */
 
     if (
-        previousRawX === null ||
-        previousRawY === null
+        previousRawX === null
     ) {
 
         previousRawX =
@@ -1360,11 +1672,13 @@ function drawLine(
         previousTime =
             now;
 
+
         smoothX =
             targetX;
 
         smoothY =
             targetY;
+
 
         previousX =
             targetX;
@@ -1372,12 +1686,20 @@ function drawLine(
         previousY =
             targetY;
 
+
+        currentDirection =
+            null;
+
+
         strokeBuffer = [
+
             {
                 x: targetX,
                 y: targetY
             }
+
         ];
+
 
         isDrawing = true;
 
@@ -1385,40 +1707,100 @@ function drawLine(
     }
 
 
+    /*
+        Raw distance.
+    */
+
     const rawDistance =
         distanceBetween(
+
             previousRawX,
             previousRawY,
+
             targetX,
             targetY
         );
 
 
+    /*
+        Time.
+    */
+
     const deltaTime =
         Math.max(
-            now - previousTime,
+
+            now -
+            previousTime,
+
             1
         );
 
 
     /*
-        Calculate hand velocity.
+        Instant speed.
     */
 
-    const speed =
+    const instantSpeed =
         (
             rawDistance /
             deltaTime
-        ) * 1000;
-
-
-    currentSpeed =
-        currentSpeed * 0.65 +
-        speed * 0.35;
+        ) *
+        1000;
 
 
     /*
-        Update raw tracking.
+        Smoothed speed.
+    */
+
+    currentSpeed =
+
+        currentSpeed *
+        0.65 +
+
+        instantSpeed *
+        0.35;
+
+
+    /*
+        Calculate direction BEFORE
+        replacing raw position.
+    */
+
+    const newDirection =
+        Math.atan2(
+
+            targetY -
+            previousRawY,
+
+            targetX -
+            previousRawX
+
+        );
+
+
+    let directionChange = 0;
+
+
+    if (
+        currentDirection !== null
+    ) {
+
+        directionChange =
+            angleDifference(
+
+                currentDirection,
+                newDirection
+
+            );
+    }
+
+
+    currentDirection =
+        newDirection;
+
+
+    /*
+        Update raw position.
     */
 
     previousRawX =
@@ -1433,10 +1815,6 @@ function drawLine(
 
     /*
         Jump protection.
-
-        If tracking suddenly teleports,
-        start a fresh anchor instead of
-        drawing a giant unwanted line.
     */
 
     if (
@@ -1450,37 +1828,45 @@ function drawLine(
         smoothY =
             targetY;
 
+
         previousX =
             targetX;
 
         previousY =
             targetY;
 
+
         strokeBuffer = [
+
             {
                 x: targetX,
                 y: targetY
             }
+
         ];
+
 
         return;
     }
 
 
     /*
-        Dynamic V5 stabilization.
+        Dynamic stabilization.
     */
 
     const smoothPoint =
         getSmoothPoint(
+
             targetX,
             targetY,
-            currentSpeed
+
+            currentSpeed,
+            directionChange
         );
 
 
     /*
-        Prevent tiny jitter.
+        Micro-jitter suppression.
     */
 
     if (
@@ -1490,16 +1876,21 @@ function drawLine(
 
         const movement =
             distanceBetween(
+
                 previousX,
                 previousY,
+
                 smoothPoint.x,
                 smoothPoint.y
+
             );
+
 
         if (
             movement <
-            MIN_POINT_DISTANCE
+            MICRO_JITTER_DISTANCE
         ) {
+
             return;
         }
     }
@@ -1512,10 +1903,17 @@ function drawLine(
         smoothPoint.y;
 
 
-    addStrokePoint(
-        smoothPoint.x,
-        smoothPoint.y
-    );
+    /*
+        Add filtered point.
+    */
+
+    addStrokePoint({
+
+        x: smoothPoint.x,
+
+        y: smoothPoint.y
+
+    });
 
 
     isDrawing = true;
@@ -1536,6 +1934,7 @@ function updateCursor(
 
     cursor.style.top =
         y + "px";
+
 
     cursor.classList.remove(
         "hidden"
@@ -1569,20 +1968,24 @@ function isFingerUp(
 
 
 /* =========================================================
-   MEDIAPIPE
+   MEDIAPIPE HANDS
 ========================================================= */
 
 const hands =
     new Hands({
+
         locateFile:
         function(file) {
 
             return (
+
                 "https://cdn.jsdelivr.net/npm/" +
                 "@mediapipe/hands/" +
                 file
+
             );
         }
+
     });
 
 
@@ -1600,265 +2003,313 @@ hands.setOptions({
 
 
 /* =========================================================
-   RESULTS
+   HAND RESULTS
 ========================================================= */
 
 hands.onResults(
-    function(results) {
-
-        if (
-            clearCooldown > 0
-        ) {
-
-            clearCooldown--;
-        }
+function(results) {
 
 
-        /*
-            NO HAND
-        */
+    /*
+        Cooldown.
+    */
 
-        if (
-            !results.multiHandLandmarks ||
-            results.multiHandLandmarks.length === 0
-        ) {
+    if (
+        clearCooldown > 0
+    ) {
 
-            handState.textContent =
-                "SEARCHING";
-
-            modeState.textContent =
-                "STANDBY";
-
-            handDot.style.background =
-                "#555";
-
-            handDot.style.boxShadow =
-                "0 0 5px #555";
-
-            stopDrawing();
-
-            hideCursor();
-
-            clearFrames = 0;
-
-            return;
-        }
+        clearCooldown--;
+    }
 
 
-        const landmarks =
-            results.multiHandLandmarks[0];
+    /*
+        NO HAND
+    */
 
+    if (
 
-        /*
-            INDEX
-        */
+        !results.multiHandLandmarks ||
 
-        const indexUp =
-            isFingerUp(
-                landmarks,
-                8,
-                6
-            );
+        results.multiHandLandmarks.length === 0
 
-
-        /*
-            MIDDLE
-        */
-
-        const middleUp =
-            isFingerUp(
-                landmarks,
-                12,
-                10
-            );
-
-
-        /*
-            RING
-        */
-
-        const ringUp =
-            isFingerUp(
-                landmarks,
-                16,
-                14
-            );
-
-
-        /*
-            PINKY
-        */
-
-        const pinkyUp =
-            isFingerUp(
-                landmarks,
-                20,
-                18
-            );
-
-
-        /*
-            OPEN HAND
-        */
-
-        const fingersUp =
-            Number(indexUp) +
-            Number(middleUp) +
-            Number(ringUp) +
-            Number(pinkyUp);
-
-
-        const openHand =
-            fingersUp >= 3;
-
-
-        /*
-            PINCH
-        */
-
-        const thumb =
-            landmarks[4];
-
-        const indexTip =
-            landmarks[8];
-
-
-        const pinchDistance =
-            Math.sqrt(
-                Math.pow(
-                    thumb.x -
-                    indexTip.x,
-                    2
-                ) +
-                Math.pow(
-                    thumb.y -
-                    indexTip.y,
-                    2
-                )
-            );
-
-
-        const isPinching =
-            pinchDistance < 0.055;
-
-
-        /*
-            CURSOR
-        */
-
-        const x =
-            (1 - indexTip.x) *
-            window.innerWidth;
-
-        const y =
-            indexTip.y *
-            window.innerHeight;
-
-
-        updateCursor(
-            x,
-            y
-        );
-
+    ) {
 
         handState.textContent =
-            "DETECTED";
+            "SEARCHING";
+
+
+        modeState.textContent =
+            "STANDBY";
+
 
         handDot.style.background =
-            "#ff00ff";
+            "#555";
+
 
         handDot.style.boxShadow =
-            "0 0 8px #ff00ff";
+            "0 0 5px #555";
 
 
-        /* =================================================
-           CLEAR HAS HIGHEST PRIORITY
-        ================================================= */
-
-        if (openHand) {
-
-            stopDrawing();
-
-            modeState.textContent =
-                "CLEARING";
-
-            clearFrames++;
+        stopDrawing();
 
 
-            if (
-                clearFrames >=
-                CLEAR_REQUIRED_FRAMES
-            ) {
-
-                if (
-                    clearCooldown <= 0
-                ) {
-
-                    clearCanvas();
-
-                    clearCooldown =
-                        CLEAR_COOLDOWN_FRAMES;
-                }
-
-                clearFrames = 0;
-            }
-
-            return;
-        }
+        hideCursor();
 
 
         clearFrames = 0;
 
 
-        /* =================================================
-           PINCH = STOP
-        ================================================= */
-
-        if (isPinching) {
-
-            stopDrawing();
-
-            modeState.textContent =
-                "STOP";
-
-            return;
-        }
+        return;
+    }
 
 
-        /* =================================================
-           INDEX ONLY = DRAW
-        ================================================= */
-
-        if (
-            indexUp &&
-            !middleUp &&
-            !ringUp &&
-            !pinkyUp &&
-            !isPinching
-        ) {
-
-            modeState.textContent =
-                "DRAW";
-
-            drawLine(
-                x,
-                y
-            );
-
-            return;
-        }
+    const landmarks =
+        results.multiHandLandmarks[0];
 
 
-        /*
-            Unknown hand pose.
-        */
+    /*
+        INDEX
+    */
+
+    const indexUp =
+        isFingerUp(
+            landmarks,
+            8,
+            6
+        );
+
+
+    /*
+        MIDDLE
+    */
+
+    const middleUp =
+        isFingerUp(
+            landmarks,
+            12,
+            10
+        );
+
+
+    /*
+        RING
+    */
+
+    const ringUp =
+        isFingerUp(
+            landmarks,
+            16,
+            14
+        );
+
+
+    /*
+        PINKY
+    */
+
+    const pinkyUp =
+        isFingerUp(
+            landmarks,
+            20,
+            18
+        );
+
+
+    /*
+        OPEN HAND
+    */
+
+    const fingersUp =
+
+        Number(indexUp) +
+        Number(middleUp) +
+        Number(ringUp) +
+        Number(pinkyUp);
+
+
+    const openHand =
+        fingersUp >= 3;
+
+
+    /*
+        PINCH
+    */
+
+    const thumb =
+        landmarks[4];
+
+    const indexTip =
+        landmarks[8];
+
+
+    const pinchDistance =
+        Math.sqrt(
+
+            Math.pow(
+                thumb.x -
+                indexTip.x,
+                2
+            ) +
+
+            Math.pow(
+                thumb.y -
+                indexTip.y,
+                2
+            )
+
+        );
+
+
+    const isPinching =
+        pinchDistance < 0.055;
+
+
+    /*
+        CURSOR POSITION
+    */
+
+    const x =
+        (
+            1 -
+            indexTip.x
+        ) *
+        window.innerWidth;
+
+
+    const y =
+        indexTip.y *
+        window.innerHeight;
+
+
+    updateCursor(
+        x,
+        y
+    );
+
+
+    handState.textContent =
+        "DETECTED";
+
+
+    handDot.style.background =
+        "#ff00ff";
+
+
+    handDot.style.boxShadow =
+        "0 0 8px #ff00ff";
+
+
+    /* =====================================================
+       CLEAR
+       HIGHEST PRIORITY
+    ===================================================== */
+
+    if (
+        openHand
+    ) {
 
         stopDrawing();
 
+
         modeState.textContent =
-            "STANDBY";
+            "CLEARING";
+
+
+        clearFrames++;
+
+
+        if (
+            clearFrames >=
+            CLEAR_REQUIRED_FRAMES
+        ) {
+
+            if (
+                clearCooldown <= 0
+            ) {
+
+                clearCanvas();
+
+
+                clearCooldown =
+                    CLEAR_COOLDOWN_FRAMES;
+            }
+
+
+            clearFrames = 0;
+        }
+
+
+        return;
     }
-);
+
+
+    clearFrames = 0;
+
+
+    /* =====================================================
+       PINCH
+       STOP DRAWING
+    ===================================================== */
+
+    if (
+        isPinching
+    ) {
+
+        stopDrawing();
+
+
+        modeState.textContent =
+            "STOP";
+
+
+        return;
+    }
+
+
+    /* =====================================================
+       INDEX ONLY
+       DRAW
+    ===================================================== */
+
+    if (
+
+        indexUp &&
+
+        !middleUp &&
+
+        !ringUp &&
+
+        !pinkyUp &&
+
+        !isPinching
+
+    ) {
+
+        modeState.textContent =
+            "DRAW";
+
+
+        drawLine(
+            x,
+            y
+        );
+
+
+        return;
+    }
+
+
+    /*
+        Unknown pose.
+    */
+
+    stopDrawing();
+
+
+    modeState.textContent =
+        "STANDBY";
+
+});
 
 
 /* =========================================================
@@ -1866,84 +2317,108 @@ hands.onResults(
 ========================================================= */
 
 startButton.addEventListener(
-    "click",
-    async function() {
+"click",
+async function() {
 
-        try {
+    try {
 
-            statusText.textContent =
-                "Starting camera...";
+        statusText.textContent =
+            "Starting camera...";
 
-            systemState.textContent =
-                "STARTING";
 
-            const stream =
-                await navigator.mediaDevices.getUserMedia({
-                    video: {
-                        facingMode: "user"
+        systemState.textContent =
+            "STARTING";
+
+
+        const stream =
+            await navigator
+            .mediaDevices
+            .getUserMedia({
+
+                video: {
+
+                    facingMode:
+                        "user"
+
+                },
+
+                audio: false
+
+            });
+
+
+        video.srcObject =
+            stream;
+
+
+        const camera =
+            new Camera(
+
+                video,
+
+                {
+
+                    onFrame:
+                    async function() {
+
+                        await hands.send({
+
+                            image:
+                                video
+
+                        });
+
                     },
-                    audio: false
-                });
 
 
-            video.srcObject =
-                stream;
+                    width: 1280,
 
+                    height: 720
 
-            const camera =
-                new Camera(
-                    video,
-                    {
+                }
 
-                        onFrame:
-                        async function() {
-
-                            await hands.send({
-                                image: video
-                            });
-
-                        },
-
-                        width: 1280,
-
-                        height: 720
-
-                    }
-                );
-
-
-            camera.start();
-
-
-            statusText.textContent =
-                "SYSTEM READY";
-
-            systemState.textContent =
-                "ONLINE";
-
-            startButton.style.display =
-                "none";
-
-        }
-        catch (error) {
-
-            console.error(
-                error
             );
 
-            statusText.textContent =
-                "CAMERA ERROR";
 
-            systemState.textContent =
-                "ERROR";
+        camera.start();
 
-            alert(
-                "Failed to start camera.\n\n" +
-                error.message
-            );
-        }
+
+        statusText.textContent =
+            "SYSTEM READY";
+
+
+        systemState.textContent =
+            "ONLINE";
+
+
+        startButton.style.display =
+            "none";
+
     }
-);
+    catch (error) {
+
+        console.error(
+            error
+        );
+
+
+        statusText.textContent =
+            "CAMERA ERROR";
+
+
+        systemState.textContent =
+            "ERROR";
+
+
+        alert(
+
+            "Failed to start camera.\n\n" +
+            error.message
+
+        );
+    }
+
+});
 
 </script>
 
