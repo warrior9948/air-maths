@@ -10,12 +10,12 @@
                maximum-scale=1.0,
                user-scalable=no">
 
-<title>Air Maths Board — V5 Advanced</title>
+<title>Air Maths Board</title>
 
 <style>
 
 /* =========================================================
-   BASE
+   PROFESSIONAL UI FOUNDATION
 ========================================================= */
 
 * {
@@ -29,8 +29,18 @@ body {
     width: 100%;
     height: 100%;
     overflow: hidden;
-    background: #05000a;
-    font-family: Arial, sans-serif;
+
+    background: #101214;
+
+    font-family:
+        Inter,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Arial,
+        sans-serif;
+
+    color: #f5f7f9;
 }
 
 
@@ -49,18 +59,17 @@ body {
 
     transform: scaleX(-1);
 
-    opacity: 0.30;
+    opacity: 0.16;
 
     z-index: 0;
 }
 
 
 /* =========================================================
-   STAGE 2 — TASK 1
-   FUTURISTIC BACKGROUND CORE
+   PROFESSIONAL BOARD BACKGROUND
 ========================================================= */
 
-#futuristicBackground {
+#professionalBackground {
     position: fixed;
     inset: 0;
 
@@ -68,133 +77,24 @@ body {
 
     pointer-events: none;
 
-    overflow: hidden;
-
     background:
-        radial-gradient(
-            circle at 50% 50%,
-            rgba(100, 0, 150, 0.24),
-            transparent 46%
-        ),
-        radial-gradient(
-            circle at 15% 20%,
-            rgba(255, 0, 255, 0.10),
-            transparent 34%
-        ),
-        radial-gradient(
-            circle at 85% 80%,
-            rgba(0, 150, 255, 0.08),
-            transparent 34%
-        ),
-        radial-gradient(
-            circle at 80% 15%,
-            rgba(120, 0, 255, 0.08),
-            transparent 30%
-        ),
-        #05000a;
 
-    animation:
-        futuristicBackgroundPulse
-        10s ease-in-out infinite alternate;
-}
-
-
-/* =========================================================
-   LARGE MOVING ENERGY FIELD
-========================================================= */
-
-#futuristicBackground::before {
-    content: "";
-
-    position: absolute;
-
-    inset: -25%;
-
-    background:
         radial-gradient(
-            ellipse at 20% 35%,
-            rgba(255, 0, 255, 0.18),
-            transparent 22%
+            circle at 50% 45%,
+            rgba(255,255,255,0.025),
+            transparent 42%
         ),
-        radial-gradient(
-            ellipse at 78% 65%,
-            rgba(80, 0, 255, 0.16),
-            transparent 24%
-        ),
-        radial-gradient(
-            ellipse at 50% 5%,
-            rgba(0, 220, 255, 0.08),
-            transparent 18%
-        ),
-        radial-gradient(
-            ellipse at 50% 100%,
-            rgba(255, 0, 180, 0.07),
-            transparent 22%
+
+        linear-gradient(
+            180deg,
+            #151719 0%,
+            #101214 100%
         );
-
-    filter: blur(45px);
-
-    opacity: 0.9;
-
-    transform-origin: center;
-
-    animation:
-        futuristicEnergyFloat
-        15s ease-in-out infinite alternate;
 }
 
 
 /* =========================================================
-   ATMOSPHERIC PARTICLE TEXTURE
-========================================================= */
-
-#futuristicBackground::after {
-    content: "";
-
-    position: absolute;
-
-    inset: 0;
-
-    opacity: 0.30;
-
-    background-image:
-
-        radial-gradient(
-            circle,
-            rgba(255, 255, 255, 0.60) 1px,
-            transparent 1.5px
-        ),
-
-        radial-gradient(
-            circle,
-            rgba(255, 0, 255, 0.42) 1px,
-            transparent 1.5px
-        ),
-
-        radial-gradient(
-            circle,
-            rgba(0, 200, 255, 0.28) 1px,
-            transparent 1.5px
-        );
-
-    background-size:
-        115px 115px,
-        175px 175px,
-        230px 230px;
-
-    background-position:
-        0 0,
-        40px 70px,
-        90px 30px;
-
-    animation:
-        atmosphericParticleDrift
-        30s linear infinite;
-}
-
-
-/* =========================================================
-   GRID
+   SUBTLE BOARD GRID
 ========================================================= */
 
 #grid {
@@ -205,163 +105,45 @@ body {
 
     pointer-events: none;
 
-    opacity: 0.45;
+    opacity: 0.16;
 
     background-image:
+
         linear-gradient(
-            rgba(180, 80, 255, 0.12) 1px,
+            rgba(255,255,255,0.045) 1px,
             transparent 1px
         ),
+
         linear-gradient(
             90deg,
-            rgba(180, 80, 255, 0.12) 1px,
+            rgba(255,255,255,0.045) 1px,
             transparent 1px
         );
 
-    background-size: 90px 90px;
+    background-size: 80px 80px;
 
     -webkit-mask-image:
         radial-gradient(
             ellipse at center,
-            black 30%,
-            transparent 95%
+            black 35%,
+            transparent 92%
         );
 
     mask-image:
         radial-gradient(
             ellipse at center,
-            black 30%,
-            transparent 95%
+            black 35%,
+            transparent 92%
         );
 }
 
 
 /* =========================================================
-   STAGE 2 — TASK 1
-   AMBIENT GLOW
-========================================================= */
-
-#ambientGlow {
-    position: fixed;
-
-    inset: -20%;
-
-    z-index: 1;
-
-    pointer-events: none;
-
-    background:
-        radial-gradient(
-            circle at 50% 50%,
-            rgba(255, 0, 255, 0.12),
-            transparent 32%
-        ),
-        radial-gradient(
-            circle at 25% 70%,
-            rgba(80, 0, 255, 0.07),
-            transparent 28%
-        ),
-        radial-gradient(
-            circle at 80% 25%,
-            rgba(0, 200, 255, 0.05),
-            transparent 25%
-        );
-
-    filter: blur(4px);
-
-    animation:
-        ambientPulse
-        7s ease-in-out infinite alternate;
-}
-
-
-/* =========================================================
-   PARTICLE FIELD
-========================================================= */
-
-#particles {
-    position: fixed;
-
-    inset: 0;
-
-    z-index: 1;
-
-    pointer-events: none;
-
-    overflow: hidden;
-}
-
-
-.stage2Particle {
-    position: absolute;
-
-    width: 2px;
-    height: 2px;
-
-    border-radius: 50%;
-
-    background:
-        rgba(255, 255, 255, 0.65);
-
-    box-shadow:
-        0 0 5px
-        rgba(255, 0, 255, 0.8);
-
-    pointer-events: none;
-
-    animation:
-        stage2ParticleFloat
-        linear infinite;
-}
-
-
-/* =========================================================
-   SCAN LINE
-========================================================= */
-
-#scanLine {
-    position: fixed;
-
-    left: 0;
-
-    width: 100%;
-
-    height: 1px;
-
-    top: -5%;
-
-    z-index: 1;
-
-    pointer-events: none;
-
-    background:
-        linear-gradient(
-            90deg,
-            transparent,
-            rgba(255, 0, 255, 0.75),
-            rgba(150, 0, 255, 0.65),
-            transparent
-        );
-
-    box-shadow:
-        0 0 12px
-        rgba(255, 0, 255, 0.5);
-
-    opacity: 0.2;
-
-    animation:
-        stage2Scan
-        9s linear infinite;
-}
-
-
-/* =========================================================
-   BACKGROUND VIGNETTE
+   BOARD VIGNETTE
 ========================================================= */
 
 #vignette {
     position: fixed;
-
     inset: 0;
 
     z-index: 1;
@@ -371,461 +153,337 @@ body {
     background:
         radial-gradient(
             ellipse at center,
-            transparent 42%,
-            rgba(0, 0, 0, 0.35) 100%
+            transparent 55%,
+            rgba(0,0,0,0.24) 100%
         );
 }
 
 
 /* =========================================================
-   FUTURISTIC BACKGROUND ANIMATIONS
+   TOP BAR
 ========================================================= */
 
-@keyframes futuristicBackgroundPulse {
-
-    0% {
-
-        transform:
-            scale(1);
-
-        filter:
-            brightness(0.88);
-    }
-
-    50% {
-
-        transform:
-            scale(1.012);
-
-        filter:
-            brightness(0.98);
-    }
-
-    100% {
-
-        transform:
-            scale(1.025);
-
-        filter:
-            brightness(1.06);
-    }
-}
-
-
-@keyframes futuristicEnergyFloat {
-
-    0% {
-
-        transform:
-            translate3d(-2%, -1%, 0)
-            scale(1)
-            rotate(0deg);
-    }
-
-    25% {
-
-        transform:
-            translate3d(2%, 1%, 0)
-            scale(1.035)
-            rotate(1deg);
-    }
-
-    50% {
-
-        transform:
-            translate3d(3%, -2%, 0)
-            scale(1.06)
-            rotate(-1deg);
-    }
-
-    75% {
-
-        transform:
-            translate3d(-1%, 3%, 0)
-            scale(1.04)
-            rotate(1deg);
-    }
-
-    100% {
-
-        transform:
-            translate3d(-3%, 1%, 0)
-            scale(1.08)
-            rotate(0deg);
-    }
-}
-
-
-@keyframes atmosphericParticleDrift {
-
-    0% {
-
-        background-position:
-            0 0,
-            40px 70px,
-            90px 30px;
-    }
-
-    50% {
-
-        background-position:
-            55px 60px,
-            -30px 110px,
-            140px -20px;
-    }
-
-    100% {
-
-        background-position:
-            115px 115px,
-            -135px 175px,
-            230px -60px;
-    }
-}
-
-
-@keyframes ambientPulse {
-
-    from {
-
-        transform:
-            scale(0.96);
-
-        opacity: 0.7;
-    }
-
-    to {
-
-        transform:
-            scale(1.04);
-
-        opacity: 1;
-    }
-}
-
-
-@keyframes stage2ParticleFloat {
-
-    0% {
-
-        transform:
-            translate3d(
-                0,
-                0,
-                0
-            );
-
-        opacity: 0;
-    }
-
-    15% {
-
-        opacity: 0.5;
-    }
-
-    50% {
-
-        opacity: 0.8;
-    }
-
-    85% {
-
-        opacity: 0.35;
-    }
-
-    100% {
-
-        transform:
-            translate3d(
-                var(--particle-x),
-                var(--particle-y),
-                0
-            );
-
-        opacity: 0;
-    }
-}
-
-
-@keyframes stage2Scan {
-
-    0% {
-
-        top: -5%;
-
-        opacity: 0;
-    }
-
-    10% {
-
-        opacity: 0.2;
-    }
-
-    90% {
-
-        opacity: 0.2;
-    }
-
-    100% {
-
-        top: 105%;
-
-        opacity: 0;
-    }
-}
-
-
-/* =========================================================
-   STAGE 2 — TASK 1
-   MOBILE OPTIMIZATION
-========================================================= */
-
-@media (max-width: 600px) {
-
-    #futuristicBackground::before {
-
-        filter:
-            blur(32px);
-    }
-
-    #futuristicBackground::after {
-
-        opacity: 0.22;
-    }
-
-    #ambientGlow {
-
-        opacity: 0.75;
-    }
-
-    #scanLine {
-
-        opacity: 0.12;
-    }
-
-    .stage2Particle {
-
-        width: 1.5px;
-        height: 1.5px;
-    }
-}
-
-
-/* =========================================================
-   REDUCED MOTION
-========================================================= */
-
-@media (prefers-reduced-motion: reduce) {
-
-    #futuristicBackground,
-    #futuristicBackground::before,
-    #futuristicBackground::after,
-    #ambientGlow,
-    #scanLine,
-    .stage2Particle {
-
-        animation: none;
-    }
-}
-
-
-/* =========================================================
-   DRAWING CANVAS
-========================================================= */
-
-#canvas {
+#topBar {
     position: fixed;
-    inset: 0;
+
+    top: 0;
+    left: 0;
 
     width: 100%;
-    height: 100%;
 
-    z-index: 2;
-
-    pointer-events: none;
-}
-
-
-/* =========================================================
-   TITLE
-========================================================= */
-
-#title {
-    position: fixed;
-
-    top: 20px;
-    left: 50%;
-
-    transform: translateX(-50%);
+    height: 68px;
 
     z-index: 10;
 
-    color: white;
+    display: flex;
 
-    font-size: 22px;
-    font-weight: bold;
+    align-items: center;
 
-    letter-spacing: 3px;
+    justify-content: space-between;
 
-    text-shadow:
-        0 0 8px #ff00ff,
-        0 0 18px #ff00ff,
-        0 0 30px rgba(255, 0, 255, 0.7);
+    padding:
+        0 22px;
+
+    background:
+        rgba(15,17,19,0.86);
+
+    border-bottom:
+        1px solid
+        rgba(255,255,255,0.07);
+
+    backdrop-filter:
+        blur(18px);
+
+    -webkit-backdrop-filter:
+        blur(18px);
 }
 
 
 /* =========================================================
-   STATUS
+   BRAND
+========================================================= */
+
+#brand {
+    display: flex;
+
+    align-items: center;
+
+    gap: 11px;
+}
+
+#brandMark {
+    width: 30px;
+    height: 30px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 8px;
+
+    background:
+        rgba(255,255,255,0.06);
+
+    border:
+        1px solid
+        rgba(255,255,255,0.10);
+
+    color: #ffffff;
+
+    font-size: 14px;
+
+    font-weight: 600;
+}
+
+#brandName {
+    font-size: 14px;
+
+    font-weight: 600;
+
+    letter-spacing: 0.2px;
+
+    color: #f4f5f6;
+}
+
+#brandSub {
+    margin-left: 7px;
+
+    color: #777d84;
+
+    font-size: 11px;
+
+    font-weight: 400;
+}
+
+
+/* =========================================================
+   SYSTEM STATUS
+========================================================= */
+
+#topStatus {
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    color: #9ba1a8;
+
+    font-size: 11px;
+
+    letter-spacing: 0.2px;
+}
+
+#systemIndicator {
+    width: 7px;
+    height: 7px;
+
+    border-radius: 50%;
+
+    background: #656a70;
+
+    box-shadow:
+        0 0 0 3px
+        rgba(255,255,255,0.025);
+}
+
+
+/* =========================================================
+   STATUS TEXT
 ========================================================= */
 
 #status {
     position: fixed;
 
-    top: 55px;
+    top: 84px;
     left: 50%;
 
-    transform: translateX(-50%);
+    transform:
+        translateX(-50%);
 
     z-index: 10;
 
-    color: #e8b8ff;
+    padding:
+        7px 12px;
 
-    font-size: 12px;
+    border-radius: 6px;
 
-    letter-spacing: 2px;
+    color: #969ca3;
+
+    background:
+        rgba(20,22,24,0.72);
+
+    border:
+        1px solid
+        rgba(255,255,255,0.06);
+
+    font-size: 10px;
+
+    letter-spacing: 0.6px;
 }
 
 
 /* =========================================================
-   SYSTEM HUD
+   PROFESSIONAL HUD
 ========================================================= */
 
 #hud {
     position: fixed;
 
-    top: 20px;
+    top: 86px;
     left: 20px;
 
     z-index: 10;
 
-    min-width: 190px;
+    width: 190px;
 
-    padding: 14px 16px;
+    padding: 14px;
+
+    border-radius: 10px;
+
+    background:
+        rgba(19,21,23,0.86);
 
     border:
         1px solid
-        rgba(255, 0, 255, 0.35);
-
-    border-radius: 12px;
-
-    background:
-        rgba(15, 0, 25, 0.65);
-
-    backdrop-filter: blur(10px);
+        rgba(255,255,255,0.075);
 
     box-shadow:
-        0 0 20px
-        rgba(255, 0, 255, 0.12);
+        0 8px 30px
+        rgba(0,0,0,0.18);
 
-    color: white;
+    backdrop-filter:
+        blur(18px);
+
+    -webkit-backdrop-filter:
+        blur(18px);
 }
 
 #hudHeader {
-    color: #ff7dff;
+    margin-bottom: 12px;
 
-    font-size: 11px;
+    color: #777e86;
 
-    letter-spacing: 2px;
+    font-size: 9px;
 
-    margin-bottom: 10px;
+    font-weight: 600;
+
+    letter-spacing: 1.2px;
+
+    text-transform: uppercase;
 }
 
 .hudLine {
     display: flex;
 
+    align-items: center;
+
     justify-content: space-between;
 
-    gap: 20px;
+    gap: 15px;
 
-    margin-top: 7px;
+    margin-top: 9px;
 
     font-size: 10px;
 }
 
 .hudLabel {
-    color: #b78fc9;
+    color: #777e86;
 
-    letter-spacing: 1px;
+    letter-spacing: 0.5px;
 }
 
 .hudValue {
-    color: #ffffff;
+    color: #dce0e4;
 
-    letter-spacing: 1px;
+    letter-spacing: 0.2px;
 }
 
 #handDot {
     display: inline-block;
 
-    width: 7px;
-    height: 7px;
+    width: 6px;
+    height: 6px;
 
     margin-right: 6px;
 
     border-radius: 50%;
 
-    background: #555;
+    background: #5f646a;
 
-    box-shadow: 0 0 5px #555;
+    box-shadow: none;
 }
 
 
 /* =========================================================
-   GESTURE PANEL
+   GESTURE BAR
 ========================================================= */
 
 #gesture {
     position: fixed;
 
-    bottom: 25px;
+    bottom: 20px;
     left: 50%;
 
-    transform: translateX(-50%);
+    transform:
+        translateX(-50%);
 
     z-index: 10;
 
-    padding: 12px 18px;
+    display: flex;
+
+    align-items: center;
+
+    gap: 18px;
+
+    padding:
+        10px 16px;
+
+    border-radius: 8px;
+
+    background:
+        rgba(19,21,23,0.88);
 
     border:
         1px solid
-        rgba(255, 0, 255, 0.35);
+        rgba(255,255,255,0.075);
 
-    border-radius: 12px;
+    box-shadow:
+        0 8px 30px
+        rgba(0,0,0,0.20);
 
-    background:
-        rgba(15, 0, 25, 0.65);
+    backdrop-filter:
+        blur(18px);
 
-    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter:
+        blur(18px);
 
-    color: #ddd;
+    color: #858b92;
 
-    font-size: 12px;
+    font-size: 10px;
 
-    letter-spacing: 1px;
-
-    text-align: center;
+    letter-spacing: 0.2px;
 
     white-space: nowrap;
 }
 
 #instructionHeader {
-    color: #ff7dff;
+    color: #b7bdc4;
 
-    font-size: 10px;
+    font-size: 9px;
 
-    letter-spacing: 2px;
+    font-weight: 600;
 
-    margin-bottom: 7px;
+    letter-spacing: 0.9px;
+
+    text-transform: uppercase;
+}
+
+#gesture b {
+    color: #d9dde1;
+
+    font-weight: 500;
 }
 
 
@@ -836,35 +494,60 @@ body {
 #startButton {
     position: fixed;
 
-    bottom: 85px;
+    bottom: 72px;
     left: 50%;
 
-    transform: translateX(-50%);
+    transform:
+        translateX(-50%);
 
     z-index: 10;
 
-    padding: 12px 24px;
+    padding:
+        10px 20px;
 
     border:
         1px solid
-        rgba(255, 0, 255, 0.6);
+        rgba(255,255,255,0.12);
 
-    border-radius: 30px;
+    border-radius: 7px;
 
     background:
-        rgba(20, 0, 35, 0.8);
+        rgba(31,34,37,0.94);
 
-    color: white;
+    color: #eef0f2;
 
-    font-size: 12px;
+    font-size: 10px;
 
-    letter-spacing: 2px;
+    font-weight: 600;
+
+    letter-spacing: 0.7px;
 
     cursor: pointer;
 
     box-shadow:
-        0 0 12px
-        rgba(255, 0, 255, 0.25);
+        0 5px 20px
+        rgba(0,0,0,0.25);
+
+    transition:
+        background 160ms ease,
+        border-color 160ms ease,
+        transform 160ms ease;
+}
+
+#startButton:hover {
+
+    background:
+        rgba(42,45,48,0.98);
+
+    border-color:
+        rgba(255,255,255,0.18);
+}
+
+#startButton:active {
+
+    transform:
+        translateX(-50%)
+        translateY(1px);
 }
 
 
@@ -875,11 +558,12 @@ body {
 #cursor {
     position: fixed;
 
-    width: 42px;
-    height: 42px;
+    width: 30px;
+    height: 30px;
 
     border:
-        2px solid #ff00ff;
+        1px solid
+        rgba(255,255,255,0.90);
 
     border-radius: 50%;
 
@@ -891,8 +575,12 @@ body {
     pointer-events: none;
 
     box-shadow:
-        0 0 8px #ff00ff,
-        0 0 18px rgba(255, 0, 255, 0.7);
+        0 0 0 4px
+        rgba(255,255,255,0.035);
+
+    transition:
+        width 100ms ease,
+        height 100ms ease;
 }
 
 #cursor::after {
@@ -903,8 +591,8 @@ body {
     left: 50%;
     top: 50%;
 
-    width: 6px;
-    height: 6px;
+    width: 4px;
+    height: 4px;
 
     transform:
         translate(-50%, -50%);
@@ -912,9 +600,6 @@ body {
     border-radius: 50%;
 
     background: #ffffff;
-
-    box-shadow:
-        0 0 8px #ffffff;
 }
 
 
@@ -925,35 +610,99 @@ body {
 .cursorMark {
     position: fixed;
 
-    width: 8px;
-    height: 8px;
+    width: 7px;
+    height: 7px;
 
     z-index: 9;
 
-    border-color: #ff00ff;
+    border-color:
+        rgba(255,255,255,0.65);
 
     pointer-events: none;
 }
 
 #markTop {
-    border-top: 2px solid;
-    border-left: 2px solid;
+    border-top: 1px solid;
+    border-left: 1px solid;
 }
 
 #markBottom {
-    border-bottom: 2px solid;
-    border-right: 2px solid;
+    border-bottom: 1px solid;
+    border-right: 1px solid;
 }
 
 #markLeft {
-    border-left: 2px solid;
-    border-bottom: 2px solid;
+    border-left: 1px solid;
+    border-bottom: 1px solid;
 }
 
 #markRight {
-    border-right: 2px solid;
-    border-top: 2px solid;
+    border-right: 1px solid;
+    border-top: 1px solid;
 }
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 600px) {
+
+    #topBar {
+        height: 58px;
+
+        padding:
+            0 14px;
+    }
+
+    #brandSub {
+        display: none;
+    }
+
+    #brandName {
+        font-size: 13px;
+    }
+
+    #hud {
+        top: 70px;
+        left: 12px;
+
+        width: 165px;
+
+        padding: 11px;
+    }
+
+    #status {
+        top: 68px;
+
+        font-size: 9px;
+    }
+
+    #gesture {
+        bottom: 12px;
+
+        gap: 10px;
+
+        padding:
+            9px 11px;
+
+        font-size: 9px;
+    }
+
+    #instructionHeader {
+        display: none;
+    }
+
+    #startButton {
+        bottom: 58px;
+    }
+
+    #cursor {
+        width: 26px;
+        height: 26px;
+    }
+}
+
 
 .hidden {
     display: none !important;
@@ -967,11 +716,10 @@ body {
 
 
 <!-- =======================================================
-     STAGE 2 — TASK 1
-     FUTURISTIC BACKGROUND
+     PROFESSIONAL BACKGROUND
 ======================================================== -->
 
-<div id="futuristicBackground"></div>
+<div id="professionalBackground"></div>
 
 
 <!-- =======================================================
@@ -990,19 +738,56 @@ body {
 
 <div id="grid"></div>
 
+<div id="vignette"></div>
+
 
 <!-- =======================================================
-     STAGE 2 — TASK 1
-     AMBIENT EFFECTS
+     TOP BAR
 ======================================================== -->
 
-<div id="ambientGlow"></div>
+<div id="topBar">
 
-<div id="particles"></div>
+    <div id="brand">
 
-<div id="scanLine"></div>
+        <div id="brandMark">
+            A
+        </div>
 
-<div id="vignette"></div>
+        <div>
+
+            <span id="brandName">
+                Air Maths
+            </span>
+
+            <span id="brandSub">
+                Spatial Board
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <div id="topStatus">
+
+        <span id="systemIndicator"></span>
+
+        <span id="topStatusText">
+            Offline
+        </span>
+
+    </div>
+
+</div>
+
+
+<!-- =======================================================
+     STATUS
+======================================================== -->
+
+<div id="status">
+    Press START
+</div>
 
 
 <!-- =======================================================
@@ -1043,27 +828,13 @@ body {
 
 
 <!-- =======================================================
-     TITLE
-======================================================== -->
-
-<div id="title">
-    ✨ AIR MATHS BOARD
-</div>
-
-
-<div id="status">
-    Press START
-</div>
-
-
-<!-- =======================================================
      HUD
 ======================================================== -->
 
 <div id="hud">
 
     <div id="hudHeader">
-        ◈ SYSTEM STATUS
+        System Status
     </div>
 
     <div class="hudLine">
@@ -1073,14 +844,14 @@ body {
             <span id="handDot"></span>
 
             <span class="hudLabel">
-                HAND
+                Hand
             </span>
 
         </span>
 
         <span id="handState"
               class="hudValue">
-            SEARCHING
+            Searching
         </span>
 
     </div>
@@ -1089,12 +860,12 @@ body {
     <div class="hudLine">
 
         <span class="hudLabel">
-            MODE
+            Mode
         </span>
 
         <span id="modeState"
               class="hudValue">
-            STANDBY
+            Standby
         </span>
 
     </div>
@@ -1103,12 +874,12 @@ body {
     <div class="hudLine">
 
         <span class="hudLabel">
-            SYSTEM
+            System
         </span>
 
         <span id="systemState"
               class="hudValue">
-            OFFLINE
+            Offline
         </span>
 
     </div>
@@ -1123,14 +894,20 @@ body {
 <div id="gesture">
 
     <div id="instructionHeader">
-        ◈ GESTURE
+        Controls
     </div>
 
-    ☝️ <b>Draw</b>
-    ·
-    🤏 <b>Stop</b>
-    ·
-    ✋ <b>Clear</b>
+    <span>
+        ☝ Draw
+    </span>
+
+    <span>
+        🤏 Pause
+    </span>
+
+    <span>
+        ✋ Clear
+    </span>
 
 </div>
 
@@ -1189,6 +966,16 @@ const systemState =
 const handDot =
     document.getElementById("handDot");
 
+const systemIndicator =
+    document.getElementById(
+        "systemIndicator"
+    );
+
+const topStatusText =
+    document.getElementById(
+        "topStatusText"
+    );
+
 
 /* =========================================================
    CANVAS SETUP
@@ -1239,41 +1026,23 @@ let strokeBuffer = [];
    ADVANCED SETTINGS
 ========================================================= */
 
-
-/* Dynamic stabilization */
-
 const SLOW_SMOOTHING = 0.20;
 
 const FAST_SMOOTHING = 0.88;
 
 const FAST_SPEED = 850;
 
-
-/* Jump protection */
-
 const MAX_REASONABLE_JUMP = 400;
-
-
-/* Noise filtering */
 
 const MICRO_JITTER_DISTANCE = 0.65;
 
 const MIN_POINT_DISTANCE = 1.0;
 
-
-/* Ink */
-
 const MIN_INK_WIDTH = 2.6;
 
 const MAX_INK_WIDTH = 5.4;
 
-
-/* Catmull-Rom → Bezier */
-
 const CURVE_TENSION = 1 / 6;
-
-
-/* Clear */
 
 let clearFrames = 0;
 
@@ -1641,7 +1410,7 @@ function drawCurve(
 
 
     ctx.strokeStyle =
-        `rgba(255,0,255,${glowAlpha})`;
+        `rgba(120,190,255,${glowAlpha})`;
 
     ctx.lineWidth =
         width * 2.6;
@@ -1653,10 +1422,10 @@ function drawCurve(
         "round";
 
     ctx.shadowColor =
-        "rgba(255,0,255,0.60)";
+        "rgba(100,180,255,0.45)";
 
     ctx.shadowBlur =
-        20;
+        18;
 
     ctx.stroke();
 
@@ -1683,7 +1452,7 @@ function drawCurve(
 
 
     ctx.strokeStyle =
-        "rgba(255,65,255,0.96)";
+        "rgba(150,210,255,0.96)";
 
     ctx.lineWidth =
         width;
@@ -1695,10 +1464,10 @@ function drawCurve(
         "round";
 
     ctx.shadowColor =
-        "rgba(255,0,255,0.85)";
+        "rgba(100,190,255,0.60)";
 
     ctx.shadowBlur =
-        9;
+        7;
 
     ctx.stroke();
 
@@ -1725,7 +1494,7 @@ function drawCurve(
 
 
     ctx.strokeStyle =
-        "rgba(255,255,255,0.88)";
+        "rgba(255,255,255,0.90)";
 
     ctx.lineWidth =
         Math.max(
@@ -1740,7 +1509,7 @@ function drawCurve(
         "round";
 
     ctx.shadowColor =
-        "rgba(255,255,255,0.45)";
+        "rgba(255,255,255,0.35)";
 
     ctx.shadowBlur =
         3;
@@ -1775,10 +1544,10 @@ function drawDot(
         "rgba(255,255,255,0.92)";
 
     ctx.shadowColor =
-        "#ff00ff";
+        "rgba(130,200,255,0.75)";
 
     ctx.shadowBlur =
-        9;
+        8;
 
     ctx.fill();
 
@@ -1886,28 +1655,22 @@ function addStrokePoint(
 
 
         drawCurve(
-
             p0,
             p0,
             p1,
             p2,
-
             currentSpeed,
             corner
-
         );
 
 
         drawCurve(
-
             p0,
             p1,
             p2,
             p3,
-
             currentSpeed,
             corner
-
         );
 
 
@@ -1971,7 +1734,7 @@ function flushStrokeBuffer() {
 
 
         ctx.strokeStyle =
-            "rgba(255,65,255,0.96)";
+            "rgba(150,210,255,0.96)";
 
         ctx.lineWidth =
             MAX_INK_WIDTH;
@@ -1983,10 +1746,10 @@ function flushStrokeBuffer() {
             "round";
 
         ctx.shadowColor =
-            "rgba(255,0,255,0.80)";
+            "rgba(100,190,255,0.60)";
 
         ctx.shadowBlur =
-            9;
+            8;
 
         ctx.stroke();
 
@@ -2011,28 +1774,22 @@ function flushStrokeBuffer() {
 
 
         drawCurve(
-
             p0,
             p0,
             p1,
             p2,
-
             currentSpeed,
             0
-
         );
 
 
         drawCurve(
-
             p0,
             p1,
             p2,
             p2,
-
             currentSpeed,
             0
-
         );
 
 
@@ -2057,15 +1814,12 @@ function flushStrokeBuffer() {
 
 
     drawCurve(
-
         p0,
         p1,
         p2,
         p2,
-
         currentSpeed,
         0
-
     );
 }
 
@@ -2116,7 +1870,7 @@ function stopDrawing() {
 
 
 /* =========================================================
-   CLEAR CANVAS
+   CLEAR
 ========================================================= */
 
 function clearCanvas() {
@@ -2417,7 +2171,7 @@ function isFingerUp(
 
 
 /* =========================================================
-   MEDIAPIPE HANDS
+   MEDIAPIPE
 ========================================================= */
 
 const hands =
@@ -2476,29 +2230,22 @@ function(results) {
     ) {
 
         handState.textContent =
-            "SEARCHING";
-
+            "Searching";
 
         modeState.textContent =
-            "STANDBY";
-
+            "Standby";
 
         handDot.style.background =
-            "#555";
-
+            "#5f646a";
 
         handDot.style.boxShadow =
-            "0 0 5px #555";
-
+            "none";
 
         stopDrawing();
 
-
         hideCursor();
 
-
         clearFrames = 0;
-
 
         return;
     }
@@ -2601,15 +2348,14 @@ function(results) {
 
 
     handState.textContent =
-        "DETECTED";
+        "Active";
 
 
     handDot.style.background =
-        "#ff00ff";
-
+        "#8bbcff";
 
     handDot.style.boxShadow =
-        "0 0 8px #ff00ff";
+        "0 0 0 3px rgba(139,188,255,0.10)";
 
 
     if (
@@ -2618,10 +2364,8 @@ function(results) {
 
         stopDrawing();
 
-
         modeState.textContent =
-            "CLEARING";
-
+            "Clearing";
 
         clearFrames++;
 
@@ -2636,7 +2380,6 @@ function(results) {
             ) {
 
                 clearCanvas();
-
 
                 clearCooldown =
                     CLEAR_COOLDOWN_FRAMES;
@@ -2660,10 +2403,8 @@ function(results) {
 
         stopDrawing();
 
-
         modeState.textContent =
-            "STOP";
-
+            "Paused";
 
         return;
     }
@@ -2684,14 +2425,12 @@ function(results) {
     ) {
 
         modeState.textContent =
-            "DRAW";
-
+            "Drawing";
 
         drawLine(
             x,
             y
         );
-
 
         return;
     }
@@ -2699,9 +2438,8 @@ function(results) {
 
     stopDrawing();
 
-
     modeState.textContent =
-        "STANDBY";
+        "Standby";
 
 });
 
@@ -2719,9 +2457,11 @@ async function() {
         statusText.textContent =
             "Starting camera...";
 
-
         systemState.textContent =
-            "STARTING";
+            "Starting";
+
+        topStatusText.textContent =
+            "Starting";
 
 
         const stream =
@@ -2764,7 +2504,6 @@ async function() {
 
                     },
 
-
                     width: 1280,
 
                     height: 720
@@ -2780,9 +2519,17 @@ async function() {
         statusText.textContent =
             "SYSTEM READY";
 
-
         systemState.textContent =
-            "ONLINE";
+            "Online";
+
+        topStatusText.textContent =
+            "Ready";
+
+        systemIndicator.style.background =
+            "#8bbcff";
+
+        systemIndicator.style.boxShadow =
+            "0 0 0 3px rgba(139,188,255,0.10)";
 
 
         startButton.style.display =
@@ -2799,9 +2546,15 @@ async function() {
         statusText.textContent =
             "CAMERA ERROR";
 
-
         systemState.textContent =
-            "ERROR";
+            "Error";
+
+        topStatusText.textContent =
+            "Camera error";
+
+
+        systemIndicator.style.background =
+            "#d46b6b";
 
 
         alert(
@@ -2813,93 +2566,6 @@ async function() {
     }
 
 });
-
-
-/* =========================================================
-   STAGE 2 — TASK 1
-   PARTICLE SYSTEM
-========================================================= */
-
-const stage2Particles =
-    document.getElementById("particles");
-
-
-function createStage2Particles() {
-
-    stage2Particles.innerHTML = "";
-
-
-    const particleCount =
-        window.innerWidth < 600
-            ? 18
-            : 30;
-
-
-    for (
-        let i = 0;
-        i < particleCount;
-        i++
-    ) {
-
-        const particle =
-            document.createElement("div");
-
-
-        particle.className =
-            "stage2Particle";
-
-
-        particle.style.left =
-            Math.random() * 100 + "%";
-
-
-        particle.style.top =
-            Math.random() * 100 + "%";
-
-
-        particle.style.setProperty(
-            "--particle-x",
-            (
-                Math.random() * 160 - 80
-            ) + "px"
-        );
-
-
-        particle.style.setProperty(
-            "--particle-y",
-            (
-                Math.random() * -180 - 30
-            ) + "px"
-        );
-
-
-        particle.style.animationDuration =
-            (
-                6 +
-                Math.random() * 10
-            ) + "s";
-
-
-        particle.style.animationDelay =
-            (
-                Math.random() * -12
-            ) + "s";
-
-
-        stage2Particles.appendChild(
-            particle
-        );
-    }
-}
-
-
-createStage2Particles();
-
-
-window.addEventListener(
-    "resize",
-    createStage2Particles
-);
 
 </script>
 
