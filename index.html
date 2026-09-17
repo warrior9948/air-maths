@@ -777,55 +777,6 @@ body {
 
 
 /* =====================================
-   CLEAR FLASH
-===================================== */
-
-#clearFlash {
-    position: fixed;
-
-    inset: 0;
-
-    z-index: 9999;
-
-    pointer-events: none;
-
-    opacity: 0;
-
-    background:
-        radial-gradient(
-            circle at center,
-            rgba(184, 76, 255, 0.40),
-            rgba(184, 76, 255, 0.06) 35%,
-            transparent 72%
-        );
-}
-
-
-#clearFlash.active {
-    animation:
-        clearAnimation 0.55s ease-out;
-}
-
-
-@keyframes clearAnimation {
-
-    0% {
-        opacity: 0;
-        transform: scale(0.8);
-    }
-
-    20% {
-        opacity: 0.75;
-    }
-
-    100% {
-        opacity: 0;
-        transform: scale(1.15);
-    }
-}
-
-
-/* =====================================
    MOBILE
 ===================================== */
 
@@ -1137,11 +1088,6 @@ body {
 </div>
 
 
-<!-- CLEAR EFFECT -->
-
-<div id="clearFlash"></div>
-
-
 <!-- START -->
 
 <button id="startButton">
@@ -1192,16 +1138,13 @@ const modeState =
 const systemState =
     document.getElementById("systemState");
 
-const clearFlash =
-    document.getElementById("clearFlash");
-
 
 let previousX = null;
 let previousY = null;
 
 
 /* =====================================
-   FAST CURSOR SMOOTHING
+   STABLE CURSOR SMOOTHING
 ===================================== */
 
 let smoothX = null;
@@ -1219,51 +1162,28 @@ function smoothPoint(targetX, targetY) {
     }
 
 
-    const dx =
-        targetX - smoothX;
-
-    const dy =
-        targetY - smoothY;
-
-
-    const distance =
-        Math.sqrt(
-            dx * dx +
-            dy * dy
-        );
-
-
-    let adaptiveSmoothing;
-
-
-    if (distance < 5) {
-
-        adaptiveSmoothing = 0.75;
-
-    }
-
-    else if (distance < 20) {
-
-        adaptiveSmoothing = 0.90;
-
-    }
-
-    else {
-
-        adaptiveSmoothing = 0.97;
-
-    }
+    const smoothing = 0.32;
 
 
     smoothX =
         smoothX +
-        dx * adaptiveSmoothing;
+        (targetX - smoothX) *
+        smoothing;
+
 
     smoothY =
         smoothY +
-        dy * adaptiveSmoothing;
+        (targetY - smoothY) *
+        smoothing;
 
 }
+
+
+/* =====================================
+   DRAWING STATE
+===================================== */
+
+let isDrawing = false;
 
 
 /* =====================================
@@ -1301,13 +1221,6 @@ function clearCanvas() {
         canvas.width,
         canvas.height
     );
-
-
-    clearFlash.classList.remove("active");
-
-    void clearFlash.offsetWidth;
-
-    clearFlash.classList.add("active");
 
 }
 
@@ -1637,6 +1550,8 @@ function(results) {
         smoothX = null;
         smoothY = null;
 
+        isDrawing = false;
+
         hideCursor();
 
         setHandSearching();
@@ -1719,6 +1634,8 @@ function(results) {
 
         clearCanvas();
 
+        isDrawing = false;
+
         previousX = null;
         previousY = null;
 
@@ -1748,11 +1665,45 @@ function(results) {
         );
 
 
-    /* DRAW */
+    /* DRAWING HYSTERESIS */
+
+    const DRAW_START = 0.075;
+    const DRAW_STOP = 0.055;
+
+
+    /* START DRAWING */
 
     if (
+        !isDrawing &&
         indexUp &&
-        pinch > 0.07
+        pinch > DRAW_START
+    ) {
+
+        isDrawing = true;
+
+        previousX = x;
+        previousY = y;
+
+        cursor.classList.add("drawing");
+
+        cursor.classList.remove("pinch");
+        cursor.classList.remove("ready");
+
+        modeState.innerText =
+            "DRAW";
+
+        status.innerText =
+            "☝️ ✨ DRAWING IN AIR";
+
+    }
+
+
+    /* CONTINUE DRAWING */
+
+    else if (
+        isDrawing &&
+        indexUp &&
+        pinch > DRAW_STOP
     ) {
 
         cursor.classList.add("drawing");
@@ -1762,6 +1713,7 @@ function(results) {
 
         modeState.innerText =
             "DRAW";
+
 
         if (
             previousX !== null &&
@@ -1791,6 +1743,8 @@ function(results) {
     /* STOP / PINCH */
 
     else {
+
+        isDrawing = false;
 
         cursor.classList.remove("drawing");
 
