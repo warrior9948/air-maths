@@ -52,18 +52,18 @@ body {
 
     background-image:
         linear-gradient(
-            rgba(255, 0, 255, 0.13) 1px,
+            rgba(255, 0, 255, 0.08) 1px,
             transparent 1px
         ),
         linear-gradient(
             90deg,
-            rgba(255, 0, 255, 0.13) 1px,
+            rgba(255, 0, 255, 0.08) 1px,
             transparent 1px
         );
 
     background-size: 55px 55px;
 
-    opacity: 0.28;
+    opacity: 0.20;
 
     mask-image:
         radial-gradient(
@@ -99,21 +99,18 @@ body {
     height: 55px;
     z-index: 6;
     pointer-events: none;
-    opacity: 0.8;
-
-    animation:
-        cornerPulse 3s ease-in-out infinite;
+    opacity: 0.45;
 }
+
 
 .corner::before,
 .corner::after {
     content: "";
     position: absolute;
-    background: #ff00ff;
+    background: #ff33ff;
 
     box-shadow:
-        0 0 7px #ff00ff,
-        0 0 16px #ff00ff;
+        0 0 5px rgba(255, 0, 255, 0.65);
 }
 
 
@@ -126,13 +123,13 @@ body {
 
 .topLeft::before {
     width: 42px;
-    height: 2px;
+    height: 1px;
     top: 0;
     left: 0;
 }
 
 .topLeft::after {
-    width: 2px;
+    width: 1px;
     height: 42px;
     top: 0;
     left: 0;
@@ -148,13 +145,13 @@ body {
 
 .topRight::before {
     width: 42px;
-    height: 2px;
+    height: 1px;
     top: 0;
     right: 0;
 }
 
 .topRight::after {
-    width: 2px;
+    width: 1px;
     height: 42px;
     top: 0;
     right: 0;
@@ -170,13 +167,13 @@ body {
 
 .bottomLeft::before {
     width: 42px;
-    height: 2px;
+    height: 1px;
     bottom: 0;
     left: 0;
 }
 
 .bottomLeft::after {
-    width: 2px;
+    width: 1px;
     height: 42px;
     bottom: 0;
     left: 0;
@@ -192,28 +189,46 @@ body {
 
 .bottomRight::before {
     width: 42px;
-    height: 2px;
+    height: 1px;
     bottom: 0;
     right: 0;
 }
 
 .bottomRight::after {
-    width: 2px;
+    width: 1px;
     height: 42px;
     bottom: 0;
     right: 0;
 }
 
 
-@keyframes cornerPulse {
+/* =====================================
+   SHARED GLASS
+===================================== */
 
-    0%, 100% {
-        opacity: 0.55;
-    }
+#topHUD,
+#systemHUD,
+#instructions {
 
-    50% {
-        opacity: 1;
-    }
+    background:
+        linear-gradient(
+            135deg,
+            rgba(12, 8, 22, 0.78),
+            rgba(4, 3, 12, 0.66)
+        );
+
+    border:
+        1px solid rgba(255, 255, 255, 0.10);
+
+    box-shadow:
+        0 8px 28px rgba(0, 0, 0, 0.30),
+        inset 0 1px 0 rgba(255, 255, 255, 0.045);
+
+    backdrop-filter:
+        blur(14px);
+
+    -webkit-backdrop-filter:
+        blur(14px);
 }
 
 
@@ -235,23 +250,10 @@ body {
 
     color: white;
 
-    background:
-        rgba(5, 0, 18, 0.70);
-
-    border:
-        1px solid rgba(255, 0, 255, 0.55);
-
     border-left:
-        3px solid #ff00ff;
+        2px solid rgba(255, 0, 255, 0.70);
 
-    border-radius: 10px;
-
-    box-shadow:
-        0 0 15px rgba(255, 0, 255, 0.25),
-        inset 0 0 20px rgba(255, 0, 255, 0.08);
-
-    backdrop-filter:
-        blur(10px);
+    border-radius: 9px;
 
     pointer-events: none;
 }
@@ -262,18 +264,16 @@ body {
 ===================================== */
 
 #title {
-    color: white;
+    color: #f7f4f8;
 
-    font-size: 24px;
+    font-size: 23px;
 
-    font-weight: bold;
+    font-weight: 700;
 
-    letter-spacing: 1.5px;
+    letter-spacing: 1.3px;
 
     text-shadow:
-        0 0 7px #ff00ff,
-        0 0 17px #ff00ff,
-        0 0 30px #ff00ff;
+        0 0 10px rgba(255, 0, 255, 0.35);
 }
 
 
@@ -285,14 +285,13 @@ body {
 
     margin-top: 6px;
 
-    color: #eeeeee;
+    color: rgba(255, 255, 255, 0.68);
 
-    font-size: 13px;
+    font-size: 12px;
 
-    letter-spacing: 0.3px;
+    letter-spacing: 0.35px;
 
-    text-shadow:
-        0 0 8px #ff00ff;
+    text-shadow: none;
 }
 
 
@@ -315,54 +314,41 @@ body {
 
     color: white;
 
-    background:
-        linear-gradient(
-            135deg,
-            rgba(15, 0, 30, 0.78),
-            rgba(4, 0, 15, 0.58)
-        );
-
-    border:
-        1px solid rgba(255, 0, 255, 0.45);
-
     border-left:
-        3px solid #ff00ff;
+        2px solid rgba(255, 0, 255, 0.60);
 
     border-radius: 9px;
 
-    box-shadow:
-        0 0 18px rgba(255, 0, 255, 0.25),
-        inset 0 0 20px rgba(255, 0, 255, 0.07);
-
-    backdrop-filter:
-        blur(10px);
-
     font-size: 11px;
 
-    letter-spacing: 0.7px;
+    letter-spacing: 0.55px;
 }
 
 
-/* HUD HEADER */
+/* =====================================
+   HUD HEADER
+===================================== */
 
 #hudHeader {
 
     margin-bottom: 9px;
 
-    color: #ff66ff;
+    color: rgba(255, 105, 255, 0.82);
 
-    font-size: 10px;
+    font-size: 9px;
 
-    font-weight: bold;
+    font-weight: 700;
 
     letter-spacing: 2px;
 
     text-shadow:
-        0 0 8px #ff00ff;
+        0 0 7px rgba(255, 0, 255, 0.25);
 }
 
 
-/* HUD LINE */
+/* =====================================
+   HUD LINE
+===================================== */
 
 .hudLine {
 
@@ -372,11 +358,12 @@ body {
 
     align-items: center;
 
+    min-height: 27px;
+
     padding: 5px 0;
 
     border-bottom:
-        1px solid
-        rgba(255, 0, 255, 0.10);
+        1px solid rgba(255, 255, 255, 0.055);
 }
 
 .hudLine:last-child {
@@ -385,18 +372,28 @@ body {
 
 
 .hudLabel {
-    opacity: 0.55;
+    color: rgba(255, 255, 255, 0.48);
+
+    font-size: 9px;
+
+    font-weight: 600;
+
+    letter-spacing: 1px;
 }
 
 
 .hudValue {
 
-    color: #ff66ff;
+    color: rgba(255, 190, 255, 0.92);
 
-    font-weight: bold;
+    font-size: 9px;
+
+    font-weight: 700;
+
+    letter-spacing: 0.9px;
 
     text-shadow:
-        0 0 7px #ff00ff;
+        0 0 6px rgba(255, 0, 255, 0.25);
 }
 
 
@@ -408,40 +405,28 @@ body {
 
     display: inline-block;
 
-    width: 7px;
-    height: 7px;
+    width: 6px;
+    height: 6px;
 
     margin-right: 6px;
 
     border-radius: 50%;
 
-    background: #777;
+    background: rgba(255, 255, 255, 0.25);
 
-    transition: 0.2s;
+    transition:
+        background 0.2s ease,
+        box-shadow 0.2s ease;
 }
+
 
 #handDot.active {
 
-    background: #ff00ff;
+    background: #ff4dff;
 
     box-shadow:
-        0 0 6px #ff00ff,
-        0 0 14px #ff00ff;
-
-    animation:
-        dotPulse 1.3s infinite;
-}
-
-
-@keyframes dotPulse {
-
-    0%, 100% {
-        opacity: 0.55;
-    }
-
-    50% {
-        opacity: 1;
-    }
+        0 0 5px rgba(255, 0, 255, 0.65),
+        0 0 10px rgba(255, 0, 255, 0.30);
 }
 
 
@@ -460,51 +445,36 @@ body {
 
     width: 205px;
 
-    padding: 15px 17px;
+    padding: 14px 16px;
 
-    color: white;
+    color: rgba(255, 255, 255, 0.78);
 
-    background:
-        linear-gradient(
-            135deg,
-            rgba(12, 0, 28, 0.82),
-            rgba(3, 0, 12, 0.68)
-        );
+    border-radius: 10px;
 
-    border:
-        1px solid rgba(255, 0, 255, 0.55);
+    font-size: 11px;
 
-    border-radius: 12px;
-
-    box-shadow:
-        0 0 18px rgba(255, 0, 255, 0.25),
-        inset 0 0 18px rgba(255, 0, 255, 0.08);
-
-    backdrop-filter:
-        blur(10px);
-
-    font-size: 12px;
-
-    line-height: 1.8;
+    line-height: 1.75;
 }
 
 
-/* INSTRUCTION HEADER */
+/* =====================================
+   INSTRUCTION HEADER
+===================================== */
 
 #instructionHeader {
 
-    margin-bottom: 6px;
+    margin-bottom: 7px;
 
-    color: #ff66ff;
+    color: rgba(255, 105, 255, 0.82);
 
-    font-size: 10px;
+    font-size: 9px;
 
-    font-weight: bold;
+    font-weight: 700;
 
-    letter-spacing: 2px;
+    letter-spacing: 1.8px;
 
     text-shadow:
-        0 0 8px #ff00ff;
+        0 0 7px rgba(255, 0, 255, 0.25);
 }
 
 
@@ -524,41 +494,43 @@ body {
     transform:
         translate(-50%, -50%);
 
-    padding: 18px 32px;
+    padding: 17px 30px;
 
     border:
-        2px solid #ff00ff;
+        1px solid rgba(255, 80, 255, 0.75);
 
-    border-radius: 15px;
+    border-radius: 12px;
 
     background:
-        rgba(255, 0, 255, 0.13);
+        rgba(255, 0, 255, 0.09);
 
-    color: white;
+    color: rgba(255, 255, 255, 0.94);
 
-    font-size: 19px;
+    font-size: 18px;
 
-    font-weight: bold;
+    font-weight: 700;
 
-    letter-spacing: 1.5px;
+    letter-spacing: 1.3px;
 
     box-shadow:
-        0 0 10px #ff00ff,
-        0 0 25px #ff00ff,
-        inset 0 0 18px rgba(255, 0, 255, 0.18);
+        0 0 12px rgba(255, 0, 255, 0.25),
+        inset 0 0 14px rgba(255, 0, 255, 0.07);
 
     backdrop-filter:
-        blur(10px);
+        blur(12px);
+
+    -webkit-backdrop-filter:
+        blur(12px);
 
     cursor: pointer;
 
     animation:
-        startPulse 2s ease-in-out infinite;
+        startPulse 3s ease-in-out infinite;
 
     transition:
-        transform 0.15s,
-        box-shadow 0.15s,
-        background 0.15s;
+        transform 0.15s ease,
+        box-shadow 0.15s ease,
+        background 0.15s ease;
 }
 
 
@@ -566,15 +538,14 @@ body {
 
     transform:
         translate(-50%, -50%)
-        scale(1.06);
+        scale(1.04);
 
     background:
-        rgba(255, 0, 255, 0.25);
+        rgba(255, 0, 255, 0.15);
 
     box-shadow:
-        0 0 15px #ff00ff,
-        0 0 40px #ff00ff,
-        inset 0 0 25px rgba(255, 0, 255, 0.25);
+        0 0 16px rgba(255, 0, 255, 0.35),
+        inset 0 0 18px rgba(255, 0, 255, 0.10);
 }
 
 
@@ -582,7 +553,7 @@ body {
 
     transform:
         translate(-50%, -50%)
-        scale(0.94);
+        scale(0.96);
 }
 
 
@@ -590,22 +561,21 @@ body {
 
     0%, 100% {
         box-shadow:
-            0 0 10px #ff00ff,
-            0 0 25px #ff00ff,
-            inset 0 0 18px rgba(255, 0, 255, 0.18);
+            0 0 10px rgba(255, 0, 255, 0.22),
+            inset 0 0 12px rgba(255, 0, 255, 0.06);
     }
 
     50% {
         box-shadow:
-            0 0 15px #ff00ff,
-            0 0 40px #ff00ff,
-            inset 0 0 25px rgba(255, 0, 255, 0.25);
+            0 0 15px rgba(255, 0, 255, 0.32),
+            inset 0 0 16px rgba(255, 0, 255, 0.09);
     }
 }
 
 
 /* =====================================
    CURSOR — BASIC STATE SYSTEM
+   FUNCTIONALITY UNTOUCHED
 ===================================== */
 
 #cursor {
@@ -837,6 +807,7 @@ body {
 
 /* =====================================
    CLEAR FLASH
+   UNTOUCHED
 ===================================== */
 
 #clearFlash {
@@ -902,17 +873,26 @@ body {
         width: calc(100vw - 160px);
 
         padding: 8px 11px;
+
+        border-radius: 8px;
     }
+
 
     #title {
-        font-size: 17px;
-        letter-spacing: 0.6px;
+
+        font-size: 16px;
+
+        letter-spacing: 0.5px;
     }
 
+
     #status {
-        font-size: 10px;
-        margin-top: 4px;
+
+        font-size: 9px;
+
+        margin-top: 3px;
     }
+
 
     #instructions {
 
@@ -923,15 +903,21 @@ body {
 
         padding: 9px 10px;
 
-        font-size: 9px;
+        font-size: 8.5px;
 
         line-height: 1.55;
+
+        border-radius: 8px;
     }
 
+
     #instructionHeader {
-        font-size: 8px;
+
+        font-size: 7.5px;
+
         margin-bottom: 3px;
     }
+
 
     #systemHUD {
 
@@ -940,19 +926,45 @@ body {
 
         width: 150px;
 
-        padding: 9px 10px;
+        padding: 8px 10px;
 
-        font-size: 9px;
+        font-size: 8px;
+
+        border-radius: 8px;
     }
+
 
     #hudHeader {
-        font-size: 8px;
-        margin-bottom: 5px;
+
+        font-size: 7.5px;
+
+        margin-bottom: 4px;
     }
 
+
     .hudLine {
+
+        min-height: 23px;
+
         padding: 3px 0;
     }
+
+
+    .hudLabel,
+    .hudValue {
+
+        font-size: 8px;
+    }
+
+
+    #handDot {
+
+        width: 5px;
+        height: 5px;
+
+        margin-right: 5px;
+    }
+
 
     #cursor {
 
@@ -960,11 +972,13 @@ body {
         height: 38px;
     }
 
+
     #cursor.ready {
 
         width: 38px;
         height: 38px;
     }
+
 
     #cursor.drawing {
 
@@ -972,44 +986,60 @@ body {
         height: 44px;
     }
 
+
     #cursor.pinch {
 
         width: 28px;
         height: 28px;
     }
 
+
     #startButton {
 
-        padding: 15px 24px;
+        padding: 14px 23px;
 
-        font-size: 16px;
+        font-size: 15px;
+
+        border-radius: 10px;
     }
+
 
     .corner {
 
         width: 38px;
         height: 38px;
+
+        opacity: 0.40;
     }
+
 
     .topLeft,
     .topRight {
+
         top: 7px;
     }
 
+
     .bottomLeft,
     .bottomRight {
+
         bottom: 7px;
     }
 
+
     .topLeft,
     .bottomLeft {
+
         left: 7px;
     }
 
+
     .topRight,
     .bottomRight {
+
         right: 7px;
     }
+
 }
 
 
@@ -1024,28 +1054,53 @@ body {
         left: 48px;
 
         width: calc(100vw - 145px);
+
+        padding: 7px 9px;
     }
+
 
     #title {
-        font-size: 14px;
+
+        font-size: 13px;
     }
 
+
     #status {
-        font-size: 8px;
+
+        font-size: 7.5px;
     }
+
 
     #instructions {
 
         width: 115px;
 
-        font-size: 8px;
+        padding: 8px 9px;
+
+        font-size: 7.5px;
     }
+
 
     #systemHUD {
 
         width: 135px;
 
-        font-size: 8px;
+        padding: 7px 8px;
+
+        font-size: 7.5px;
+    }
+
+
+    #hudHeader {
+
+        font-size: 7px;
+    }
+
+
+    .hudLabel,
+    .hudValue {
+
+        font-size: 7.5px;
     }
 
 }
@@ -1058,12 +1113,16 @@ body {
 @media (max-height: 500px) {
 
     #systemHUD {
+
         top: 72px;
     }
 
+
     #startButton {
-        padding: 11px 21px;
-        font-size: 14px;
+
+        padding: 10px 20px;
+
+        font-size: 13px;
     }
 
 }
@@ -1430,12 +1489,6 @@ function showCursor(x, y) {
     cursor.style.top =
         y + "px";
 
-
-    /*
-       Normal state:
-       if the cursor is not drawing
-       and not pinching, it is READY.
-    */
 
     if (
         !cursor.classList.contains("drawing") &&
