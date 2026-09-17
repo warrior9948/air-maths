@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
 <meta charset="UTF-8">
 
 <meta name="viewport"
@@ -11,11 +13,24 @@
 
 <title>Air Maths Board</title>
 
+
+<!-- =========================================================
+     MEDIAPIPE
+     ========================================================= -->
+
 <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js"></script>
+
 <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
 
+
 <style>
+
+/* =========================================================
+   DESIGN SYSTEM
+   ========================================================= */
+
 :root{
+
     --bg-0:#0d0f11;
     --bg-1:#121416;
     --bg-2:#181b1e;
@@ -41,19 +56,32 @@
     --bottombar:28px;
 }
 
+
+/* =========================================================
+   GLOBAL
+   ========================================================= */
+
 *{
     box-sizing:border-box;
+
     -webkit-tap-highlight-color:transparent;
 }
 
+
 html,
 body{
+
     margin:0;
+
     width:100%;
     height:100%;
+
     overflow:hidden;
+
     background:var(--bg-0);
+
     color:var(--text-1);
+
     font-family:
         Inter,
         ui-sans-serif,
@@ -64,52 +92,81 @@ body{
         sans-serif;
 }
 
+
 button{
+
     font:inherit;
 }
 
-#app{
-    position:fixed;
-    inset:0;
-    width:100%;
-    height:100%;
-    background:var(--bg-0);
-    overflow:hidden;
-}
 
 /* =========================================================
-   INVISIBLE CAMERA TRACKING LAYER
+   CAMERA
    ========================================================= */
 
+/*
+    IMPORTANT
+
+    The camera is NOT transparent.
+
+    It is a completely normal active video element.
+
+    The entire Air Maths application is simply positioned
+    above it.
+
+    This keeps the camera pipeline reliable on mobile
+    browsers while preventing the user from seeing
+    themselves.
+*/
+
 #camera{
+
     position:fixed;
-    inset:0;
+
+    left:0;
+    top:0;
 
     width:100vw;
     height:100vh;
 
     object-fit:cover;
 
-    /*
-       IMPORTANT:
-       The video remains active and rendered internally so
-       MediaPipe continues receiving frames.
+    opacity:1;
 
-       But the user sees absolutely nothing.
-    */
-    opacity:0;
-    visibility:visible;
     pointer-events:none;
 
-    z-index:-10;
+    z-index:0;
 }
+
+
+/* =========================================================
+   APPLICATION
+   ========================================================= */
+
+#app{
+
+    position:fixed;
+
+    inset:0;
+
+    width:100%;
+    height:100%;
+
+    overflow:hidden;
+
+    background:var(--bg-0);
+
+    z-index:10;
+}
+
 
 /* =========================================================
    TOP BAR
    ========================================================= */
 
 .topbar{
+
     position:absolute;
+
     left:0;
     right:0;
     top:0;
@@ -121,12 +178,14 @@ button{
 
     border-bottom:1px solid var(--line-1);
 
-    background:rgba(13,15,17,.97);
+    background:#0d0f11;
 
     z-index:20;
 }
 
+
 .brand{
+
     width:var(--rail);
     height:100%;
 
@@ -137,13 +196,17 @@ button{
     border-right:1px solid var(--line-1);
 
     font-size:12px;
+
     font-weight:700;
+
     letter-spacing:.08em;
 
     color:var(--text-1);
 }
 
+
 .document{
+
     height:100%;
 
     display:flex;
@@ -156,34 +219,49 @@ button{
     border-right:1px solid var(--line-1);
 }
 
+
 .document-name{
+
     font-size:12px;
+
     color:var(--text-1);
 }
 
+
 .document-type{
+
     margin-left:9px;
 
     font-size:10px;
+
     color:var(--text-4);
 
     letter-spacing:.08em;
+
     text-transform:uppercase;
 }
 
+
 .menu{
+
     display:flex;
+
     height:100%;
+
     align-items:center;
+
     gap:2px;
+
     padding-left:8px;
 }
 
-.menu button,
-.top-action{
+
+.menu button{
+
     height:30px;
 
     border:0;
+
     background:transparent;
 
     color:var(--text-3);
@@ -191,32 +269,43 @@ button{
     padding:0 10px;
 
     font-size:10px;
+
     letter-spacing:.08em;
 
     cursor:pointer;
 }
 
-.menu button:hover,
-.top-action:hover{
+
+.menu button:hover{
+
     color:var(--text-1);
+
     background:var(--bg-2);
 }
 
+
 .top-right{
+
     margin-left:auto;
 
     height:100%;
 
     display:flex;
+
     align-items:center;
+
     gap:8px;
 
     padding-right:10px;
 }
 
+
 .connection{
+
     display:flex;
+
     align-items:center;
+
     gap:6px;
 
     padding:0 9px;
@@ -228,10 +317,13 @@ button{
     color:var(--text-3);
 
     font-size:9px;
+
     letter-spacing:.08em;
 }
 
+
 .connection-dot{
+
     width:5px;
     height:5px;
 
@@ -240,58 +332,79 @@ button{
     background:var(--text-4);
 }
 
+
 .connection.active .connection-dot{
+
     background:#8eaa91;
 }
 
+
 .version{
+
     color:var(--text-4);
+
     font-size:9px;
+
     letter-spacing:.08em;
 }
 
+
 /* =========================================================
-   LEFT TOOL RAIL
+   TOOL RAIL
    ========================================================= */
 
 .toolrail{
+
     position:absolute;
 
     left:0;
+
     top:var(--topbar);
+
     bottom:var(--bottombar);
 
     width:var(--rail);
 
     display:flex;
+
     flex-direction:column;
+
     align-items:center;
 
     border-right:1px solid var(--line-1);
 
-    background:var(--bg-1);
+    background:#121416;
 
-    z-index:15;
+    z-index:20;
 }
 
+
 .tool-group{
+
     width:100%;
+
     padding:8px 0;
 
     border-bottom:1px solid var(--line-1);
 }
 
+
 .tool{
+
     position:relative;
 
     width:100%;
+
     height:38px;
 
     display:flex;
+
     align-items:center;
+
     justify-content:center;
 
     border:0;
+
     background:transparent;
 
     color:var(--text-4);
@@ -299,23 +412,33 @@ button{
     cursor:pointer;
 }
 
+
 .tool:hover{
+
     color:var(--text-2);
+
     background:var(--bg-2);
 }
 
+
 .tool.active{
+
     color:var(--accent);
+
     background:var(--accent-bg);
 }
 
+
 .tool.active::before{
+
     content:"";
 
     position:absolute;
 
     left:0;
+
     top:8px;
+
     bottom:8px;
 
     width:2px;
@@ -323,13 +446,19 @@ button{
     background:var(--accent);
 }
 
+
 .tool-symbol{
+
     font-size:11px;
+
     font-weight:600;
+
     letter-spacing:.04em;
 }
 
+
 .tool-bottom{
+
     margin-top:auto;
 
     width:100%;
@@ -339,39 +468,52 @@ button{
     border-top:1px solid var(--line-1);
 }
 
+
 /* =========================================================
    WORKSPACE
    ========================================================= */
 
 .workspace{
+
     position:absolute;
 
     left:var(--rail);
+
     right:0;
 
     top:var(--topbar);
+
     bottom:var(--bottombar);
 
     overflow:hidden;
 
-    background:
+    background-color:var(--bg-0);
+
+    background-image:
+
         linear-gradient(
             rgba(255,255,255,.018) 1px,
             transparent 1px
         ),
+
         linear-gradient(
             90deg,
             rgba(255,255,255,.018) 1px,
             transparent 1px
-        ),
-        var(--bg-0);
+        );
 
     background-size:32px 32px;
+
+    z-index:11;
 }
 
-/* subtle center workspace boundary */
+
+/* =========================================================
+   BOARD
+   ========================================================= */
 
 .board-shell{
+
     position:absolute;
 
     inset:18px;
@@ -384,19 +526,26 @@ button{
             rgba(145,175,208,.025),
             transparent 55%
         ),
-        rgba(12,14,16,.38);
+        #0d0f11;
 
     overflow:hidden;
+
+    z-index:12;
 }
 
-/* canvas fills actual board */
+
+/* =========================================================
+   CANVAS
+   ========================================================= */
 
 #drawCanvas{
+
     position:absolute;
 
     inset:0;
 
     width:100%;
+
     height:100%;
 
     display:block;
@@ -406,14 +555,17 @@ button{
     z-index:3;
 }
 
+
 /* =========================================================
    CURSOR
    ========================================================= */
 
 #cursor{
+
     position:fixed;
 
     width:18px;
+
     height:18px;
 
     border:1px solid rgba(145,175,208,.9);
@@ -434,7 +586,9 @@ button{
         height .08s linear;
 }
 
+
 #cursor::before{
+
     content:"";
 
     position:absolute;
@@ -452,7 +606,9 @@ button{
     background:var(--accent);
 }
 
+
 #cursor::after{
+
     content:"";
 
     position:absolute;
@@ -468,24 +624,32 @@ button{
     background:rgba(145,175,208,.18);
 }
 
+
 #cursor.drawing{
+
     width:14px;
     height:14px;
 }
 
+
 #cursor.pause{
+
     border-color:var(--text-3);
 }
 
+
 #cursor.clear{
+
     border-color:var(--danger);
 }
 
+
 /* =========================================================
-   BOARD INFORMATION
+   BOARD LABELS
    ========================================================= */
 
 .board-label{
+
     position:absolute;
 
     left:18px;
@@ -496,13 +660,17 @@ button{
     color:var(--text-4);
 
     font-size:9px;
+
     letter-spacing:.14em;
+
     text-transform:uppercase;
 
     pointer-events:none;
 }
 
+
 .board-coordinates{
+
     position:absolute;
 
     right:18px;
@@ -519,11 +687,13 @@ button{
     pointer-events:none;
 }
 
+
 /* =========================================================
-   CENTER INITIALIZATION PANEL
+   INITIALIZATION PANEL
    ========================================================= */
 
 .center-panel{
+
     position:absolute;
 
     left:50%;
@@ -540,20 +710,27 @@ button{
     pointer-events:none;
 }
 
+
 .center-kicker{
+
     color:var(--text-4);
 
     font-size:9px;
+
     letter-spacing:.16em;
+
     text-transform:uppercase;
 
     margin-bottom:10px;
 }
 
+
 .center-title{
+
     color:var(--text-1);
 
     font-size:17px;
+
     font-weight:500;
 
     letter-spacing:.01em;
@@ -561,10 +738,13 @@ button{
     margin-bottom:8px;
 }
 
+
 .center-description{
+
     color:var(--text-3);
 
     font-size:11px;
+
     line-height:1.6;
 
     max-width:300px;
@@ -572,7 +752,9 @@ button{
     margin:0 auto 18px;
 }
 
+
 #startBtn{
+
     pointer-events:auto;
 
     border:1px solid var(--accent-line);
@@ -596,53 +778,79 @@ button{
         border-color .15s ease;
 }
 
+
 #startBtn:hover{
+
     background:rgba(145,175,208,.15);
+
     border-color:rgba(145,175,208,.45);
 }
 
+
 #startBtn:active{
+
     transform:translateY(1px);
 }
 
+
+#startBtn:disabled{
+
+    opacity:.55;
+
+    cursor:default;
+}
+
+
 .center-panel.hidden{
+
     opacity:0;
+
     pointer-events:none;
 }
 
+
 /* =========================================================
-   RIGHT INSPECTOR
+   INSPECTOR
    ========================================================= */
 
 .inspector{
+
     position:absolute;
 
     top:16px;
+
     right:16px;
 
     width:188px;
 
     border:1px solid var(--line-2);
 
-    background:rgba(18,20,22,.93);
+    background:#121416;
 
     z-index:12;
 }
 
+
 .inspector-section{
+
     padding:11px 12px;
 
     border-bottom:1px solid var(--line-1);
 }
 
+
 .inspector-section:last-child{
+
     border-bottom:0;
 }
 
+
 .inspector-title{
+
     color:var(--text-4);
 
     font-size:8px;
+
     letter-spacing:.13em;
 
     text-transform:uppercase;
@@ -650,9 +858,13 @@ button{
     margin-bottom:10px;
 }
 
+
 .inspector-row{
+
     display:flex;
+
     align-items:center;
+
     justify-content:space-between;
 
     min-height:22px;
@@ -660,24 +872,35 @@ button{
     font-size:10px;
 }
 
+
 .inspector-name{
+
     color:var(--text-3);
 }
 
+
 .inspector-value{
+
     color:var(--text-2);
 
     font-variant-numeric:tabular-nums;
 }
 
+
 .status-value{
+
     display:flex;
+
     align-items:center;
+
     gap:6px;
 }
 
+
 .status-dot{
+
     width:5px;
+
     height:5px;
 
     border-radius:50%;
@@ -685,19 +908,25 @@ button{
     background:var(--text-4);
 }
 
+
 .status-dot.ready{
+
     background:#8eaa91;
 }
 
+
 .status-dot.warning{
+
     background:#b9a37b;
 }
 
+
 /* =========================================================
-   BOTTOM STATUS BAR
+   BOTTOM BAR
    ========================================================= */
 
 .bottombar{
+
     position:absolute;
 
     left:0;
@@ -707,37 +936,49 @@ button{
     height:var(--bottombar);
 
     display:flex;
+
     align-items:center;
 
     padding:0 10px;
 
     border-top:1px solid var(--line-1);
 
-    background:var(--bg-1);
+    background:#121416;
 
     z-index:20;
 }
 
+
 .bottom-left{
+
     display:flex;
+
     gap:14px;
 }
 
+
 .bottom-item{
+
     color:var(--text-4);
 
     font-size:8px;
 
     letter-spacing:.08em;
+
     text-transform:uppercase;
 }
 
+
 .bottom-item strong{
+
     color:var(--text-3);
+
     font-weight:500;
 }
 
+
 .bottom-right{
+
     margin-left:auto;
 
     color:var(--text-4);
@@ -747,137 +988,209 @@ button{
     letter-spacing:.1em;
 }
 
+
 /* =========================================================
-   ORIENTATION / MOBILE
+   MOBILE
    ========================================================= */
 
 @media(max-width:700px){
 
     :root{
+
         --topbar:44px;
+
         --rail:42px;
+
         --bottombar:25px;
     }
 
+
     .document{
+
         min-width:0;
+
         padding:0 10px;
     }
 
+
     .document-type{
+
         display:none;
     }
+
 
     .menu{
+
         display:none;
     }
 
+
     .top-right{
+
         gap:4px;
     }
 
+
     .connection{
+
         padding:0 7px;
     }
 
+
     .version{
+
         display:none;
     }
 
+
     .workspace{
+
         left:var(--rail);
     }
 
+
     .board-shell{
+
         inset:8px;
     }
 
+
     .inspector{
+
         top:10px;
+
         right:10px;
+
         width:160px;
     }
 
+
     .board-label{
+
         left:12px;
+
         top:10px;
     }
+
 
     .board-coordinates{
+
         right:12px;
+
         top:10px;
     }
 
+
     .center-panel{
+
         width:min(320px,82vw);
     }
 
+
     .center-title{
+
         font-size:15px;
     }
 }
 
-/* landscape phones */
 
-@media(max-height:500px) and (orientation:landscape){
+/* =========================================================
+   LANDSCAPE PHONE
+   ========================================================= */
+
+@media(
+    max-height:500px
+) and (
+    orientation:landscape
+){
 
     :root{
+
         --topbar:40px;
+
         --rail:40px;
+
         --bottombar:24px;
     }
 
+
     .board-shell{
+
         inset:6px;
     }
 
+
     .inspector{
+
         top:8px;
+
         right:8px;
+
         width:150px;
     }
 
+
     .inspector-section{
+
         padding:7px 9px;
     }
 
+
     .inspector-title{
+
         margin-bottom:5px;
     }
 
+
     .inspector-row{
+
         min-height:18px;
     }
 
+
     .center-description{
+
         margin-bottom:10px;
     }
 
+
     #startBtn{
+
         height:31px;
     }
 
+
     .bottom-left{
+
         gap:8px;
     }
 }
+
 </style>
+
 </head>
+
 
 <body>
 
+
+<!-- =========================================================
+     CAMERA
+     ========================================================= -->
+
+<video
+    id="camera"
+    autoplay
+    muted
+    playsinline
+></video>
+
+
+<!-- =========================================================
+     APPLICATION
+     ========================================================= -->
+
 <div id="app">
-
-    <!-- =====================================================
-         INVISIBLE CAMERA
-         ===================================================== -->
-
-    <video
-        id="camera"
-        autoplay
-        muted
-        playsinline
-    ></video>
 
 
     <!-- =====================================================
@@ -890,7 +1203,9 @@ button{
             AM
         </div>
 
+
         <div class="document">
+
             <span class="document-name">
                 Untitled Board
             </span>
@@ -898,14 +1213,22 @@ button{
             <span class="document-type">
                 Mathematics
             </span>
+
         </div>
 
+
         <nav class="menu">
+
             <button>FILE</button>
+
             <button>EDIT</button>
+
             <button>VIEW</button>
+
             <button>TOOLS</button>
+
         </nav>
+
 
         <div class="top-right">
 
@@ -913,6 +1236,7 @@ button{
                 class="connection"
                 id="connectionStatus"
             >
+
                 <span
                     class="connection-dot"
                     id="connectionDot"
@@ -921,7 +1245,9 @@ button{
                 <span id="connectionText">
                     OFFLINE
                 </span>
+
             </div>
+
 
             <div class="version">
                 V5
@@ -932,11 +1258,13 @@ button{
     </header>
 
 
+
     <!-- =====================================================
          TOOL RAIL
          ===================================================== -->
 
     <aside class="toolrail">
+
 
         <div class="tool-group">
 
@@ -945,26 +1273,36 @@ button{
                 id="penTool"
                 title="Pen"
             >
-                <span class="tool-symbol">P</span>
+                <span class="tool-symbol">
+                    P
+                </span>
             </button>
+
 
             <button
                 class="tool"
                 id="selectTool"
                 title="Select"
             >
-                <span class="tool-symbol">S</span>
+                <span class="tool-symbol">
+                    S
+                </span>
             </button>
+
 
             <button
                 class="tool"
                 id="measureTool"
                 title="Measure"
             >
-                <span class="tool-symbol">M</span>
+                <span class="tool-symbol">
+                    M
+                </span>
             </button>
 
         </div>
+
+
 
         <div class="tool-group">
 
@@ -973,26 +1311,36 @@ button{
                 id="undoBtn"
                 title="Undo"
             >
-                <span class="tool-symbol">↶</span>
+                <span class="tool-symbol">
+                    ↶
+                </span>
             </button>
+
 
             <button
                 class="tool"
                 id="redoBtn"
                 title="Redo"
             >
-                <span class="tool-symbol">↷</span>
+                <span class="tool-symbol">
+                    ↷
+                </span>
             </button>
+
 
             <button
                 class="tool"
                 id="clearBtn"
                 title="Clear"
             >
-                <span class="tool-symbol">×</span>
+                <span class="tool-symbol">
+                    ×
+                </span>
             </button>
 
         </div>
+
+
 
         <div class="tool-bottom">
 
@@ -1001,15 +1349,20 @@ button{
                 id="gridBtn"
                 title="Grid"
             >
-                <span class="tool-symbol">⊞</span>
+                <span class="tool-symbol">
+                    ⊞
+                </span>
             </button>
+
 
             <button
                 class="tool"
                 id="zoomBtn"
                 title="Zoom"
             >
-                <span class="tool-symbol">⌕</span>
+                <span class="tool-symbol">
+                    ⌕
+                </span>
             </button>
 
         </div>
@@ -1017,17 +1370,21 @@ button{
     </aside>
 
 
+
     <!-- =====================================================
-         MAIN WORKSPACE
+         WORKSPACE
          ===================================================== -->
 
     <main class="workspace">
 
+
         <div class="board-shell">
+
 
             <div class="board-label">
                 AIR MATHS / WORKSPACE
             </div>
+
 
             <div
                 class="board-coordinates"
@@ -1036,7 +1393,14 @@ button{
                 0, 0
             </div>
 
+
             <canvas id="drawCanvas"></canvas>
+
+
+
+            <!-- =============================================
+                 INITIALIZATION PANEL
+                 ============================================= -->
 
             <div
                 class="center-panel"
@@ -1047,14 +1411,21 @@ button{
                     HAND TRACKING SYSTEM
                 </div>
 
+
                 <div class="center-title">
                     Initialize camera
                 </div>
 
-                <p class="center-description">
-                    Your camera remains active for hand tracking,
-                    but the camera image is hidden from the workspace.
+
+                <p
+                    class="center-description"
+                    id="centerDescription"
+                >
+                    Camera tracking is used only for
+                    hand detection. Your camera view
+                    remains behind the board interface.
                 </p>
+
 
                 <button id="startBtn">
                     INITIALIZE CAMERA
@@ -1065,17 +1436,20 @@ button{
         </div>
 
 
+
         <!-- =================================================
              INSPECTOR
              ================================================= -->
 
         <aside class="inspector">
 
+
             <section class="inspector-section">
 
                 <div class="inspector-title">
                     Tracking
                 </div>
+
 
                 <div class="inspector-row">
 
@@ -1091,6 +1465,7 @@ button{
                     </span>
 
                 </div>
+
 
                 <div class="inspector-row">
 
@@ -1110,11 +1485,13 @@ button{
             </section>
 
 
+
             <section class="inspector-section">
 
                 <div class="inspector-title">
                     System
                 </div>
+
 
                 <div class="inspector-row">
 
@@ -1127,6 +1504,7 @@ button{
                     </span>
 
                 </div>
+
 
                 <div class="inspector-row">
 
@@ -1146,11 +1524,13 @@ button{
             </section>
 
 
+
             <section class="inspector-section">
 
                 <div class="inspector-title">
                     Input
                 </div>
+
 
                 <div class="inspector-row">
 
@@ -1166,6 +1546,7 @@ button{
                     </span>
 
                 </div>
+
 
                 <div class="inspector-row">
 
@@ -1195,11 +1576,13 @@ button{
     </main>
 
 
+
     <!-- =====================================================
          CURSOR
          ===================================================== -->
 
     <div id="cursor"></div>
+
 
 
     <!-- =====================================================
@@ -1208,21 +1591,25 @@ button{
 
     <footer class="bottombar">
 
+
         <div class="bottom-left">
 
             <div class="bottom-item">
                 <strong>INDEX</strong> Draw
             </div>
 
+
             <div class="bottom-item">
                 <strong>PINCH</strong> Pause
             </div>
+
 
             <div class="bottom-item">
                 <strong>OPEN</strong> Clear
             </div>
 
         </div>
+
 
         <div class="bottom-right">
             AIR MATHS BOARD
@@ -1233,11 +1620,12 @@ button{
 </div>
 
 
+
+<!-- =========================================================
+     JAVASCRIPT
+     ========================================================= -->
+
 <script>
-/* ============================================================
-   AIR MATHS BOARD
-   V5 PROFESSIONAL HAND DRAWING ENGINE
-   ============================================================ */
 
 "use strict";
 
@@ -1249,94 +1637,127 @@ button{
 const video =
     document.getElementById("camera");
 
+
 const canvas =
     document.getElementById("drawCanvas");
 
+
 const ctx =
-    canvas.getContext("2d", {
-        alpha:true,
-        desynchronized:true
-    });
+    canvas.getContext(
+        "2d",
+        {
+            alpha:true,
+            desynchronized:true
+        }
+    );
+
 
 const cursor =
     document.getElementById("cursor");
 
+
 const startBtn =
     document.getElementById("startBtn");
+
 
 const centerPanel =
     document.getElementById("centerPanel");
 
+
+const centerDescription =
+    document.getElementById("centerDescription");
+
+
 const connectionStatus =
     document.getElementById("connectionStatus");
 
-const connectionDot =
-    document.getElementById("connectionDot");
 
 const connectionText =
     document.getElementById("connectionText");
 
+
 const cameraState =
     document.getElementById("cameraState");
+
 
 const handState =
     document.getElementById("handState");
 
+
 const modeState =
     document.getElementById("modeState");
+
 
 const gestureState =
     document.getElementById("gestureState");
 
+
 const trackingDot =
     document.getElementById("trackingDot");
 
+
 const trackingState =
     document.getElementById("trackingState");
+
 
 const coordinates =
     document.getElementById("coordinates");
 
 
 /* ============================================================
-   GLOBAL STATE
+   CAMERA STATE
    ============================================================ */
 
 let stream = null;
 
 let cameraRunning = false;
 
+let mediapipeCamera = null;
+
+
+/* ============================================================
+   CANVAS STATE
+   ============================================================ */
+
+let viewWidth = 1;
+
+let viewHeight = 1;
+
+let dpr = 1;
+
+
+/* ============================================================
+   VIDEO DIMENSIONS
+   ============================================================ */
+
 let lastVideoWidth = 0;
+
 let lastVideoHeight = 0;
 
 
 /* ============================================================
-   CANVAS / VIEWPORT
+   CANVAS RESIZE
    ============================================================ */
-
-let viewWidth = 1;
-let viewHeight = 1;
-let dpr = 1;
-
-
-/*
-    Resize the drawing surface to the actual visible viewport.
-
-    IMPORTANT:
-    The canvas is aligned to the full workspace, not the
-    camera's native resolution.
-*/
 
 function resizeCanvas(){
 
     const rect =
         canvas.getBoundingClientRect();
 
+
     viewWidth =
-        Math.max(1, rect.width);
+        Math.max(
+            1,
+            rect.width
+        );
+
 
     viewHeight =
-        Math.max(1, rect.height);
+        Math.max(
+            1,
+            rect.height
+        );
+
 
     dpr =
         Math.min(
@@ -1344,11 +1765,18 @@ function resizeCanvas(){
             2
         );
 
+
     canvas.width =
-        Math.round(viewWidth * dpr);
+        Math.round(
+            viewWidth * dpr
+        );
+
 
     canvas.height =
-        Math.round(viewHeight * dpr);
+        Math.round(
+            viewHeight * dpr
+        );
+
 
     ctx.setTransform(
         dpr,
@@ -1359,18 +1787,21 @@ function resizeCanvas(){
         0
     );
 
-    /*
-       Do NOT clear the canvas here.
-       Browser resize should not destroy existing work.
-    */
-
-    resetDrawingState();
 
     lastVideoWidth =
         video.videoWidth || 0;
 
+
     lastVideoHeight =
         video.videoHeight || 0;
+
+
+    /*
+       Prevent a partially completed stroke from
+       continuing after orientation changes.
+    */
+
+    resetDrawingState();
 }
 
 
@@ -1379,140 +1810,298 @@ function resizeCanvas(){
    ============================================================ */
 
 /*
-    The camera uses:
+    CSS uses:
 
         object-fit: cover
 
-    Therefore the camera image is NOT necessarily mapped
-    1:1 onto the phone screen.
+    We reproduce that exact calculation mathematically.
 
-    This function calculates exactly how the source video
-    is displayed inside the viewport.
+    This is extremely important on mobile because:
+
+        portrait ≠ landscape
+
+    and the camera aspect ratio is normally different
+    from the phone's screen aspect ratio.
 */
 
-function getVideoGeometry(){
+function getCameraGeometry(){
 
-    const vw =
-        window.innerWidth;
-
-    const vh =
-        window.innerHeight;
-
-    const videoWidth =
+    const cameraWidth =
         video.videoWidth || 1280;
 
-    const videoHeight =
+
+    const cameraHeight =
         video.videoHeight || 720;
+
+
+    const viewportWidth =
+        window.innerWidth;
+
+
+    const viewportHeight =
+        window.innerHeight;
+
 
     const scale =
         Math.max(
-            vw / videoWidth,
-            vh / videoHeight
+            viewportWidth / cameraWidth,
+            viewportHeight / cameraHeight
         );
 
+
     const renderedWidth =
-        videoWidth * scale;
+        cameraWidth * scale;
+
 
     const renderedHeight =
-        videoHeight * scale;
+        cameraHeight * scale;
 
-    const cropX =
-        (renderedWidth - vw) / 2;
 
-    const cropY =
-        (renderedHeight - vh) / 2;
+    const offsetX =
+        (
+            renderedWidth -
+            viewportWidth
+        ) / 2;
+
+
+    const offsetY =
+        (
+            renderedHeight -
+            viewportHeight
+        ) / 2;
+
 
     return {
-        videoWidth,
-        videoHeight,
+
+        cameraWidth,
+
+        cameraHeight,
+
         renderedWidth,
+
         renderedHeight,
-        cropX,
-        cropY,
-        viewportWidth:vw,
-        viewportHeight:vh
+
+        offsetX,
+
+        offsetY,
+
+        viewportWidth,
+
+        viewportHeight
+
     };
 }
 
 
 /* ============================================================
-   HAND → SCREEN COORDINATE MAPPING
+   CAMERA → SCREEN
    ============================================================ */
 
-function mapHandToScreen(
+function mapCameraToScreen(
     normalizedX,
     normalizedY
 ){
 
     const geometry =
-        getVideoGeometry();
+        getCameraGeometry();
+
 
     /*
-       MediaPipe X:
+       MediaPipe gives normalized coordinates.
 
-            0 = left
-            1 = right
-
-       Because this is a front-facing camera,
-       we mirror the horizontal axis so the board
-       behaves naturally like a mirror.
+       Convert them into native camera pixels.
     */
 
-    const sourceX =
-        (1 - normalizedX)
-        * geometry.videoWidth;
+    let cameraX =
+        normalizedX *
+        geometry.cameraWidth;
 
-    const sourceY =
-        normalizedY
-        * geometry.videoHeight;
 
-    const renderedX =
-        sourceX
-        * (
-            geometry.renderedWidth /
-            geometry.videoWidth
-        );
+    let cameraY =
+        normalizedY *
+        geometry.cameraHeight;
 
-    const renderedY =
-        sourceY
-        * (
-            geometry.renderedHeight /
-            geometry.videoHeight
-        );
+
+    /*
+       Mirror front-facing camera.
+
+       This makes the board behave naturally:
+       move hand right → cursor moves right.
+    */
+
+    cameraX =
+        geometry.cameraWidth -
+        cameraX;
+
+
+    /*
+       Apply the exact same scaling and cropping
+       used by object-fit:cover.
+    */
+
+    const scaleX =
+        geometry.renderedWidth /
+        geometry.cameraWidth;
+
+
+    const scaleY =
+        geometry.renderedHeight /
+        geometry.cameraHeight;
+
 
     let screenX =
-        renderedX - geometry.cropX;
+        cameraX * scaleX -
+        geometry.offsetX;
+
 
     let screenY =
-        renderedY - geometry.cropY;
+        cameraY * scaleY -
+        geometry.offsetY;
+
 
     /*
-       Convert full-screen coordinates into the actual
-       canvas workspace coordinates.
+       Clamp to the physical phone viewport.
     */
-
-    const canvasRect =
-        canvas.getBoundingClientRect();
-
-    screenX -= canvasRect.left;
-    screenY -= canvasRect.top;
 
     screenX =
         Math.max(
             0,
-            Math.min(viewWidth, screenX)
+            Math.min(
+                geometry.viewportWidth,
+                screenX
+            )
         );
+
 
     screenY =
         Math.max(
             0,
-            Math.min(viewHeight, screenY)
+            Math.min(
+                geometry.viewportHeight,
+                screenY
+            )
         );
 
+
     return {
+
         x:screenX,
+
         y:screenY
+
     };
+}
+
+
+/* ============================================================
+   SCREEN → BOARD
+   ============================================================ */
+
+function mapScreenToBoard(
+    screenPoint
+){
+
+    const rect =
+        canvas.getBoundingClientRect();
+
+
+    let x =
+        screenPoint.x -
+        rect.left;
+
+
+    let y =
+        screenPoint.y -
+        rect.top;
+
+
+    /*
+       Clamp against the actual board.
+    */
+
+    x =
+        Math.max(
+            0,
+            Math.min(
+                rect.width,
+                x
+            )
+        );
+
+
+    y =
+        Math.max(
+            0,
+            Math.min(
+                rect.height,
+                y
+            )
+        );
+
+
+    return {
+
+        x,
+        y
+
+    };
+}
+
+
+/* ============================================================
+   CAMERA → BOARD
+   ============================================================ */
+
+function mapHandToBoard(
+    normalizedX,
+    normalizedY
+){
+
+    const screenPoint =
+        mapCameraToScreen(
+            normalizedX,
+            normalizedY
+        );
+
+
+    return mapScreenToBoard(
+        screenPoint
+    );
+}
+
+
+/* ============================================================
+   CURSOR
+   ============================================================ */
+
+function updateCursor(
+    boardPoint
+){
+
+    const rect =
+        canvas.getBoundingClientRect();
+
+
+    const screenX =
+        rect.left +
+        boardPoint.x;
+
+
+    const screenY =
+        rect.top +
+        boardPoint.y;
+
+
+    cursor.style.left =
+        `${screenX}px`;
+
+
+    cursor.style.top =
+        `${screenY}px`;
+
+
+    cursor.style.opacity =
+        "1";
 }
 
 
@@ -1520,48 +2109,82 @@ function mapHandToScreen(
    V5 DRAWING ENGINE
    ============================================================ */
 
-const SLOW_SMOOTHING = 0.20;
+const SLOW_SMOOTHING =
+    0.20;
 
-const FAST_SMOOTHING = 0.88;
 
-const FAST_SPEED = 850;
+const FAST_SMOOTHING =
+    0.88;
 
-const MAX_REASONABLE_JUMP = 400;
 
-const MICRO_JITTER_DISTANCE = 0.65;
+const FAST_SPEED =
+    850;
 
-const MIN_POINT_DISTANCE = 1.0;
 
-const MIN_INK_WIDTH = 2.6;
+const MAX_REASONABLE_JUMP =
+    400;
 
-const MAX_INK_WIDTH = 5.4;
 
-const CURVE_TENSION = 1 / 6;
+const MICRO_JITTER_DISTANCE =
+    0.65;
+
+
+const MIN_POINT_DISTANCE =
+    1.0;
+
+
+const MIN_INK_WIDTH =
+    2.6;
+
+
+const MAX_INK_WIDTH =
+    5.4;
+
+
+const CURVE_TENSION =
+    1 / 6;
 
 
 let drawing = false;
 
-let hasPreviousPoint = false;
+
+let hasPreviousPoint =
+    false;
+
 
 let lastPoint = {
+
     x:0,
     y:0
+
 };
+
 
 let smoothedPoint = {
+
     x:0,
     y:0
+
 };
 
-let lastTime = 0;
 
-let lastSpeed = 0;
+let lastTime =
+    0;
+
+
+let lastSpeed =
+    0;
+
 
 let strokePoints = [];
 
-let clearFrames = 0;
 
-let clearCooldown = 0;
+let clearFrames =
+    0;
+
+
+let clearCooldown =
+    0;
 
 
 /* ============================================================
@@ -1573,11 +2196,14 @@ function distance(a,b){
     const dx =
         b.x - a.x;
 
+
     const dy =
         b.y - a.y;
 
+
     return Math.sqrt(
-        dx * dx + dy * dy
+        dx * dx +
+        dy * dy
     );
 }
 
@@ -1588,15 +2214,24 @@ function distance(a,b){
 
 function resetDrawingState(){
 
-    drawing = false;
+    drawing =
+        false;
 
-    hasPreviousPoint = false;
 
-    strokePoints = [];
+    hasPreviousPoint =
+        false;
 
-    lastSpeed = 0;
 
-    lastTime = performance.now();
+    strokePoints =
+        [];
+
+
+    lastSpeed =
+        0;
+
+
+    lastTime =
+        performance.now();
 }
 
 
@@ -1614,23 +2249,33 @@ function smoothPoint(
         smoothedPoint.x =
             target.x;
 
+
         smoothedPoint.y =
             target.y;
+
 
         lastPoint.x =
             target.x;
 
+
         lastPoint.y =
             target.y;
+
 
         lastTime =
             now;
 
-        hasPreviousPoint = true;
+
+        hasPreviousPoint =
+            true;
+
 
         return {
+
             x:target.x,
+
             y:target.y
+
         };
     }
 
@@ -1638,15 +2283,21 @@ function smoothPoint(
     const dt =
         Math.max(
             0.001,
-            (now - lastTime) / 1000
+            (
+                now -
+                lastTime
+            ) / 1000
         );
 
 
     const dx =
-        target.x - lastPoint.x;
+        target.x -
+        lastPoint.x;
+
 
     const dy =
-        target.y - lastPoint.y;
+        target.y -
+        lastPoint.y;
 
 
     const rawDistance =
@@ -1665,18 +2316,11 @@ function smoothPoint(
         speed * .3;
 
 
-    /*
-       Fast hand movement:
-       less smoothing → responsive.
-
-       Slow movement:
-       more smoothing → stable.
-    */
-
     const speedRatio =
         Math.min(
             1,
-            lastSpeed / FAST_SPEED
+            lastSpeed /
+            FAST_SPEED
         );
 
 
@@ -1685,7 +2329,8 @@ function smoothPoint(
         (
             FAST_SMOOTHING -
             SLOW_SMOOTHING
-        ) * speedRatio;
+        ) *
+        speedRatio;
 
 
     /*
@@ -1700,27 +2345,35 @@ function smoothPoint(
         smoothedPoint.x =
             target.x;
 
+
         smoothedPoint.y =
             target.y;
+
 
         lastPoint.x =
             target.x;
 
+
         lastPoint.y =
             target.y;
+
 
         lastTime =
             now;
 
+
         return {
+
             x:target.x,
+
             y:target.y
+
         };
     }
 
 
     /*
-       Ignore extremely tiny jitter.
+       Ignore microscopic jitter.
     */
 
     if(
@@ -1731,9 +2384,13 @@ function smoothPoint(
         lastTime =
             now;
 
+
         return {
+
             x:smoothedPoint.x,
+
             y:smoothedPoint.y
+
         };
     }
 
@@ -1742,29 +2399,36 @@ function smoothPoint(
         (
             target.x -
             smoothedPoint.x
-        ) * smoothing;
+        ) *
+        smoothing;
 
 
     smoothedPoint.y +=
         (
             target.y -
             smoothedPoint.y
-        ) * smoothing;
+        ) *
+        smoothing;
 
 
     lastPoint.x =
         target.x;
 
+
     lastPoint.y =
         target.y;
+
 
     lastTime =
         now;
 
 
     return {
+
         x:smoothedPoint.x,
+
         y:smoothedPoint.y
+
     };
 }
 
@@ -1775,29 +2439,27 @@ function smoothPoint(
 
 function getPenWidth(){
 
-    /*
-       Faster motion → slightly thinner line.
-       Slower motion → slightly thicker line.
-    */
-
     const speedRatio =
         Math.min(
             1,
-            lastSpeed / FAST_SPEED
+            lastSpeed /
+            FAST_SPEED
         );
+
 
     return (
         MAX_INK_WIDTH -
         (
             MAX_INK_WIDTH -
             MIN_INK_WIDTH
-        ) * speedRatio
+        ) *
+        speedRatio
     );
 }
 
 
 /* ============================================================
-   BEZIER STROKE
+   BEZIER SEGMENT
    ============================================================ */
 
 function drawSmoothSegment(){
@@ -1806,6 +2468,7 @@ function drawSmoothSegment(){
         strokePoints.length <
         2
     ){
+
         return;
     }
 
@@ -1816,54 +2479,86 @@ function drawSmoothSegment(){
 
     const p0 =
         strokePoints[
-            Math.max(0,len - 4)
+            Math.max(
+                0,
+                len - 4
+            )
         ];
+
 
     const p1 =
         strokePoints[
-            Math.max(0,len - 3)
+            Math.max(
+                0,
+                len - 3
+            )
         ];
+
 
     const p2 =
         strokePoints[
-            Math.max(0,len - 2)
+            Math.max(
+                0,
+                len - 2
+            )
         ];
+
 
     const p3 =
         strokePoints[
-            Math.max(0,len - 1)
+            Math.max(
+                0,
+                len - 1
+            )
         ];
 
 
     const cp1x =
         p1.x +
-        (p2.x - p0.x)
-        * CURVE_TENSION;
+        (
+            p2.x -
+            p0.x
+        ) *
+        CURVE_TENSION;
+
 
     const cp1y =
         p1.y +
-        (p2.y - p0.y)
-        * CURVE_TENSION;
+        (
+            p2.y -
+            p0.y
+        ) *
+        CURVE_TENSION;
 
 
     const cp2x =
         p2.x -
-        (p3.x - p1.x)
-        * CURVE_TENSION;
+        (
+            p3.x -
+            p1.x
+        ) *
+        CURVE_TENSION;
+
 
     const cp2y =
         p2.y -
-        (p3.y - p1.y)
-        * CURVE_TENSION;
+        (
+            p3.y -
+            p1.y
+        ) *
+        CURVE_TENSION;
 
 
     ctx.save();
 
+
     ctx.lineCap =
         "round";
 
+
     ctx.lineJoin =
         "round";
+
 
     ctx.globalCompositeOperation =
         "source-over";
@@ -1875,55 +2570,72 @@ function drawSmoothSegment(){
 
     ctx.beginPath();
 
+
     ctx.moveTo(
         p1.x,
         p1.y
     );
 
+
     ctx.bezierCurveTo(
+
         cp1x,
         cp1y,
+
         cp2x,
         cp2y,
+
         p3.x,
         p3.y
+
     );
 
 
     ctx.lineWidth =
         getPenWidth();
 
+
     ctx.strokeStyle =
         "rgba(145,175,208,.96)";
+
 
     ctx.shadowBlur =
         7;
 
+
     ctx.shadowColor =
         "rgba(145,175,208,.18)";
+
 
     ctx.stroke();
 
 
     /*
-       Fine inner pass for a more digital-pen feel.
+       Inner pass.
     */
 
     ctx.beginPath();
+
 
     ctx.moveTo(
         p1.x,
         p1.y
     );
 
+
     ctx.bezierCurveTo(
+
         cp1x,
         cp1y,
+
         cp2x,
         cp2y,
+
         p3.x,
         p3.y
+
     );
+
 
     ctx.lineWidth =
         Math.max(
@@ -1931,13 +2643,17 @@ function drawSmoothSegment(){
             getPenWidth() * .45
         );
 
+
     ctx.strokeStyle =
         "rgba(220,230,240,.30)";
+
 
     ctx.shadowBlur =
         0;
 
+
     ctx.stroke();
+
 
     ctx.restore();
 }
@@ -1951,26 +2667,39 @@ function drawDot(point){
 
     ctx.save();
 
+
     ctx.beginPath();
 
+
     ctx.arc(
+
         point.x,
+
         point.y,
+
         getPenWidth() / 2,
+
         0,
+
         Math.PI * 2
+
     );
+
 
     ctx.fillStyle =
         "rgba(145,175,208,.96)";
 
+
     ctx.shadowBlur =
         7;
+
 
     ctx.shadowColor =
         "rgba(145,175,208,.18)";
 
+
     ctx.fill();
+
 
     ctx.restore();
 }
@@ -1982,21 +2711,26 @@ function drawDot(point){
 
 function startStroke(point){
 
-    drawing = true;
+    drawing =
+        true;
+
 
     strokePoints = [
+
         {
             x:point.x,
             y:point.y
         }
+
     ];
+
 
     drawDot(point);
 }
 
 
 /* ============================================================
-   DRAW
+   DRAW LINE
    ============================================================ */
 
 function drawLine(point){
@@ -2039,19 +2773,19 @@ function drawLine(point){
         d <
         MIN_POINT_DISTANCE
     ){
+
         return;
     }
 
 
     strokePoints.push({
+
         x:smooth.x,
+
         y:smooth.y
+
     });
 
-
-    /*
-       Keep a compact buffer.
-    */
 
     if(
         strokePoints.length >
@@ -2072,13 +2806,20 @@ function drawLine(point){
 
 function stopDrawing(){
 
-    drawing = false;
+    drawing =
+        false;
 
-    strokePoints = [];
 
-    hasPreviousPoint = false;
+    strokePoints =
+        [];
 
-    lastSpeed = 0;
+
+    hasPreviousPoint =
+        false;
+
+
+    lastSpeed =
+        0;
 }
 
 
@@ -2088,27 +2829,37 @@ function stopDrawing(){
 
 function clearBoard(){
 
-    clearFrames = 0;
+    clearFrames =
+        0;
 
-    clearCooldown = 15;
+
+    clearCooldown =
+        15;
+
 
     ctx.save();
 
+
     ctx.clearRect(
+
         0,
         0,
+
         viewWidth,
         viewHeight
+
     );
 
+
     ctx.restore();
+
 
     resetDrawingState();
 }
 
 
 /* ============================================================
-   GESTURE CLASSIFICATION
+   FINGER DETECTION
    ============================================================ */
 
 function fingerUp(
@@ -2124,13 +2875,13 @@ function fingerUp(
 }
 
 
+/* ============================================================
+   GESTURE CLASSIFICATION
+   ============================================================ */
+
 function classifyGesture(
     landmarks
 ){
-
-    /*
-       Finger states.
-    */
 
     const indexUp =
         fingerUp(
@@ -2139,6 +2890,7 @@ function classifyGesture(
             6
         );
 
+
     const middleUp =
         fingerUp(
             landmarks,
@@ -2146,12 +2898,14 @@ function classifyGesture(
             10
         );
 
+
     const ringUp =
         fingerUp(
             landmarks,
             16,
             14
         );
+
 
     const pinkyUp =
         fingerUp(
@@ -2168,26 +2922,34 @@ function classifyGesture(
     const thumb =
         landmarks[4];
 
+
     const index =
         landmarks[8];
 
 
     const pinchDistance =
         Math.sqrt(
+
             Math.pow(
-                thumb.x - index.x,
-                2
-            ) +
-            Math.pow(
-                thumb.y - index.y,
+                thumb.x -
+                index.x,
                 2
             )
+
+            +
+
+            Math.pow(
+                thumb.y -
+                index.y,
+                2
+            )
+
         );
 
 
     const pinch =
         pinchDistance <
-        0.055;
+        .055;
 
 
     /*
@@ -2210,10 +2972,9 @@ function classifyGesture(
 
 
     /*
-       Draw gesture:
-       index up
-       remaining fingers down
-       not pinching
+       Drawing gesture.
+
+       Only index finger up.
     */
 
     const draw =
@@ -2227,10 +2988,11 @@ function classifyGesture(
     if(openHand){
 
         return {
+
             name:"OPEN",
-            type:"clear",
-            indexUp,
-            pinch
+
+            type:"clear"
+
         };
     }
 
@@ -2238,10 +3000,11 @@ function classifyGesture(
     if(pinch){
 
         return {
+
             name:"PINCH",
-            type:"pause",
-            indexUp,
-            pinch
+
+            type:"pause"
+
         };
     }
 
@@ -2249,19 +3012,21 @@ function classifyGesture(
     if(draw){
 
         return {
+
             name:"DRAW",
-            type:"draw",
-            indexUp,
-            pinch
+
+            type:"draw"
+
         };
     }
 
 
     return {
+
         name:"NONE",
-        type:"none",
-        indexUp,
-        pinch
+
+        type:"none"
+
     };
 }
 
@@ -2272,9 +3037,11 @@ function classifyGesture(
 
 const hands =
     new Hands({
+
         locateFile:
             file =>
                 `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`
+
     });
 
 
@@ -2287,6 +3054,7 @@ hands.setOptions({
     minDetectionConfidence:.60,
 
     minTrackingConfidence:.60
+
 });
 
 
@@ -2302,6 +3070,7 @@ hands.onResults(
 function onHandsResults(results){
 
     if(!cameraRunning){
+
         return;
     }
 
@@ -2311,24 +3080,34 @@ function onHandsResults(results){
         results.multiHandLandmarks[0];
 
 
+    /*
+       No hand.
+    */
+
     if(!landmarks){
 
         handState.textContent =
             "NONE";
 
+
         trackingState.textContent =
             "SEARCHING";
+
 
         trackingDot.className =
             "status-dot warning";
 
+
         gestureState.textContent =
             "NONE";
+
 
         cursor.style.opacity =
             "0";
 
+
         stopDrawing();
+
 
         return;
     }
@@ -2341,8 +3120,10 @@ function onHandsResults(results){
     handState.textContent =
         "DETECTED";
 
+
     trackingState.textContent =
         "ACTIVE";
+
 
     trackingDot.className =
         "status-dot ready";
@@ -2356,21 +3137,32 @@ function onHandsResults(results){
         landmarks[8];
 
 
+    /*
+       NEW:
+
+       Camera
+          ↓
+       screen
+          ↓
+       board
+    */
+
     const point =
-        mapHandToScreen(
+        mapHandToBoard(
+
             indexTip.x,
+
             indexTip.y
+
         );
 
 
     /*
-       Cursor follows exactly the same coordinate
-       transformation as the drawing engine.
+       Cursor and drawing use the
+       exact same point.
     */
 
-    updateCursor(
-        point
-    );
+    updateCursor(point);
 
 
     coordinates.textContent =
@@ -2378,7 +3170,7 @@ function onHandsResults(results){
 
 
     /*
-       Gesture classification.
+       Gesture.
     */
 
     const gesture =
@@ -2391,6 +3183,10 @@ function onHandsResults(results){
         gesture.name;
 
 
+    /* ========================================================
+       DRAW
+       ======================================================== */
+
     if(
         gesture.type ===
         "draw"
@@ -2399,20 +3195,28 @@ function onHandsResults(results){
         modeState.textContent =
             "DRAWING";
 
+
         cursor.classList.add(
             "drawing"
         );
+
 
         cursor.classList.remove(
             "pause",
             "clear"
         );
 
+
         drawLine(point);
+
 
         return;
     }
 
+
+    /* ========================================================
+       PINCH
+       ======================================================== */
 
     if(
         gesture.type ===
@@ -2422,20 +3226,28 @@ function onHandsResults(results){
         modeState.textContent =
             "PAUSED";
 
+
         cursor.classList.add(
             "pause"
         );
+
 
         cursor.classList.remove(
             "drawing",
             "clear"
         );
 
+
         stopDrawing();
+
 
         return;
     }
 
+
+    /* ========================================================
+       OPEN HAND
+       ======================================================== */
 
     if(
         gesture.type ===
@@ -2445,20 +3257,23 @@ function onHandsResults(results){
         modeState.textContent =
             "CLEAR";
 
+
         cursor.classList.add(
             "clear"
         );
+
 
         cursor.classList.remove(
             "drawing",
             "pause"
         );
 
+
         stopDrawing();
 
+
         /*
-           Require several consecutive open-hand frames.
-           This prevents accidental clearing.
+           Multiple consecutive frames required.
         */
 
         if(clearCooldown > 0){
@@ -2477,49 +3292,58 @@ function onHandsResults(results){
             clearBoard();
         }
 
+
         return;
     }
 
 
+    /*
+       No active gesture.
+    */
+
     modeState.textContent =
         "READY";
 
+
     cursor.classList.remove(
+
         "drawing",
+
         "pause",
+
         "clear"
+
     );
 
-    clearFrames = 0;
+
+    clearFrames =
+        0;
+
 
     stopDrawing();
 }
 
 
 /* ============================================================
-   CURSOR
-   ============================================================ */
-
-function updateCursor(point){
-
-    cursor.style.left =
-        `${point.x + canvas.getBoundingClientRect().left}px`;
-
-    cursor.style.top =
-        `${point.y + canvas.getBoundingClientRect().top}px`;
-
-    cursor.style.opacity =
-        "1";
-}
-
-
-/* ============================================================
-   START CAMERA
+   CAMERA INITIALIZATION
    ============================================================ */
 
 async function initializeCamera(){
 
     if(cameraRunning){
+
+        return;
+    }
+
+
+    if(
+        !navigator.mediaDevices ||
+        !navigator.mediaDevices.getUserMedia
+    ){
+
+        centerDescription.textContent =
+            "This browser does not provide camera access.";
+
         return;
     }
 
@@ -2527,22 +3351,23 @@ async function initializeCamera(){
     startBtn.disabled =
         true;
 
+
     startBtn.textContent =
         "INITIALIZING";
 
 
     try{
 
-        /*
-           User-facing camera.
 
-           The video itself is invisible.
-        */
+        /* ====================================================
+           GET CAMERA
+           ==================================================== */
 
         stream =
             await navigator.mediaDevices.getUserMedia({
 
                 video:{
+
                     facingMode:{
                         ideal:"user"
                     },
@@ -2553,7 +3378,13 @@ async function initializeCamera(){
 
                     height:{
                         ideal:720
+                    },
+
+                    frameRate:{
+                        ideal:30,
+                        max:30
                     }
+
                 },
 
                 audio:false
@@ -2561,23 +3392,70 @@ async function initializeCamera(){
             });
 
 
+        /*
+           Give the stream to the video.
+        */
+
         video.srcObject =
             stream;
 
+
+        /*
+           IMPORTANT:
+
+           Wait for metadata.
+
+           This prevents coordinate mapping from running
+           before videoWidth/videoHeight exist.
+        */
+
+        await new Promise(
+            resolve => {
+
+                if(
+                    video.readyState >= 1 &&
+                    video.videoWidth > 0
+                ){
+
+                    resolve();
+
+                    return;
+                }
+
+
+                video.onloadedmetadata =
+                    () => {
+
+                        resolve();
+
+                    };
+
+            }
+        );
+
+
+        /*
+           Start actual playback.
+        */
 
         await video.play();
 
 
         /*
-           Give the browser a frame to establish
-           video dimensions.
+           Wait one browser frame.
         */
 
         await new Promise(
             resolve =>
-                requestAnimationFrame(resolve)
+                requestAnimationFrame(
+                    resolve
+                )
         );
 
+
+        /*
+           Now dimensions are trustworthy.
+        */
 
         resizeCanvas();
 
@@ -2586,22 +3464,26 @@ async function initializeCamera(){
             true;
 
 
+        /* ====================================================
+           UI STATE
+           ==================================================== */
+
         cameraState.textContent =
             "ON";
 
+
         connectionText.textContent =
             "ONLINE";
+
 
         connectionStatus.classList.add(
             "active"
         );
 
-        connectionDot.classList.add(
-            "active"
-        );
 
         trackingState.textContent =
             "SEARCHING";
+
 
         trackingDot.className =
             "status-dot warning";
@@ -2616,51 +3498,60 @@ async function initializeCamera(){
             "CAMERA ACTIVE";
 
 
-        /*
-           MediaPipe camera utility.
+        /* ====================================================
+           MEDIAPIPE CAMERA
+           ==================================================== */
 
-           It receives the actual video frames even though
-           the user cannot see the camera image.
-        */
-
-        const camera =
+        mediapipeCamera =
             new Camera(
+
                 video,
+
                 {
 
                     onFrame:
                         async () => {
 
                             if(
+
                                 cameraRunning &&
+
                                 video.readyState >= 2
+
                             ){
 
-                                await hands.send({
-                                    image:video
-                                });
+                                try{
+
+                                    await hands.send({
+
+                                        image:video
+
+                                    });
+
+                                }catch(error){
+
+                                    console.error(
+                                        "MediaPipe frame error:",
+                                        error
+                                    );
+
+                                }
 
                             }
 
                         },
+
 
                     width:1280,
 
                     height:720
 
                 }
+
             );
 
 
-        camera.start();
-
-
-        /*
-           Keep reference available for debugging.
-        */
-
-        window.airMathsCamera =
-            camera;
+        mediapipeCamera.start();
 
 
     }catch(error){
@@ -2675,11 +3566,31 @@ async function initializeCamera(){
             false;
 
 
+        if(stream){
+
+            stream
+                .getTracks()
+                .forEach(
+                    track =>
+                        track.stop()
+                );
+
+            stream =
+                null;
+        }
+
+
+        video.srcObject =
+            null;
+
+
         cameraState.textContent =
             "ERROR";
 
+
         connectionText.textContent =
             "OFFLINE";
+
 
         connectionStatus.classList.remove(
             "active"
@@ -2688,6 +3599,7 @@ async function initializeCamera(){
 
         trackingState.textContent =
             "ERROR";
+
 
         trackingDot.className =
             "status-dot warning";
@@ -2701,49 +3613,42 @@ async function initializeCamera(){
         startBtn.disabled =
             false;
 
+
         startBtn.textContent =
             "RETRY CAMERA";
 
 
-        let message =
-            "Camera could not be initialized.";
-
-
         if(
-            error &&
             error.name ===
             "NotAllowedError"
         ){
 
-            message =
-                "Camera permission was denied.";
-        }
+            centerDescription.textContent =
+                "Camera permission was denied. Allow camera access and try again.";
 
-        else if(
-            error &&
+        }else if(
             error.name ===
             "NotFoundError"
         ){
 
-            message =
-                "No camera was found.";
-        }
+            centerDescription.textContent =
+                "No usable camera was found on this device.";
 
-        else if(
-            error &&
+        }else if(
             error.name ===
             "NotReadableError"
         ){
 
-            message =
-                "Camera is already being used by another application.";
+            centerDescription.textContent =
+                "The camera is being used by another application.";
+
+        }else{
+
+            centerDescription.textContent =
+                "Camera initialization failed. Please retry.";
+
         }
 
-
-        document.querySelector(
-            ".center-description"
-        ).textContent =
-            message;
     }
 }
 
@@ -2767,6 +3672,7 @@ function stopCamera(){
                     track.stop()
             );
 
+
         stream =
             null;
     }
@@ -2779,15 +3685,19 @@ function stopCamera(){
     cameraState.textContent =
         "OFF";
 
+
     connectionText.textContent =
         "OFFLINE";
+
 
     connectionStatus.classList.remove(
         "active"
     );
 
+
     trackingState.textContent =
         "WAITING";
+
 
     trackingDot.className =
         "status-dot";
@@ -2802,10 +3712,11 @@ function stopCamera(){
 
 
 /* ============================================================
-   RESIZE / ORIENTATION
+   RESIZE HANDLING
    ============================================================ */
 
-let resizeTimer = null;
+let resizeTimer =
+    null;
 
 
 function handleResize(){
@@ -2822,7 +3733,7 @@ function handleResize(){
                 resizeCanvas();
 
             },
-            100
+            120
         );
 }
 
@@ -2833,49 +3744,70 @@ window.addEventListener(
 );
 
 
+/* ============================================================
+   ORIENTATION CHANGE
+   ============================================================ */
+
 window.addEventListener(
+
     "orientationchange",
+
     () => {
 
+        /*
+           Android needs a little time to update
+           viewport dimensions after rotation.
+        */
+
         setTimeout(
+
             () => {
 
                 resizeCanvas();
 
             },
-            250
+
+            350
+
         );
 
     }
+
 );
 
 
-/*
-   Also check video dimensions.
-
-   Some Android browsers report the camera dimensions
-   only after playback begins.
-*/
+/* ============================================================
+   VIDEO DIMENSION MONITOR
+   ============================================================ */
 
 setInterval(
+
     () => {
 
-        if(
-            cameraRunning &&
-            (
-                video.videoWidth !==
-                lastVideoWidth ||
+        if(!cameraRunning){
 
-                video.videoHeight !==
-                lastVideoHeight
-            )
+            return;
+        }
+
+
+        if(
+
+            video.videoWidth !==
+            lastVideoWidth ||
+
+            video.videoHeight !==
+            lastVideoHeight
+
         ){
 
             resizeCanvas();
+
         }
 
     },
+
     500
+
 );
 
 
@@ -2886,12 +3818,15 @@ setInterval(
 document
     .getElementById("clearBtn")
     .addEventListener(
+
         "click",
+
         () => {
 
             clearBoard();
 
         }
+
     );
 
 
@@ -2900,19 +3835,24 @@ document
    ============================================================ */
 
 startBtn.addEventListener(
+
     "click",
+
     initializeCamera
+
 );
 
 
 /* ============================================================
-   TOOL BUTTONS
+   TOOL SELECTION
    ============================================================ */
 
 document
     .getElementById("penTool")
     .addEventListener(
+
         "click",
+
         () => {
 
             setActiveTool(
@@ -2920,13 +3860,16 @@ document
             );
 
         }
+
     );
 
 
 document
     .getElementById("selectTool")
     .addEventListener(
+
         "click",
+
         () => {
 
             setActiveTool(
@@ -2934,13 +3877,16 @@ document
             );
 
         }
+
     );
 
 
 document
     .getElementById("measureTool")
     .addEventListener(
+
         "click",
+
         () => {
 
             setActiveTool(
@@ -2948,6 +3894,7 @@ document
             );
 
         }
+
     );
 
 
@@ -2956,10 +3903,15 @@ function setActiveTool(id){
     document
         .querySelectorAll(".tool")
         .forEach(
-            button =>
+
+            button => {
+
                 button.classList.remove(
                     "active"
-                )
+                );
+
+            }
+
         );
 
 
@@ -2972,7 +3924,7 @@ function setActiveTool(id){
 
 
 /* ============================================================
-   GRID TOGGLE
+   GRID
    ============================================================ */
 
 let gridEnabled =
@@ -2982,7 +3934,9 @@ let gridEnabled =
 document
     .getElementById("gridBtn")
     .addEventListener(
+
         "click",
+
         () => {
 
             gridEnabled =
@@ -2997,69 +3951,86 @@ document
 
             if(gridEnabled){
 
-                workspace.style.background =
+                workspace.style.backgroundColor =
+                    "var(--bg-0)";
+
+
+                workspace.style.backgroundImage =
+
                     `
+
                     linear-gradient(
                         rgba(255,255,255,.018) 1px,
                         transparent 1px
                     ),
+
                     linear-gradient(
                         90deg,
                         rgba(255,255,255,.018) 1px,
                         transparent 1px
-                    ),
-                    var(--bg-0)
+                    )
+
                     `;
+
 
                 workspace.style.backgroundSize =
                     "32px 32px";
 
+
             }else{
 
-                workspace.style.background =
-                    "var(--bg-0)";
+                workspace.style.backgroundImage =
+                    "none";
+
             }
 
         }
+
     );
 
 
 /* ============================================================
-   UNDO / REDO PLACEHOLDERS
+   UNDO / REDO
    ============================================================ */
 
 document
     .getElementById("undoBtn")
     .addEventListener(
+
         "click",
+
         () => {
 
             /*
-               History engine will be added in the
+               History engine reserved for the
                next system stage.
             */
 
         }
+
     );
 
 
 document
     .getElementById("redoBtn")
     .addEventListener(
+
         "click",
+
         () => {
 
             /*
-               History engine will be added in the
+               History engine reserved for the
                next system stage.
             */
 
         }
+
     );
 
 
 /* ============================================================
-   ZOOM BUTTON
+   ZOOM
    ============================================================ */
 
 let zoomLevel =
@@ -3069,38 +4040,44 @@ let zoomLevel =
 document
     .getElementById("zoomBtn")
     .addEventListener(
+
         "click",
+
         () => {
 
             zoomLevel += .1;
 
-            if(zoomLevel > 2){
-                zoomLevel = 1;
+
+            if(
+                zoomLevel > 2
+            ){
+
+                zoomLevel =
+                    1;
+
             }
+
 
             canvas.style.transform =
                 `scale(${zoomLevel})`;
+
 
             canvas.style.transformOrigin =
                 "center center";
 
         }
+
     );
 
 
 /* ============================================================
-   INITIAL CANVAS SETUP
-   ============================================================ */
-
-resizeCanvas();
-
-
-/* ============================================================
-   PREVENT PAGE SCROLLING / GESTURE INTERFERENCE
+   PREVENT TOUCH SCROLL
    ============================================================ */
 
 document.addEventListener(
+
     "touchmove",
+
     event => {
 
         if(
@@ -3109,21 +4086,26 @@ document.addEventListener(
         ){
 
             event.preventDefault();
+
         }
 
     },
+
     {
         passive:false
     }
+
 );
 
 
 /* ============================================================
-   PAGE VISIBILITY
+   VISIBILITY CHANGE
    ============================================================ */
 
 document.addEventListener(
+
     "visibilitychange",
+
     () => {
 
         if(
@@ -3132,27 +4114,40 @@ document.addEventListener(
         ){
 
             stopDrawing();
+
         }
 
     }
+
 );
 
 
 /* ============================================================
-   INITIAL STATUS
+   INITIAL CANVAS
+   ============================================================ */
+
+resizeCanvas();
+
+
+/* ============================================================
+   INITIAL UI STATE
    ============================================================ */
 
 cameraState.textContent =
     "OFF";
 
+
 handState.textContent =
     "NONE";
+
 
 modeState.textContent =
     "READY";
 
+
 gestureState.textContent =
     "NONE";
+
 
 trackingState.textContent =
     "WAITING";
