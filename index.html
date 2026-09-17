@@ -387,6 +387,7 @@ body {
     </div>
 
     <div class="hudLine">
+
         <span>
 
             <span id="handDot"></span>
@@ -401,6 +402,7 @@ body {
               class="hudValue">
             SEARCHING
         </span>
+
     </div>
 
     <div class="hudLine">
@@ -526,16 +528,12 @@ window.addEventListener(
 
 
 /* ================================
-   DRAWING STATE
+   V4 DRAWING STATE
 ================================ */
 
-let isDrawing = false;
-
-let previousX = null;
-let previousY = null;
-
-let smoothX = null;
-let smoothY = null;
+/*
+   Raw fingertip position
+*/
 
 let previousRawX = null;
 let previousRawY = null;
@@ -543,51 +541,79 @@ let previousRawY = null;
 let previousTime = null;
 
 
+/*
+   Smoothed fingertip
+*/
+
+let smoothX = null;
+let smoothY = null;
+
+
+/*
+   Recent points used
+   for curve generation.
+*/
+
+const pointBuffer = [];
+
+const MAX_BUFFER_POINTS = 8;
+
+
+/*
+   Last point rendered.
+*/
+
+let lastRenderedX = null;
+let lastRenderedY = null;
+
+
+/*
+   Drawing state.
+*/
+
+let isDrawing = false;
+
+
 /* ================================
-   V3 DRAWING SETTINGS
+   V4 DRAWING SETTINGS
 ================================ */
 
 /*
    Slow movement:
-   stronger smoothing
+   stronger smoothing.
 
    Fast movement:
-   weaker smoothing
-
-   This gives us
-   velocity-aware drawing.
+   more responsive.
 */
 
 const SLOW_SMOOTHING = 0.28;
 
 const FAST_SMOOTHING = 0.78;
 
-
-/*
-   Movement considered fast.
-*/
-
 const FAST_SPEED = 850;
 
 
 /*
-   Maximum realistic tracking jump.
-
-   Larger movements are not
-   immediately drawn as one huge line.
+   Jump protection.
 */
 
 const MAX_REASONABLE_JUMP = 320;
 
 
 /*
-   Interpolation step.
-
-   Smaller number =
-   more points in fast lines.
+   Distance between
+   generated curve samples.
 */
 
-const INTERPOLATION_STEP = 10;
+const CURVE_STEP = 4;
+
+
+/*
+   Minimum distance before
+   a new point enters buffer.
+*/
+
+const MIN_POINT_DISTANCE = 1.5;
 
 
 /* ================================
@@ -660,16 +686,18 @@ function resetDrawingState() {
 
     isDrawing = false;
 
-    previousX = null;
-    previousY = null;
-
-    smoothX = null;
-    smoothY = null;
-
     previousRawX = null;
     previousRawY = null;
 
     previousTime = null;
+
+    smoothX = null;
+    smoothY = null;
+
+    lastRenderedX = null;
+    lastRenderedY = null;
+
+    pointBuffer.length = 0;
 
 }
 
@@ -751,15 +779,20 @@ function getSmoothPoint(
         smoothY === null
     ) {
 
-        smoothX = targetX;
-        smoothY = targetY;
+        smoothX =
+            targetX;
+
+        smoothY =
+            targetY;
 
         return;
 
     }
 
+
     const smoothing =
         getSmoothing(speed);
+
 
     smoothX +=
         (
@@ -768,12 +801,38 @@ function getSmoothPoint(
         ) *
         smoothing;
 
+
     smoothY +=
         (
             targetY -
             smoothY
         ) *
         smoothing;
+
+}
+
+
+/* ================================
+   DISTANCE
+================================ */
+
+function getDistance(
+    x1,
+    y1,
+    x2,
+    y2
+) {
+
+    const dx =
+        x2 - x1;
+
+    const dy =
+        y2 - y1;
+
+    return Math.sqrt(
+        dx * dx +
+        dy * dy
+    );
 
 }
 
@@ -795,18 +854,26 @@ function drawSegment(
 
     ctx.beginPath();
 
-    ctx.moveTo(x1, y1);
+    ctx.moveTo(
+        x1,
+        y1
+    );
 
-    ctx.lineTo(x2, y2);
+    ctx.lineTo(
+        x2,
+        y2
+    );
 
     ctx.strokeStyle =
         "rgba(255,0,255,0.35)";
 
     ctx.lineWidth = 13;
 
-    ctx.lineCap = "round";
+    ctx.lineCap =
+        "round";
 
-    ctx.lineJoin = "round";
+    ctx.lineJoin =
+        "round";
 
     ctx.shadowColor =
         "#ff00ff";
@@ -822,18 +889,26 @@ function drawSegment(
 
     ctx.beginPath();
 
-    ctx.moveTo(x1, y1);
+    ctx.moveTo(
+        x1,
+        y1
+    );
 
-    ctx.lineTo(x2, y2);
+    ctx.lineTo(
+        x2,
+        y2
+    );
 
     ctx.strokeStyle =
         "#ff66ff";
 
     ctx.lineWidth = 5;
 
-    ctx.lineCap = "round";
+    ctx.lineCap =
+        "round";
 
-    ctx.lineJoin = "round";
+    ctx.lineJoin =
+        "round";
 
     ctx.shadowColor =
         "#ff00ff";
@@ -849,18 +924,26 @@ function drawSegment(
 
     ctx.beginPath();
 
-    ctx.moveTo(x1, y1);
+    ctx.moveTo(
+        x1,
+        y1
+    );
 
-    ctx.lineTo(x2, y2);
+    ctx.lineTo(
+        x2,
+        y2
+    );
 
     ctx.strokeStyle =
         "#ffffff";
 
     ctx.lineWidth = 2;
 
-    ctx.lineCap = "round";
+    ctx.lineCap =
+        "round";
 
-    ctx.lineJoin = "round";
+    ctx.lineJoin =
+        "round";
 
     ctx.shadowColor =
         "#ffffff";
@@ -870,73 +953,157 @@ function drawSegment(
     ctx.stroke();
 
 
-    /*
-       RESET shadow.
-    */
-
     ctx.shadowBlur = 0;
 
 }
 
 
 /* ================================
-   INTERPOLATED LINE
+   CATMULL-ROM INTERPOLATION
 ================================ */
 
-function drawInterpolatedLine(
-    x1,
-    y1,
-    x2,
-    y2
+function catmullRom(
+    p0,
+    p1,
+    p2,
+    p3,
+    t
 ) {
 
-    const dx =
-        x2 - x1;
+    const t2 =
+        t * t;
 
-    const dy =
-        y2 - y1;
+    const t3 =
+        t2 * t;
 
-    const distance =
-        Math.sqrt(
-            dx * dx +
-            dy * dy
+
+    const x =
+        0.5 *
+        (
+            (2 * p1.x) +
+
+            (-p0.x + p2.x) * t +
+
+            (
+                2 * p0.x -
+                5 * p1.x +
+                4 * p2.x -
+                p3.x
+            ) * t2 +
+
+            (
+                -p0.x +
+                3 * p1.x -
+                3 * p2.x +
+                p3.x
+            ) * t3
         );
 
-    /*
-       Very small movement.
-    */
+
+    const y =
+        0.5 *
+        (
+            (2 * p1.y) +
+
+            (-p0.y + p2.y) * t +
+
+            (
+                2 * p0.y -
+                5 * p1.y +
+                4 * p2.y -
+                p3.y
+            ) * t2 +
+
+            (
+                -p0.y +
+                3 * p1.y -
+                3 * p2.y +
+                p3.y
+            ) * t3
+        );
+
+
+    return {
+        x: x,
+        y: y
+    };
+
+}
+
+
+/* ================================
+   DRAW BUFFERED CURVE
+================================ */
+
+function drawBufferedCurve() {
 
     if (
-        distance <=
-        INTERPOLATION_STEP
+        pointBuffer.length < 4
     ) {
-
-        drawSegment(
-            x1,
-            y1,
-            x2,
-            y2
-        );
 
         return;
 
     }
 
 
-    /*
-       Number of interpolation
-       points.
-    */
+    const count =
+        pointBuffer.length;
 
-    const steps =
-        Math.ceil(
-            distance /
-            INTERPOLATION_STEP
+
+    const p0 =
+        pointBuffer[count - 4];
+
+    const p1 =
+        pointBuffer[count - 3];
+
+    const p2 =
+        pointBuffer[count - 2];
+
+    const p3 =
+        pointBuffer[count - 1];
+
+
+    const approximateLength =
+        getDistance(
+            p0.x,
+            p0.y,
+            p1.x,
+            p1.y
+        ) +
+
+        getDistance(
+            p1.x,
+            p1.y,
+            p2.x,
+            p2.y
+        ) +
+
+        getDistance(
+            p2.x,
+            p2.y,
+            p3.x,
+            p3.y
         );
 
 
-    let lastX = x1;
-    let lastY = y1;
+    const steps =
+        Math.max(
+            2,
+            Math.ceil(
+                approximateLength /
+                CURVE_STEP
+            )
+        );
+
+
+    let previousPoint =
+        catmullRom(
+            p0,
+            p1,
+            p2,
+            p3,
+            0
+        );
 
 
     for (
@@ -948,29 +1115,103 @@ function drawInterpolatedLine(
         const t =
             i / steps;
 
-        const currentX =
-            x1 + dx * t;
 
-        const currentY =
-            y1 + dy * t;
+        const currentPoint =
+            catmullRom(
+                p0,
+                p1,
+                p2,
+                p3,
+                t
+            );
+
 
         drawSegment(
-            lastX,
-            lastY,
-            currentX,
-            currentY
+            previousPoint.x,
+            previousPoint.y,
+            currentPoint.x,
+            currentPoint.y
         );
 
-        lastX = currentX;
-        lastY = currentY;
+
+        previousPoint =
+            currentPoint;
 
     }
+
+
+    lastRenderedX =
+        p2.x;
+
+    lastRenderedY =
+        p2.y;
 
 }
 
 
 /* ================================
-   V3 DRAW LINE
+   ADD POINT
+================================ */
+
+function addPoint(
+    x,
+    y
+) {
+
+    if (
+        pointBuffer.length > 0
+    ) {
+
+        const last =
+            pointBuffer[
+                pointBuffer.length - 1
+            ];
+
+
+        const distance =
+            getDistance(
+                last.x,
+                last.y,
+                x,
+                y
+            );
+
+
+        if (
+            distance <
+            MIN_POINT_DISTANCE
+        ) {
+
+            return false;
+
+        }
+
+    }
+
+
+    pointBuffer.push({
+        x: x,
+        y: y
+    });
+
+
+    while (
+        pointBuffer.length >
+        MAX_BUFFER_POINTS
+    ) {
+
+        pointBuffer.shift();
+
+    }
+
+
+    return true;
+
+}
+
+
+/* ================================
+   V4 DRAW LINE
 ================================ */
 
 function drawLine(
@@ -982,36 +1223,61 @@ function drawLine(
         performance.now();
 
 
-    /*
+    /* ============================
        FIRST POINT
-    */
+    ============================ */
 
     if (
         previousRawX === null ||
         previousRawY === null
     ) {
 
-        smoothX = targetX;
-        smoothY = targetY;
+        smoothX =
+            targetX;
 
-        previousX = targetX;
-        previousY = targetY;
+        smoothY =
+            targetY;
 
-        previousRawX = targetX;
-        previousRawY = targetY;
 
-        previousTime = now;
+        previousRawX =
+            targetX;
 
-        isDrawing = true;
+        previousRawY =
+            targetY;
+
+
+        previousTime =
+            now;
+
+
+        pointBuffer.length =
+            0;
+
+
+        pointBuffer.push({
+            x: targetX,
+            y: targetY
+        });
+
+
+        lastRenderedX =
+            targetX;
+
+        lastRenderedY =
+            targetY;
+
+
+        isDrawing =
+            true;
 
         return;
 
     }
 
 
-    /*
+    /* ============================
        RAW MOVEMENT
-    */
+    ============================ */
 
     const rawDX =
         targetX -
@@ -1021,6 +1287,7 @@ function drawLine(
         targetY -
         previousRawY;
 
+
     const rawDistance =
         Math.sqrt(
             rawDX * rawDX +
@@ -1028,13 +1295,14 @@ function drawLine(
         );
 
 
-    /*
+    /* ============================
        TIME
-    */
+    ============================ */
 
     let deltaTime =
         now -
         previousTime;
+
 
     if (
         deltaTime < 1
@@ -1045,10 +1313,9 @@ function drawLine(
     }
 
 
-    /*
+    /* ============================
        VELOCITY
-       pixels / second
-    */
+    ============================ */
 
     const speed =
         (
@@ -1057,10 +1324,6 @@ function drawLine(
         ) *
         1000;
 
-
-    /*
-       SAVE RAW POINT
-    */
 
     previousRawX =
         targetX;
@@ -1072,23 +1335,14 @@ function drawLine(
         now;
 
 
-    /*
+    /* ============================
        JUMP PROTECTION
-    */
+    ============================ */
 
     if (
         rawDistance >
         MAX_REASONABLE_JUMP
     ) {
-
-        /*
-           Do not create
-           a massive unwanted
-           line.
-
-           Instead, re-anchor
-           the pen.
-        */
 
         smoothX =
             targetX;
@@ -1096,21 +1350,32 @@ function drawLine(
         smoothY =
             targetY;
 
-        previousX =
+
+        pointBuffer.length =
+            0;
+
+
+        pointBuffer.push({
+            x: targetX,
+            y: targetY
+        });
+
+
+        lastRenderedX =
             targetX;
 
-        previousY =
+        lastRenderedY =
             targetY;
+
 
         return;
 
     }
 
 
-    /*
-       VELOCITY-AWARE
-       SMOOTHING
-    */
+    /* ============================
+       SMOOTH POSITION
+    ============================ */
 
     getSmoothPoint(
         targetX,
@@ -1119,61 +1384,75 @@ function drawLine(
     );
 
 
-    /*
-       DRAW DISTANCE
-    */
+    /* ============================
+       ADD POINT
+    ============================ */
 
-    const drawDX =
-        smoothX -
-        previousX;
-
-    const drawDY =
-        smoothY -
-        previousY;
-
-    const drawDistance =
-        Math.sqrt(
-            drawDX * drawDX +
-            drawDY * drawDY
+    const added =
+        addPoint(
+            smoothX,
+            smoothY
         );
 
 
-    /*
-       Ignore tiny
-       movements.
-    */
-
-    if (
-        drawDistance <
-        0.5
-    ) {
+    if (!added) {
 
         return;
 
     }
 
 
-    /*
-       FAST-LINE
-       INTERPOLATION
-    */
+    /* ============================
+       CURVE RENDERING
+    ============================ */
 
-    drawInterpolatedLine(
-        previousX,
-        previousY,
-        smoothX,
-        smoothY
-    );
+    if (
+        pointBuffer.length >= 4
+    ) {
+
+        drawBufferedCurve();
+
+    }
 
 
-    /*
-       UPDATE DRAW POINT
-    */
+    /* ============================
+       STROKE BEGINNING
+    ============================ */
 
-    previousX =
+    if (
+        pointBuffer.length < 4 &&
+        lastRenderedX !== null
+    ) {
+
+        const distance =
+            getDistance(
+                lastRenderedX,
+                lastRenderedY,
+                smoothX,
+                smoothY
+            );
+
+
+        if (
+            distance > 0.5
+        ) {
+
+            drawSegment(
+                lastRenderedX,
+                lastRenderedY,
+                smoothX,
+                smoothY
+            );
+
+        }
+
+    }
+
+
+    lastRenderedX =
         smoothX;
 
-    previousY =
+    lastRenderedY =
         smoothY;
 
 }
@@ -1229,9 +1508,9 @@ hands.onResults(
         }
 
 
-        /*
+        /* ============================
            NO HAND
-        */
+        ============================ */
 
         if (
             !results.multiHandLandmarks ||
@@ -1265,9 +1544,9 @@ hands.onResults(
             "DETECTED";
 
 
-        /*
-           FINGERS
-        */
+        /* ============================
+           FINGER DETECTION
+        ============================ */
 
         const indexUp =
             isFingerUp(
@@ -1298,9 +1577,9 @@ hands.onResults(
             );
 
 
-        /*
+        /* ============================
            OPEN HAND
-        */
+        ============================ */
 
         const fingersUp =
             Number(indexUp) +
@@ -1308,13 +1587,14 @@ hands.onResults(
             Number(ringUp) +
             Number(pinkyUp);
 
+
         const openHand =
             fingersUp >= 3;
 
 
-        /*
+        /* ============================
            PINCH
-        */
+        ============================ */
 
         const thumbTip =
             landmarks[4];
@@ -1343,12 +1623,9 @@ hands.onResults(
             pinchDistance < 0.055;
 
 
-        /*
+        /* ============================
            INDEX POSITION
-
-           Camera is mirrored,
-           so X is reversed.
-        */
+        ============================ */
 
         const x =
             (
@@ -1356,6 +1633,7 @@ hands.onResults(
                 indexTip.x
             ) *
             window.innerWidth;
+
 
         const y =
             indexTip.y *
@@ -1369,7 +1647,8 @@ hands.onResults(
 
 
         /* ============================
-           CLEAR — HIGHEST PRIORITY
+           CLEAR
+           HIGHEST PRIORITY
         ============================ */
 
         if (openHand) {
@@ -1380,6 +1659,7 @@ hands.onResults(
                 "CLEARING";
 
             clearFrames++;
+
 
             if (
                 clearFrames >=
@@ -1397,19 +1677,16 @@ hands.onResults(
 
                 }
 
+
                 clearFrames = 0;
 
             }
+
 
             return;
 
         }
 
-
-        /*
-           Reset clear counter
-           if hand isn't open.
-        */
 
         clearFrames = 0;
 
@@ -1445,19 +1722,21 @@ hands.onResults(
             modeState.textContent =
                 "DRAWING";
 
+
             drawLine(
                 x,
                 y
             );
+
 
             return;
 
         }
 
 
-        /*
-           UNKNOWN HAND POSITION
-        */
+        /* ============================
+           UNKNOWN POSITION
+        ============================ */
 
         stopDrawing();
 
@@ -1482,6 +1761,7 @@ startButton.addEventListener(
 
             systemState.textContent =
                 "STARTING";
+
 
             const stream =
                 await navigator.mediaDevices
@@ -1528,8 +1808,10 @@ startButton.addEventListener(
             status.textContent =
                 "SYSTEM ONLINE";
 
+
             systemState.textContent =
                 "ONLINE";
+
 
             startButton.style.display =
                 "none";
@@ -1540,8 +1822,10 @@ startButton.addEventListener(
 
             console.error(error);
 
+
             status.textContent =
                 "CAMERA ERROR";
+
 
             systemState.textContent =
                 "ERROR";
