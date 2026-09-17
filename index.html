@@ -99,6 +99,235 @@ body {
 
 
 /* =========================================================
+   STAGE 2 — TASK 1 ADDITIONS
+   FUTURISTIC BACKGROUND
+========================================================= */
+
+#ambientGlow {
+    position: fixed;
+
+    inset: -20%;
+
+    z-index: 1;
+
+    pointer-events: none;
+
+    background:
+        radial-gradient(
+            circle at 50% 50%,
+            rgba(255, 0, 255, 0.12),
+            transparent 32%
+        );
+
+    animation:
+        ambientPulse 7s ease-in-out infinite alternate;
+}
+
+
+/* =========================================================
+   PARTICLE FIELD
+========================================================= */
+
+#particles {
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 1;
+
+    pointer-events: none;
+
+    overflow: hidden;
+}
+
+
+.stage2Particle {
+    position: absolute;
+
+    width: 2px;
+    height: 2px;
+
+    border-radius: 50%;
+
+    background:
+        rgba(255, 255, 255, 0.65);
+
+    box-shadow:
+        0 0 5px
+        rgba(255, 0, 255, 0.8);
+
+    pointer-events: none;
+
+    animation:
+        stage2ParticleFloat
+        linear infinite;
+}
+
+
+/* =========================================================
+   SCAN LINE
+========================================================= */
+
+#scanLine {
+    position: fixed;
+
+    left: 0;
+
+    width: 100%;
+
+    height: 1px;
+
+    top: -5%;
+
+    z-index: 1;
+
+    pointer-events: none;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(255, 0, 255, 0.75),
+            transparent
+        );
+
+    box-shadow:
+        0 0 12px
+        rgba(255, 0, 255, 0.5);
+
+    opacity: 0.2;
+
+    animation:
+        stage2Scan 9s linear infinite;
+}
+
+
+/* =========================================================
+   BACKGROUND VIGNETTE
+========================================================= */
+
+#vignette {
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 1;
+
+    pointer-events: none;
+
+    background:
+        radial-gradient(
+            ellipse at center,
+            transparent 45%,
+            rgba(0, 0, 0, 0.35) 100%
+        );
+}
+
+
+/* =========================================================
+   STAGE 2 TASK 1 ANIMATIONS
+========================================================= */
+
+@keyframes ambientPulse {
+
+    from {
+        transform:
+            scale(0.96);
+
+        opacity: 0.7;
+    }
+
+    to {
+        transform:
+            scale(1.04);
+
+        opacity: 1;
+    }
+}
+
+
+@keyframes stage2ParticleFloat {
+
+    0% {
+        transform:
+            translate3d(
+                0,
+                0,
+                0
+            );
+
+        opacity: 0;
+    }
+
+    15% {
+        opacity: 0.5;
+    }
+
+    50% {
+        opacity: 0.8;
+    }
+
+    85% {
+        opacity: 0.35;
+    }
+
+    100% {
+        transform:
+            translate3d(
+                var(--particle-x),
+                var(--particle-y),
+                0
+            );
+
+        opacity: 0;
+    }
+}
+
+
+@keyframes stage2Scan {
+
+    0% {
+        top: -5%;
+        opacity: 0;
+    }
+
+    10% {
+        opacity: 0.2;
+    }
+
+    90% {
+        opacity: 0.2;
+    }
+
+    100% {
+        top: 105%;
+        opacity: 0;
+    }
+}
+
+
+/* =========================================================
+   STAGE 2 TASK 1 — MOBILE ADDITION
+========================================================= */
+
+@media (max-width: 600px) {
+
+    #ambientGlow {
+        opacity: 0.75;
+    }
+
+    #scanLine {
+        opacity: 0.12;
+    }
+
+    .stage2Particle {
+        width: 1.5px;
+        height: 1.5px;
+    }
+}
+
+
+/* =========================================================
    DRAWING CANVAS
 ========================================================= */
 
@@ -450,6 +679,19 @@ body {
 ======================================================== -->
 
 <div id="grid"></div>
+
+
+<!-- =======================================================
+     STAGE 2 — TASK 1 ADDITIONS
+======================================================== -->
+
+<div id="ambientGlow"></div>
+
+<div id="particles"></div>
+
+<div id="scanLine"></div>
+
+<div id="vignette"></div>
 
 
 <!-- =======================================================
@@ -2419,6 +2661,93 @@ async function() {
     }
 
 });
+
+
+/* =========================================================
+   STAGE 2 — TASK 1 ADDITION
+   PARTICLE SYSTEM
+========================================================= */
+
+const stage2Particles =
+    document.getElementById("particles");
+
+
+function createStage2Particles() {
+
+    stage2Particles.innerHTML = "";
+
+
+    const particleCount =
+        window.innerWidth < 600
+            ? 18
+            : 30;
+
+
+    for (
+        let i = 0;
+        i < particleCount;
+        i++
+    ) {
+
+        const particle =
+            document.createElement("div");
+
+
+        particle.className =
+            "stage2Particle";
+
+
+        particle.style.left =
+            Math.random() * 100 + "%";
+
+
+        particle.style.top =
+            Math.random() * 100 + "%";
+
+
+        particle.style.setProperty(
+            "--particle-x",
+            (
+                Math.random() * 160 - 80
+            ) + "px"
+        );
+
+
+        particle.style.setProperty(
+            "--particle-y",
+            (
+                Math.random() * -180 - 30
+            ) + "px"
+        );
+
+
+        particle.style.animationDuration =
+            (
+                6 +
+                Math.random() * 10
+            ) + "s";
+
+
+        particle.style.animationDelay =
+            (
+                Math.random() * -12
+            ) + "s";
+
+
+        stage2Particles.appendChild(
+            particle
+        );
+    }
+}
+
+
+createStage2Particles();
+
+
+window.addEventListener(
+    "resize",
+    createStage2Particles
+);
 
 </script>
 
