@@ -20,44 +20,36 @@
 
 :root {
 
-    /* Background */
     --bg-0: #0d0f11;
     --bg-1: #121416;
     --bg-2: #181b1e;
     --bg-3: #1d2024;
 
-    /* Borders */
     --line-1: #24282c;
     --line-2: #2c3136;
     --line-3: #383e44;
 
-    /* Text */
     --text-1: #e6e9ec;
     --text-2: #b0b6bd;
     --text-3: #7c838a;
     --text-4: #5d646b;
 
-    /* Accent */
     --accent: #91afd0;
     --accent-bg: rgba(145,175,208,0.10);
     --accent-line: rgba(145,175,208,0.28);
 
-    /* States */
     --success: #8eaa95;
     --warning: #b5a074;
     --danger: #b87878;
 
-    /* Geometry */
     --topbar: 48px;
     --bottombar: 28px;
-
     --rail: 48px;
 
     --radius-xs: 3px;
     --radius-sm: 5px;
     --radius-md: 7px;
 
-    /* Typography */
     --font:
         Inter,
         "Segoe UI",
@@ -69,14 +61,12 @@
 
 
 /* =========================================================
-   02 — RESET
+   RESET
 ========================================================= */
 
 * {
-
     margin: 0;
     padding: 0;
-
     box-sizing: border-box;
 }
 
@@ -95,11 +85,13 @@ body {
     font-family: var(--font);
 
     -webkit-font-smoothing: antialiased;
+
+    touch-action: none;
 }
 
 
 /* =========================================================
-   03 — APPLICATION SHELL
+   APPLICATION
 ========================================================= */
 
 #app {
@@ -108,14 +100,17 @@ body {
 
     inset: 0;
 
-    background: var(--bg-0);
+    width: 100vw;
+    height: 100vh;
 
     overflow: hidden;
+
+    background: var(--bg-0);
 }
 
 
 /* =========================================================
-   04 — CAMERA
+   CAMERA
 ========================================================= */
 
 #video {
@@ -124,8 +119,8 @@ body {
 
     inset: 0;
 
-    width: 100%;
-    height: 100%;
+    width: 100vw;
+    height: 100vh;
 
     object-fit: cover;
 
@@ -136,11 +131,13 @@ body {
     z-index: 0;
 
     pointer-events: none;
+
+    background: #000;
 }
 
 
 /* =========================================================
-   05 — WORKSPACE
+   WORKSPACE
 ========================================================= */
 
 #workspace {
@@ -161,7 +158,7 @@ body {
 
 
 /* =========================================================
-   06 — TECHNICAL GRID
+   GRID
 ========================================================= */
 
 #grid {
@@ -192,7 +189,7 @@ body {
 
 
 /* =========================================================
-   07 — CANVAS
+   CANVAS
 ========================================================= */
 
 #canvas {
@@ -201,14 +198,19 @@ body {
 
     inset: 0;
 
+    width: 100vw;
+    height: 100vh;
+
     z-index: 5;
 
     pointer-events: none;
+
+    display: block;
 }
 
 
 /* =========================================================
-   08 — TOP APPLICATION BAR
+   TOP BAR
 ========================================================= */
 
 #topbar {
@@ -229,8 +231,7 @@ body {
 
     background: var(--bg-2);
 
-    border-bottom:
-        1px solid var(--line-1);
+    border-bottom: 1px solid var(--line-1);
 }
 
 
@@ -241,7 +242,6 @@ body {
 #brand {
 
     width: var(--rail);
-
     height: 100%;
 
     display: flex;
@@ -249,8 +249,7 @@ body {
     align-items: center;
     justify-content: center;
 
-    border-right:
-        1px solid var(--line-1);
+    border-right: 1px solid var(--line-1);
 
     color: var(--text-1);
 
@@ -263,7 +262,7 @@ body {
 
 
 /* =========================================================
-   DOCUMENT AREA
+   DOCUMENT
 ========================================================= */
 
 #document {
@@ -296,8 +295,7 @@ body {
 
     padding-left: 9px;
 
-    border-left:
-        1px solid var(--line-2);
+    border-left: 1px solid var(--line-2);
 }
 
 
@@ -322,15 +320,13 @@ body {
 
     padding: 0 9px;
 
-    border:
-        1px solid transparent;
+    border: 1px solid transparent;
 
     background: transparent;
 
     color: var(--text-3);
 
-    border-radius:
-        var(--radius-xs);
+    border-radius: var(--radius-xs);
 
     font-family: var(--font);
 
@@ -394,13 +390,12 @@ body {
 }
 
 .statusDot.online {
-
     background: var(--success);
 }
 
 
 /* =========================================================
-   09 — LEFT TOOL RAIL
+   LEFT RAIL
 ========================================================= */
 
 #rail {
@@ -425,14 +420,8 @@ body {
 
     background: var(--bg-2);
 
-    border-right:
-        1px solid var(--line-1);
+    border-right: 1px solid var(--line-1);
 }
-
-
-/* =========================================================
-   TOOL GROUP
-========================================================= */
 
 .toolGroup {
 
@@ -442,19 +431,12 @@ body {
 
     margin-bottom: 8px;
 
-    border-bottom:
-        1px solid var(--line-1);
+    border-bottom: 1px solid var(--line-1);
 }
 
 .toolGroup:last-child {
-
     border-bottom: none;
 }
-
-
-/* =========================================================
-   TOOL
-========================================================= */
 
 .tool {
 
@@ -470,11 +452,9 @@ body {
     align-items: center;
     justify-content: center;
 
-    border:
-        1px solid transparent;
+    border: 1px solid transparent;
 
-    border-radius:
-        var(--radius-sm);
+    border-radius: var(--radius-sm);
 
     background: transparent;
 
@@ -487,8 +467,7 @@ body {
 
     background: var(--accent-bg);
 
-    border-color:
-        var(--accent-line);
+    border-color: var(--accent-line);
 
     color: var(--accent);
 }
@@ -511,7 +490,7 @@ body {
 
 
 /* =========================================================
-   10 — RIGHT INSPECTOR
+   INSPECTOR
 ========================================================= */
 
 #inspector {
@@ -526,22 +505,14 @@ body {
 
     z-index: 25;
 
-    background:
-        rgba(24,27,30,0.96);
+    background: rgba(24,27,30,0.96);
 
-    border:
-        1px solid var(--line-2);
+    border: 1px solid var(--line-2);
 
-    border-radius:
-        var(--radius-md);
+    border-radius: var(--radius-md);
 
     overflow: hidden;
 }
-
-
-/* =========================================================
-   INSPECTOR HEADER
-========================================================= */
 
 .inspectorHeader {
 
@@ -555,8 +526,7 @@ body {
 
     justify-content: space-between;
 
-    border-bottom:
-        1px solid var(--line-1);
+    border-bottom: 1px solid var(--line-1);
 
     color: var(--text-2);
 
@@ -576,21 +546,14 @@ body {
     font-size: 12px;
 }
 
-
-/* =========================================================
-   INSPECTOR SECTION
-========================================================= */
-
 .inspectorSection {
 
     padding: 10px 11px;
 
-    border-bottom:
-        1px solid var(--line-1);
+    border-bottom: 1px solid var(--line-1);
 }
 
 .inspectorSection:last-child {
-
     border-bottom: none;
 }
 
@@ -609,11 +572,6 @@ body {
     text-transform: uppercase;
 }
 
-
-/* =========================================================
-   PROPERTY ROW
-========================================================= */
-
 .property {
 
     min-height: 25px;
@@ -626,9 +584,7 @@ body {
 }
 
 .propertyLabel {
-
     color: var(--text-3);
-
     font-size: 9px;
 }
 
@@ -638,13 +594,12 @@ body {
 
     font-size: 9px;
 
-    font-variant-numeric:
-        tabular-nums;
+    font-variant-numeric: tabular-nums;
 }
 
 
 /* =========================================================
-   11 — CENTER STATUS
+   WORKSPACE STATUS
 ========================================================= */
 
 #workspaceStatus {
@@ -654,11 +609,11 @@ body {
     top: calc(var(--topbar) + 10px);
 
     left: calc(
-        var(--rail) + 50%
+        var(--rail) +
+        (100vw - var(--rail)) / 2
     );
 
-    transform:
-        translateX(-50%);
+    transform: translateX(-50%);
 
     z-index: 20;
 
@@ -670,14 +625,11 @@ body {
 
     align-items: center;
 
-    background:
-        rgba(18,20,22,0.88);
+    background: rgba(18,20,22,0.88);
 
-    border:
-        1px solid var(--line-1);
+    border: 1px solid var(--line-1);
 
-    border-radius:
-        var(--radius-xs);
+    border-radius: var(--radius-xs);
 
     color: var(--text-4);
 
@@ -688,7 +640,7 @@ body {
 
 
 /* =========================================================
-   12 — START BUTTON
+   START BUTTON
 ========================================================= */
 
 #startButton {
@@ -697,13 +649,19 @@ body {
 
     left: calc(
         var(--rail) +
-        (100% - var(--rail)) / 2
+        (100vw - var(--rail)) / 2
     );
 
-    top: 50%;
+    top: calc(
+        var(--topbar) +
+        (
+            100vh -
+            var(--topbar) -
+            var(--bottombar)
+        ) / 2
+    );
 
-    transform:
-        translate(-50%, -50%);
+    transform: translate(-50%, -50%);
 
     z-index: 50;
 
@@ -713,11 +671,9 @@ body {
 
     background: var(--bg-3);
 
-    border:
-        1px solid var(--line-3);
+    border: 1px solid var(--line-3);
 
-    border-radius:
-        var(--radius-sm);
+    border-radius: var(--radius-sm);
 
     color: var(--text-1);
 
@@ -733,13 +689,12 @@ body {
 }
 
 #startButton:hover {
-
     background: #23272b;
 }
 
 
 /* =========================================================
-   13 — CURSOR
+   CURSOR
 ========================================================= */
 
 #cursor {
@@ -749,14 +704,11 @@ body {
     width: 20px;
     height: 20px;
 
-    transform:
-        translate(-50%, -50%);
+    transform: translate(-50%, -50%);
 
     z-index: 15;
 
-    border:
-        1px solid
-        rgba(225,232,238,0.9);
+    border: 1px solid rgba(225,232,238,0.9);
 
     border-radius: 50%;
 
@@ -779,18 +731,16 @@ body {
     width: 3px;
     height: 3px;
 
-    transform:
-        translate(-50%, -50%);
+    transform: translate(-50%, -50%);
 
-    background:
-        #edf2f6;
+    background: #edf2f6;
 
     border-radius: 50%;
 }
 
 
 /* =========================================================
-   14 — BOTTOM STATUS BAR
+   BOTTOM BAR
 ========================================================= */
 
 #bottomBar {
@@ -813,18 +763,12 @@ body {
 
     background: var(--bg-2);
 
-    border-top:
-        1px solid var(--line-1);
+    border-top: 1px solid var(--line-1);
 
     color: var(--text-4);
 
     font-size: 8px;
 }
-
-
-/* =========================================================
-   BOTTOM GROUP
-========================================================= */
 
 .bottomGroup {
 
@@ -838,12 +782,10 @@ body {
 
     padding: 0 12px;
 
-    border-right:
-        1px solid var(--line-1);
+    border-right: 1px solid var(--line-1);
 }
 
 .bottomGroup:first-child {
-
     padding-left: 2px;
 }
 
@@ -855,11 +797,6 @@ body {
 
     border-right: none;
 }
-
-
-/* =========================================================
-   KEY
-========================================================= */
 
 .key {
 
@@ -876,8 +813,7 @@ body {
 
     background: var(--bg-3);
 
-    border:
-        1px solid var(--line-2);
+    border: 1px solid var(--line-2);
 
     border-radius: 3px;
 
@@ -888,17 +824,16 @@ body {
 
 
 /* =========================================================
-   15 — HIDDEN
+   HIDDEN
 ========================================================= */
 
 .hidden {
-
     display: none !important;
 }
 
 
 /* =========================================================
-   16 — MOBILE
+   MOBILE / PORTRAIT
 ========================================================= */
 
 @media (max-width: 700px) {
@@ -912,12 +847,10 @@ body {
 
     #documentType,
     #topActions {
-
         display: none;
     }
 
     #document {
-
         padding-left: 12px;
     }
 
@@ -929,7 +862,6 @@ body {
     }
 
     #topStatus .topStatusItem {
-
         font-size: 7px;
     }
 
@@ -958,17 +890,14 @@ body {
     }
 
     .tool.active::before {
-
         left: -5px;
     }
 
     .bottomGroup {
-
         padding: 0 7px;
     }
 
     .hideMobile {
-
         display: none;
     }
 
@@ -979,19 +908,71 @@ body {
     }
 }
 
+
+/* =========================================================
+   LANDSCAPE PHONE
+========================================================= */
+
+@media
+(max-width: 900px)
+and (orientation: landscape) {
+
+    :root {
+
+        --topbar: 40px;
+        --bottombar: 24px;
+        --rail: 40px;
+    }
+
+    #document {
+        padding-left: 9px;
+    }
+
+    #documentName {
+        font-size: 10px;
+    }
+
+    #inspector {
+
+        width: 165px;
+
+        top: calc(
+            var(--topbar) + 6px
+        );
+
+        right: 6px;
+    }
+
+    .inspectorSection {
+        padding: 7px 9px;
+    }
+
+    .property {
+        min-height: 21px;
+    }
+
+    .tool {
+
+        width: 30px;
+        height: 30px;
+    }
+
+    #workspaceStatus {
+
+        top: calc(
+            var(--topbar) + 7px
+        );
+    }
+}
+
 </style>
 </head>
 
 
 <body>
 
-
 <div id="app">
 
-
-<!-- =======================================================
-     CAMERA
-======================================================== -->
 
 <video
     id="video"
@@ -1000,10 +981,6 @@ body {
 </video>
 
 
-<!-- =======================================================
-     WORKSPACE
-======================================================== -->
-
 <div id="workspace">
 
     <div id="grid"></div>
@@ -1011,23 +988,14 @@ body {
 </div>
 
 
-<!-- =======================================================
-     DRAWING CANVAS
-======================================================== -->
-
 <canvas id="canvas"></canvas>
 
-
-<!-- =======================================================
-     TOP BAR
-======================================================== -->
 
 <header id="topbar">
 
     <div id="brand">
         AM
     </div>
-
 
     <div id="document">
 
@@ -1040,7 +1008,6 @@ body {
         </span>
 
     </div>
-
 
     <div id="topActions">
 
@@ -1061,7 +1028,6 @@ body {
         </button>
 
     </div>
-
 
     <div id="topStatus">
 
@@ -1087,70 +1053,47 @@ body {
 </header>
 
 
-<!-- =======================================================
-     LEFT TOOL RAIL
-======================================================== -->
-
 <aside id="rail">
-
 
     <div class="toolGroup">
 
-        <div
-            class="tool active"
-            title="Pen">
+        <div class="tool active">
             P
         </div>
 
-        <div
-            class="tool"
-            title="Select">
+        <div class="tool">
             S
         </div>
 
-        <div
-            class="tool"
-            title="Move">
+        <div class="tool">
             M
         </div>
 
     </div>
 
-
     <div class="toolGroup">
 
-        <div
-            class="tool"
-            title="Undo">
+        <div class="tool">
             ↶
         </div>
 
-        <div
-            class="tool"
-            title="Redo">
+        <div class="tool">
             ↷
         </div>
 
-        <div
-            class="tool"
-            title="Clear">
+        <div class="tool">
             C
         </div>
 
     </div>
 
-
     <div class="toolGroup">
 
-        <div
-            class="tool"
-            title="Grid">
+        <div class="tool">
             #
         </div>
 
-        <div
-            class="tool"
-            title="Zoom">
+        <div class="tool">
             Z
         </div>
 
@@ -1159,21 +1102,12 @@ body {
 </aside>
 
 
-<!-- =======================================================
-     WORKSPACE STATUS
-======================================================== -->
-
 <div id="workspaceStatus">
     PRESS INITIALIZE CAMERA
 </div>
 
 
-<!-- =======================================================
-     RIGHT INSPECTOR
-======================================================== -->
-
 <aside id="inspector">
-
 
     <div class="inspectorHeader">
 
@@ -1194,7 +1128,6 @@ body {
             Tracking
         </div>
 
-
         <div class="property">
 
             <span class="propertyLabel">
@@ -1208,7 +1141,6 @@ body {
             </span>
 
         </div>
-
 
         <div class="property">
 
@@ -1233,7 +1165,6 @@ body {
             System
         </div>
 
-
         <div class="property">
 
             <span class="propertyLabel">
@@ -1248,15 +1179,13 @@ body {
 
         </div>
 
-
         <div class="property">
 
             <span class="propertyLabel">
                 Tracking
             </span>
 
-            <span
-                class="propertyValue">
+            <span class="propertyValue">
                 MediaPipe
             </span>
 
@@ -1271,7 +1200,6 @@ body {
             Input
         </div>
 
-
         <div class="property">
 
             <span class="propertyLabel">
@@ -1284,7 +1212,6 @@ body {
 
         </div>
 
-
         <div class="property">
 
             <span class="propertyLabel">
@@ -1296,7 +1223,6 @@ body {
             </span>
 
         </div>
-
 
         <div class="property">
 
@@ -1315,31 +1241,18 @@ body {
 </aside>
 
 
-<!-- =======================================================
-     CURSOR
-======================================================== -->
-
 <div
     id="cursor"
     class="hidden">
 </div>
 
 
-<!-- =======================================================
-     START
-======================================================== -->
-
 <button id="startButton">
     INITIALIZE CAMERA
 </button>
 
 
-<!-- =======================================================
-     BOTTOM BAR
-======================================================== -->
-
 <footer id="bottomBar">
-
 
     <div class="bottomGroup">
 
@@ -1353,7 +1266,6 @@ body {
 
     </div>
 
-
     <div class="bottomGroup">
 
         <span class="key">
@@ -1365,7 +1277,6 @@ body {
         </span>
 
     </div>
-
 
     <div class="bottomGroup hideMobile">
 
@@ -1379,7 +1290,6 @@ body {
 
     </div>
 
-
     <div class="bottomGroup">
 
         AIR MATHS BOARD
@@ -1388,13 +1298,8 @@ body {
 
 </footer>
 
-
 </div>
 
-
-<!-- =======================================================
-     MEDIAPIPE
-======================================================== -->
 
 <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js"></script>
 
@@ -1423,54 +1328,244 @@ const startButton =
     document.getElementById("startButton");
 
 const workspaceStatus =
-    document.getElementById(
-        "workspaceStatus"
-    );
+    document.getElementById("workspaceStatus");
 
 const handState =
-    document.getElementById(
-        "handState"
-    );
+    document.getElementById("handState");
 
 const modeState =
-    document.getElementById(
-        "modeState"
-    );
+    document.getElementById("modeState");
 
 const systemState =
-    document.getElementById(
-        "systemState"
-    );
+    document.getElementById("systemState");
 
 const systemIndicator =
-    document.getElementById(
-        "systemIndicator"
-    );
+    document.getElementById("systemIndicator");
 
 const topStatusText =
-    document.getElementById(
-        "topStatusText"
-    );
+    document.getElementById("topStatusText");
 
 
 /* =========================================================
-   CANVAS
+   CAMERA / SCREEN GEOMETRY
+========================================================= */
+
+let viewportWidth = 0;
+let viewportHeight = 0;
+
+let devicePixelRatioValue = 1;
+
+
+/*
+   MediaPipe receives the actual camera frame.
+
+   The video is displayed using:
+
+       object-fit: cover
+
+   Therefore the displayed camera image can be
+   cropped on either axis.
+
+   This function calculates that crop exactly.
+*/
+
+function getVideoGeometry() {
+
+    const vw =
+        video.videoWidth ||
+        1280;
+
+    const vh =
+        video.videoHeight ||
+        720;
+
+    const sw =
+        window.innerWidth;
+
+    const sh =
+        window.innerHeight;
+
+
+    const videoAspect =
+        vw / vh;
+
+    const screenAspect =
+        sw / sh;
+
+
+    let renderedWidth;
+    let renderedHeight;
+
+
+    if (
+        screenAspect >
+        videoAspect
+    ) {
+
+        renderedWidth =
+            sw;
+
+        renderedHeight =
+            sw /
+            videoAspect;
+
+    }
+    else {
+
+        renderedHeight =
+            sh;
+
+        renderedWidth =
+            sh *
+            videoAspect;
+
+    }
+
+
+    const offsetX =
+        (
+            sw -
+            renderedWidth
+        ) / 2;
+
+    const offsetY =
+        (
+            sh -
+            renderedHeight
+        ) / 2;
+
+
+    return {
+
+        videoWidth: vw,
+
+        videoHeight: vh,
+
+        renderedWidth,
+
+        renderedHeight,
+
+        offsetX,
+
+        offsetY
+
+    };
+}
+
+
+/* =========================================================
+   CANVAS RESIZE
 ========================================================= */
 
 function resizeCanvas() {
 
-    canvas.width =
+    viewportWidth =
         window.innerWidth;
 
-    canvas.height =
+    viewportHeight =
         window.innerHeight;
+
+
+    devicePixelRatioValue =
+        Math.min(
+            window.devicePixelRatio || 1,
+            2
+        );
+
+
+    /*
+       CSS size.
+    */
+
+    canvas.style.width =
+        viewportWidth + "px";
+
+    canvas.style.height =
+        viewportHeight + "px";
+
+
+    /*
+       Internal resolution.
+
+       The drawing engine continues using
+       normal CSS-pixel coordinates.
+    */
+
+    canvas.width =
+        Math.round(
+            viewportWidth *
+            devicePixelRatioValue
+        );
+
+    canvas.height =
+        Math.round(
+            viewportHeight *
+            devicePixelRatioValue
+        );
+
+
+    ctx.setTransform(
+        devicePixelRatioValue,
+        0,
+        0,
+        devicePixelRatioValue,
+        0,
+        0
+    );
+
+
+    ctx.lineCap =
+        "round";
+
+    ctx.lineJoin =
+        "round";
 }
+
+
+/* Initial */
 
 resizeCanvas();
 
+
 window.addEventListener(
     "resize",
-    resizeCanvas
+    function() {
+
+        resizeCanvas();
+
+        resetDrawingState();
+
+    },
+    {
+        passive: true
+    }
+);
+
+
+window.addEventListener(
+    "orientationchange",
+    function() {
+
+        /*
+           Give the browser a moment to finish
+           changing the viewport dimensions.
+        */
+
+        setTimeout(
+            function() {
+
+                resizeCanvas();
+
+                resetDrawingState();
+
+            },
+            150
+        );
+
+    },
+    {
+        passive: true
+    }
 );
 
 
@@ -2003,7 +2098,6 @@ function addStrokePoint(point) {
             d <
             MICRO_JITTER_DISTANCE
         ) {
-
             return;
         }
 
@@ -2011,7 +2105,6 @@ function addStrokePoint(point) {
             d <
             MIN_POINT_DISTANCE
         ) {
-
             return;
         }
     }
@@ -2095,7 +2188,6 @@ function flushStrokeBuffer() {
     if (
         count === 0
     ) {
-
         return;
     }
 
@@ -2184,19 +2276,13 @@ function flushStrokeBuffer() {
     }
 
     const p0 =
-        strokeBuffer[
-            count - 3
-        ];
+        strokeBuffer[count - 3];
 
     const p1 =
-        strokeBuffer[
-            count - 2
-        ];
+        strokeBuffer[count - 2];
 
     const p2 =
-        strokeBuffer[
-            count - 1
-        ];
+        strokeBuffer[count - 1];
 
     drawCurve(
         p0,
@@ -2245,7 +2331,6 @@ function stopDrawing() {
     if (
         isDrawing
     ) {
-
         flushStrokeBuffer();
     }
 
@@ -2262,8 +2347,8 @@ function clearCanvas() {
     ctx.clearRect(
         0,
         0,
-        canvas.width,
-        canvas.height
+        viewportWidth,
+        viewportHeight
     );
 
     resetDrawingState();
@@ -2441,7 +2526,6 @@ function drawLine(
             movement <
             MICRO_JITTER_DISTANCE
         ) {
-
             return;
         }
     }
@@ -2544,6 +2628,92 @@ hands.setOptions({
 
 
 /* =========================================================
+   NORMALIZED CAMERA → SCREEN COORDINATES
+========================================================= */
+
+function mapHandToScreen(
+    normalizedX,
+    normalizedY
+) {
+
+    const geometry =
+        getVideoGeometry();
+
+
+    /*
+       MediaPipe coordinates are based on the
+       original camera frame.
+
+       object-fit: cover enlarges that frame
+       and crops the excess.
+
+       We reproduce that exact transformation.
+    */
+
+    const displayedX =
+        normalizedX *
+        geometry.renderedWidth;
+
+    const displayedY =
+        normalizedY *
+        geometry.renderedHeight;
+
+
+    let screenX =
+        displayedX +
+        geometry.offsetX;
+
+    let screenY =
+        displayedY +
+        geometry.offsetY;
+
+
+    /*
+       The displayed video is mirrored.
+
+       MediaPipe itself gives us the original
+       camera coordinate, so mirror X here.
+    */
+
+    screenX =
+        window.innerWidth -
+        screenX;
+
+
+    /*
+       Keep the coordinate inside the screen.
+    */
+
+    screenX =
+        Math.max(
+            0,
+            Math.min(
+                window.innerWidth,
+                screenX
+            )
+        );
+
+    screenY =
+        Math.max(
+            0,
+            Math.min(
+                window.innerHeight,
+                screenY
+            )
+        );
+
+
+    return {
+
+        x: screenX,
+
+        y: screenY
+
+    };
+}
+
+
+/* =========================================================
    HAND RESULTS
 ========================================================= */
 
@@ -2553,7 +2723,6 @@ function(results) {
     if (
         clearCooldown > 0
     ) {
-
         clearCooldown--;
     }
 
@@ -2652,17 +2821,27 @@ function(results) {
         pinchDistance < 0.055;
 
 
-    const x =
-        (
-            1 -
-            indexTip.x
-        ) *
-        window.innerWidth;
+    /*
+       IMPORTANT:
 
+       Do NOT directly multiply normalized
+       MediaPipe coordinates by window dimensions.
+
+       Use the camera projection function.
+    */
+
+    const screenPoint =
+        mapHandToScreen(
+            indexTip.x,
+            indexTip.y
+        );
+
+
+    const x =
+        screenPoint.x;
 
     const y =
-        indexTip.y *
-        window.innerHeight;
+        screenPoint.y;
 
 
     updateCursor(
@@ -2756,12 +2935,28 @@ function(results) {
 
 
 /* =========================================================
+   CAMERA
+========================================================= */
+
+let cameraInstance = null;
+
+let cameraStarted = false;
+
+
+/* =========================================================
    START CAMERA
 ========================================================= */
 
 startButton.addEventListener(
 "click",
 async function() {
+
+    if (
+        cameraStarted
+    ) {
+        return;
+    }
+
 
     try {
 
@@ -2782,8 +2977,17 @@ async function() {
 
                 video: {
 
-                    facingMode:
-                        "user"
+                    facingMode: {
+                        ideal: "user"
+                    },
+
+                    width: {
+                        ideal: 1280
+                    },
+
+                    height: {
+                        ideal: 720
+                    }
 
                 },
 
@@ -2796,7 +3000,39 @@ async function() {
             stream;
 
 
-        const camera =
+        await video.play();
+
+
+        /*
+           Wait until the browser knows the actual
+           camera dimensions.
+        */
+
+        if (
+            video.readyState <
+            2
+        ) {
+
+            await new Promise(
+                function(resolve) {
+
+                    video.onloadedmetadata =
+                        resolve;
+
+                }
+            );
+
+        }
+
+
+        /*
+           Recalculate screen/camera geometry.
+        */
+
+        resizeCanvas();
+
+
+        cameraInstance =
             new Camera(
                 video,
                 {
@@ -2804,9 +3040,15 @@ async function() {
                     onFrame:
                     async function() {
 
-                        await hands.send({
-                            image: video
-                        });
+                        if (
+                            video.readyState >= 2
+                        ) {
+
+                            await hands.send({
+                                image: video
+                            });
+
+                        }
 
                     },
 
@@ -2818,7 +3060,10 @@ async function() {
             );
 
 
-        camera.start();
+        cameraInstance.start();
+
+
+        cameraStarted = true;
 
 
         workspaceStatus.textContent =
@@ -2864,6 +3109,34 @@ async function() {
     }
 
 });
+
+
+/* =========================================================
+   KEEP CAMERA GEOMETRY SYNCHRONIZED
+========================================================= */
+
+video.addEventListener(
+    "loadedmetadata",
+    function() {
+
+        resizeCanvas();
+
+    }
+);
+
+
+/* =========================================================
+   INITIAL STATE
+========================================================= */
+
+workspaceStatus.textContent =
+    "PRESS INITIALIZE CAMERA";
+
+systemState.textContent =
+    "Offline";
+
+topStatusText.textContent =
+    "OFFLINE";
 
 </script>
 
