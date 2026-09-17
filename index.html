@@ -3,6 +3,7 @@
 
 <head>
 <meta charset="UTF-8">
+
 <meta name="viewport"
       content="width=device-width, initial-scale=1.0">
 
@@ -22,7 +23,10 @@ body {
     font-family: Arial, sans-serif;
 }
 
-/* CAMERA */
+
+/* =========================
+   CAMERA
+========================= */
 
 #video {
     position: fixed;
@@ -40,7 +44,10 @@ body {
     z-index: 0;
 }
 
-/* GRID */
+
+/* =========================
+   GRID
+========================= */
 
 #grid {
     position: fixed;
@@ -76,7 +83,10 @@ body {
         );
 }
 
-/* DRAWING CANVAS */
+
+/* =========================
+   CANVAS
+========================= */
 
 #canvas {
     position: fixed;
@@ -90,7 +100,10 @@ body {
     pointer-events: none;
 }
 
-/* TITLE */
+
+/* =========================
+   TITLE
+========================= */
 
 #title {
     position: fixed;
@@ -114,7 +127,10 @@ body {
         0 0 20px #ff00ff;
 }
 
-/* STATUS */
+
+/* =========================
+   STATUS
+========================= */
 
 #status {
     position: fixed;
@@ -133,7 +149,10 @@ body {
     z-index: 10;
 }
 
-/* START BUTTON */
+
+/* =========================
+   START BUTTON
+========================= */
 
 #startButton {
     position: fixed;
@@ -165,7 +184,10 @@ body {
     cursor: pointer;
 }
 
-/* HUD */
+
+/* =========================
+   HUD
+========================= */
 
 #hud {
     position: fixed;
@@ -192,6 +214,7 @@ body {
     font-size: 12px;
 }
 
+
 #hudHeader {
     color: #ff66ff;
 
@@ -199,6 +222,7 @@ body {
 
     letter-spacing: 1px;
 }
+
 
 .hudLine {
     display: flex;
@@ -208,13 +232,16 @@ body {
     margin: 8px 0;
 }
 
+
 .hudLabel {
     color: #aaa;
 }
 
+
 .hudValue {
     color: #ffffff;
 }
+
 
 #handDot {
     display: inline-block;
@@ -228,10 +255,14 @@ body {
 
     background: #ff00ff;
 
-    box-shadow: 0 0 8px #ff00ff;
+    box-shadow:
+        0 0 8px #ff00ff;
 }
 
-/* GESTURE */
+
+/* =========================
+   GESTURE STRIP
+========================= */
 
 #gesture {
     position: fixed;
@@ -254,6 +285,7 @@ body {
     font-size: 12px;
 }
 
+
 #instructionHeader {
     color: #ff66ff;
 
@@ -262,7 +294,10 @@ body {
     letter-spacing: 1px;
 }
 
-/* CURSOR */
+
+/* =========================
+   CURSOR
+========================= */
 
 #cursor {
     position: fixed;
@@ -288,6 +323,7 @@ body {
     display: none;
 }
 
+
 #cursorCenter {
     position: absolute;
 
@@ -308,7 +344,10 @@ body {
         0 0 8px white;
 }
 
-/* CURSOR MARKS */
+
+/* =========================
+   CURSOR MARKS
+========================= */
 
 .cursorMark {
     position: fixed;
@@ -325,17 +364,21 @@ body {
     display: none;
 }
 
+
 #markTop {
     border-top: 2px solid;
 }
+
 
 #markBottom {
     border-bottom: 2px solid;
 }
 
+
 #markLeft {
     border-left: 2px solid;
 }
+
 
 #markRight {
     border-right: 2px solid;
@@ -348,7 +391,9 @@ body {
 <body>
 
 
-<!-- CAMERA -->
+<!-- =========================
+     CAMERA
+========================= -->
 
 <video
     id="video"
@@ -357,17 +402,23 @@ body {
 </video>
 
 
-<!-- GRID -->
+<!-- =========================
+     GRID
+========================= -->
 
 <div id="grid"></div>
 
 
-<!-- DRAWING -->
+<!-- =========================
+     DRAWING CANVAS
+========================= -->
 
 <canvas id="canvas"></canvas>
 
 
-<!-- TITLE -->
+<!-- =========================
+     TITLE
+========================= -->
 
 <div id="title">
     ✨ AIR MATHS BOARD
@@ -379,7 +430,9 @@ body {
 </div>
 
 
-<!-- HUD -->
+<!-- =========================
+     SYSTEM HUD
+========================= -->
 
 <div id="hud">
 
@@ -391,16 +444,22 @@ body {
     <div class="hudLine">
 
         <span>
+
             <span id="handDot"></span>
+
             <span class="hudLabel">
                 HAND
             </span>
+
         </span>
+
 
         <span
             id="handState"
             class="hudValue">
+
             SEARCHING
+
         </span>
 
     </div>
@@ -412,10 +471,13 @@ body {
             MODE
         </span>
 
+
         <span
             id="modeState"
             class="hudValue">
+
             STANDBY
+
         </span>
 
     </div>
@@ -427,10 +489,13 @@ body {
             SYSTEM
         </span>
 
+
         <span
             id="systemState"
             class="hudValue">
+
             OFFLINE
+
         </span>
 
     </div>
@@ -438,7 +503,9 @@ body {
 </div>
 
 
-<!-- GESTURE -->
+<!-- =========================
+     GESTURE GUIDE
+========================= -->
 
 <div id="gesture">
 
@@ -455,35 +522,54 @@ body {
 </div>
 
 
-<!-- START -->
+<!-- =========================
+     START BUTTON
+========================= -->
 
 <button id="startButton">
     START CAMERA
 </button>
 
 
-<!-- CURSOR -->
+<!-- =========================
+     CURSOR
+========================= -->
 
 <div id="cursor">
+
     <div id="cursorCenter"></div>
+
 </div>
 
 
-<div id="markTop"
-     class="cursorMark"></div>
-
-<div id="markBottom"
-     class="cursorMark"></div>
-
-<div id="markLeft"
-     class="cursorMark"></div>
-
-<div id="markRight"
-     class="cursorMark"></div>
+<div
+    id="markTop"
+    class="cursorMark">
+</div>
 
 
+<div
+    id="markBottom"
+    class="cursorMark">
+</div>
 
-<!-- MEDIAPIPE -->
+
+<div
+    id="markLeft"
+    class="cursorMark">
+</div>
+
+
+<div
+    id="markRight"
+    class="cursorMark">
+</div>
+
+
+
+<!-- =========================
+     MEDIAPIPE
+========================= -->
 
 <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js"></script>
 
@@ -541,6 +627,7 @@ function resizeCanvas() {
 
 resizeCanvas();
 
+
 window.addEventListener(
     "resize",
     resizeCanvas
@@ -548,17 +635,18 @@ window.addEventListener(
 
 
 /* =========================================================
-   DRAWING VARIABLES
+   DRAWING STATE
 ========================================================= */
 
 let previousX = null;
+
 let previousY = null;
 
 let isDrawing = false;
 
 
 /* =========================================================
-   CLEAR VARIABLES
+   CLEAR STATE
 ========================================================= */
 
 let clearFrames = 0;
@@ -571,22 +659,15 @@ const CLEAR_COOLDOWN_FRAMES = 15;
 
 
 /* =========================================================
-   DRAWING FUNCTION
+   DRAWING
 ========================================================= */
 
 function drawLine(x, y) {
 
+
     /*
-        V1 deliberately uses direct drawing.
-
-        NO:
-        - smoothing
-        - velocity
-        - point buffer
-        - curve algorithm
-        - adaptive filtering
+        First point of a stroke.
     */
-
 
     if (
         previousX === null ||
@@ -594,29 +675,40 @@ function drawLine(x, y) {
     ) {
 
         previousX = x;
+
         previousY = y;
 
         return;
+
     }
 
 
     const distance =
         Math.sqrt(
-            Math.pow(x - previousX, 2) +
-            Math.pow(y - previousY, 2)
+
+            Math.pow(
+                x - previousX,
+                2
+            )
+
+            +
+
+            Math.pow(
+                y - previousY,
+                2
+            )
+
         );
 
 
-    /*
-        Ignore absolutely tiny movements.
-    */
-
     if (distance < 1) {
+
         return;
+
     }
 
 
-    /* OUTER GLOW */
+    /* GLOW */
 
     ctx.beginPath();
 
@@ -625,7 +717,10 @@ function drawLine(x, y) {
         previousY
     );
 
-    ctx.lineTo(x, y);
+    ctx.lineTo(
+        x,
+        y
+    );
 
     ctx.strokeStyle =
         "rgba(255,0,255,0.35)";
@@ -636,14 +731,15 @@ function drawLine(x, y) {
 
     ctx.lineJoin = "round";
 
-    ctx.shadowColor = "#ff00ff";
+    ctx.shadowColor =
+        "#ff00ff";
 
     ctx.shadowBlur = 25;
 
     ctx.stroke();
 
 
-    /* INNER NEON */
+    /* NEON */
 
     ctx.beginPath();
 
@@ -652,7 +748,10 @@ function drawLine(x, y) {
         previousY
     );
 
-    ctx.lineTo(x, y);
+    ctx.lineTo(
+        x,
+        y
+    );
 
     ctx.strokeStyle =
         "#ff66ff";
@@ -663,7 +762,8 @@ function drawLine(x, y) {
 
     ctx.lineJoin = "round";
 
-    ctx.shadowColor = "#ff00ff";
+    ctx.shadowColor =
+        "#ff00ff";
 
     ctx.shadowBlur = 12;
 
@@ -679,7 +779,10 @@ function drawLine(x, y) {
         previousY
     );
 
-    ctx.lineTo(x, y);
+    ctx.lineTo(
+        x,
+        y
+    );
 
     ctx.strokeStyle =
         "#ffffff";
@@ -690,23 +793,19 @@ function drawLine(x, y) {
 
     ctx.lineJoin = "round";
 
-    ctx.shadowColor = "#ffffff";
+    ctx.shadowColor =
+        "#ffffff";
 
     ctx.shadowBlur = 5;
 
     ctx.stroke();
 
 
-    /*
-        Important:
-        Reset shadow so it doesn't
-        affect other canvas operations.
-    */
-
     ctx.shadowBlur = 0;
 
 
     previousX = x;
+
     previousY = y;
 
 }
@@ -721,6 +820,7 @@ function stopDrawing() {
     isDrawing = false;
 
     previousX = null;
+
     previousY = null;
 
 }
@@ -739,7 +839,9 @@ function clearCanvas() {
         canvas.height
     );
 
+
     stopDrawing();
+
 
     modeState.textContent =
         "CLEARED";
@@ -753,7 +855,8 @@ function clearCanvas() {
 
 function updateCursor(x, y) {
 
-    cursor.style.display = "block";
+    cursor.style.display =
+        "block";
 
     cursor.style.left =
         x + "px";
@@ -764,10 +867,6 @@ function updateCursor(x, y) {
 }
 
 
-/* =========================================================
-   HIDE CURSOR
-========================================================= */
-
 function hideCursor() {
 
     cursor.style.display =
@@ -777,7 +876,7 @@ function hideCursor() {
 
 
 /* =========================================================
-   HAND DETECTION
+   MEDIAPIPE HANDS
 ========================================================= */
 
 const hands =
@@ -787,9 +886,13 @@ const hands =
         function(file) {
 
             return (
+
                 "https://cdn.jsdelivr.net/npm/" +
+
                 "@mediapipe/hands/" +
+
                 file
+
             );
 
         }
@@ -829,286 +932,347 @@ function isFingerUp(
 
 
 /* =========================================================
-   HAND RESULT
+   HAND RESULTS
 ========================================================= */
 
 hands.onResults(
-    function(results) {
+function(results) {
 
 
-        /* -----------------------------------------------
-           NO HAND
-        ------------------------------------------------ */
+    /* =====================================================
+       NO HAND
+    ===================================================== */
 
-        if (
-            !results.multiHandLandmarks ||
-            results.multiHandLandmarks.length === 0
-        ) {
+    if (
+        !results.multiHandLandmarks ||
 
-            handState.textContent =
-                "SEARCHING";
-
-            modeState.textContent =
-                "STANDBY";
-
-            hideCursor();
-
-            stopDrawing();
-
-            clearFrames = 0;
-
-            return;
-        }
-
-
-        /* -----------------------------------------------
-           HAND FOUND
-        ------------------------------------------------ */
-
-        const landmarks =
-            results.multiHandLandmarks[0];
-
+        results.multiHandLandmarks.length === 0
+    ) {
 
         handState.textContent =
-            "DETECTED";
+            "SEARCHING";
 
 
-        /* -----------------------------------------------
-           INDEX FINGER
-        ------------------------------------------------ */
-
-        const indexTip =
-            landmarks[8];
-
-        const indexPIP =
-            landmarks[6];
+        modeState.textContent =
+            "STANDBY";
 
 
-        const indexUp =
-            isFingerUp(
-                landmarks,
-                8,
-                6
-            );
+        hideCursor();
 
 
-        /* -----------------------------------------------
-           OTHER FINGERS
-        ------------------------------------------------ */
-
-        const middleUp =
-            isFingerUp(
-                landmarks,
-                12,
-                10
-            );
-
-        const ringUp =
-            isFingerUp(
-                landmarks,
-                16,
-                14
-            );
-
-        const pinkyUp =
-            isFingerUp(
-                landmarks,
-                20,
-                18
-            );
-
-
-        /* -----------------------------------------------
-           THUMB
-        ------------------------------------------------ */
-
-        const thumbTip =
-            landmarks[4];
-
-        const thumbIP =
-            landmarks[3];
-
-
-        /*
-            Pinch detection uses distance
-            between thumb tip and index tip.
-        */
-
-        const dx =
-            thumbTip.x -
-            indexTip.x;
-
-        const dy =
-            thumbTip.y -
-            indexTip.y;
-
-        const pinchDistance =
-            Math.sqrt(
-                dx * dx +
-                dy * dy
-            );
-
-
-        const isPinching =
-            pinchDistance < 0.075;
-
-
-        /* -----------------------------------------------
-           OPEN HAND
-        ------------------------------------------------ */
-
-        const openHand =
-            indexUp &&
-            middleUp &&
-            ringUp &&
-            pinkyUp;
-
-
-        /* -----------------------------------------------
-           INDEX POSITION
-        ------------------------------------------------ */
-
-        /*
-            Camera is mirrored.
-
-            Therefore X is flipped.
-        */
-
-        const x =
-            (1 - indexTip.x) *
-            window.innerWidth;
-
-        const y =
-            indexTip.y *
-            window.innerHeight;
-
-
-        updateCursor(x, y);
-
-
-        /* =================================================
-           GESTURE PRIORITY
-
-           1. CLEAR
-           2. PINCH / STOP
-           3. DRAW
-           4. READY
-        ================================================= */
-
-
-        /* -----------------------------------------------
-           CLEAR
-        ------------------------------------------------ */
-
-        if (openHand && !isPinching) {
-
-            stopDrawing();
-
-            modeState.textContent =
-                "CLEARING";
-
-            clearFrames++;
-
-
-            if (
-                clearFrames >=
-                CLEAR_REQUIRED_FRAMES
-            ) {
-
-                if (clearCooldown <= 0) {
-
-                    clearCanvas();
-
-                    clearCooldown =
-                        CLEAR_COOLDOWN_FRAMES;
-
-                }
-
-                clearFrames = 0;
-
-            }
-
-
-            return;
-        }
+        stopDrawing();
 
 
         clearFrames = 0;
 
 
-        if (clearCooldown > 0) {
+        return;
 
-            clearCooldown--;
-
-        }
+    }
 
 
-        /* -----------------------------------------------
-           PINCH = STOP
-        ------------------------------------------------ */
+    /* =====================================================
+       HAND DETECTED
+    ===================================================== */
 
-        if (isPinching) {
-
-            stopDrawing();
-
-            modeState.textContent =
-                "STOPPED";
-
-            return;
-        }
+    const landmarks =
+        results.multiHandLandmarks[0];
 
 
-        /* -----------------------------------------------
-           INDEX ONLY = DRAW
-        ------------------------------------------------ */
-
-        if (
-            indexUp &&
-            !middleUp &&
-            !ringUp &&
-            !pinkyUp
-        ) {
-
-            modeState.textContent =
-                "DRAWING";
+    handState.textContent =
+        "DETECTED";
 
 
-            /*
-                New stroke starts here.
-                This prevents a line connecting
-                two separate strokes.
-            */
+    /* =====================================================
+       FINGERS
+    ===================================================== */
 
-            if (!isDrawing) {
-
-                isDrawing = true;
-
-                previousX = x;
-                previousY = y;
-
-            }
-            else {
-
-                drawLine(x, y);
-
-            }
+    const indexUp =
+        isFingerUp(
+            landmarks,
+            8,
+            6
+        );
 
 
-            return;
-        }
+    const middleUp =
+        isFingerUp(
+            landmarks,
+            12,
+            10
+        );
 
 
-        /* -----------------------------------------------
-           OTHER HAND STATES
-        ------------------------------------------------ */
+    const ringUp =
+        isFingerUp(
+            landmarks,
+            16,
+            14
+        );
+
+
+    const pinkyUp =
+        isFingerUp(
+            landmarks,
+            20,
+            18
+        );
+
+
+    /* =====================================================
+       OPEN HAND
+
+       3 OR MORE FINGERS UP
+       = CLEAR
+
+       This is deliberately checked BEFORE
+       drawing.
+    ===================================================== */
+
+    const fingersUp =
+
+        Number(indexUp) +
+
+        Number(middleUp) +
+
+        Number(ringUp) +
+
+        Number(pinkyUp);
+
+
+    const openHand =
+        fingersUp >= 3;
+
+
+    /* =====================================================
+       PINCH
+    ===================================================== */
+
+    const indexTip =
+        landmarks[8];
+
+    const thumbTip =
+        landmarks[4];
+
+
+    const dx =
+        thumbTip.x -
+        indexTip.x;
+
+
+    const dy =
+        thumbTip.y -
+        indexTip.y;
+
+
+    const pinchDistance =
+        Math.sqrt(
+            dx * dx +
+            dy * dy
+        );
+
+
+    /*
+        Smaller threshold makes pinch
+        less likely to interfere with
+        the CLEAR gesture.
+    */
+
+    const isPinching =
+        pinchDistance < 0.055;
+
+
+    /* =====================================================
+       INDEX POSITION
+    ===================================================== */
+
+    const x =
+        (1 - indexTip.x) *
+        window.innerWidth;
+
+
+    const y =
+        indexTip.y *
+        window.innerHeight;
+
+
+    updateCursor(x, y);
+
+
+    /* =====================================================
+       GESTURE PRIORITY
+       
+       1. CLEAR
+       2. STOP
+       3. DRAW
+       4. READY
+    ===================================================== */
+
+
+    /* =====================================================
+       1. CLEAR
+    ===================================================== */
+
+    if (openHand) {
+
+
+        /*
+            ABSOLUTE RULE:
+
+            If openHand is true,
+            drawing stops immediately.
+        */
 
         stopDrawing();
 
+
         modeState.textContent =
-            "READY";
+            "CLEARING";
+
+
+        clearFrames++;
+
+
+        if (
+            clearFrames >=
+            CLEAR_REQUIRED_FRAMES
+        ) {
+
+
+            if (
+                clearCooldown <= 0
+            ) {
+
+                clearCanvas();
+
+
+                clearCooldown =
+                    CLEAR_COOLDOWN_FRAMES;
+
+            }
+
+
+            clearFrames = 0;
+
+        }
+
+
+        return;
 
     }
-);
+
+
+    /* =====================================================
+       NO LONGER OPEN HAND
+    ===================================================== */
+
+    clearFrames = 0;
+
+
+    if (
+        clearCooldown > 0
+    ) {
+
+        clearCooldown--;
+
+    }
+
+
+    /* =====================================================
+       2. PINCH = STOP
+    ===================================================== */
+
+    if (isPinching) {
+
+
+        stopDrawing();
+
+
+        modeState.textContent =
+            "STOPPED";
+
+
+        return;
+
+    }
+
+
+    /* =====================================================
+       3. DRAW
+       
+       Drawing is allowed ONLY when:
+
+       INDEX = UP
+       MIDDLE = DOWN
+       RING = DOWN
+       PINKY = DOWN
+       PINCH = FALSE
+    ===================================================== */
+
+    if (
+
+        indexUp &&
+
+        !middleUp &&
+
+        !ringUp &&
+
+        !pinkyUp &&
+
+        !isPinching
+
+    ) {
+
+
+        modeState.textContent =
+            "DRAWING";
+
+
+        /*
+            Start a completely new stroke.
+        */
+
+        if (!isDrawing) {
+
+
+            isDrawing = true;
+
+
+            previousX = x;
+
+            previousY = y;
+
+
+        }
+        else {
+
+
+            drawLine(
+                x,
+                y
+            );
+
+
+        }
+
+
+        return;
+
+    }
+
+
+    /* =====================================================
+       4. EVERYTHING ELSE
+    ===================================================== */
+
+    stopDrawing();
+
+
+    modeState.textContent =
+        "READY";
+
+
+});
 
 
 /* =========================================================
@@ -1119,12 +1283,14 @@ async function startCamera() {
 
     try {
 
+
         status.textContent =
             "Starting camera...";
 
 
         const stream =
-            await navigator.mediaDevices.getUserMedia({
+            await navigator.mediaDevices
+            .getUserMedia({
 
                 video: {
                     facingMode: "user"
@@ -1144,6 +1310,7 @@ async function startCamera() {
 
         systemState.textContent =
             "ONLINE";
+
 
         status.textContent =
             "Camera Ready";
@@ -1185,18 +1352,24 @@ async function startCamera() {
 
     catch(error) {
 
+
         console.error(error);
 
 
         systemState.textContent =
             "ERROR";
 
+
         status.textContent =
             "Camera Failed";
 
+
         alert(
+
             "Could not start camera.\n\n" +
+
             error.message
+
         );
 
     }
