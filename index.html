@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
 <meta charset="UTF-8">
 
 <meta name="viewport"
@@ -12,1323 +11,1273 @@
 
 <title>Air Maths Board</title>
 
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
+
 <style>
+:root{
+    --bg-0:#0d0f11;
+    --bg-1:#121416;
+    --bg-2:#181b1e;
+    --bg-3:#1d2024;
 
-/* =========================================================
-   01 — DESIGN SYSTEM
-========================================================= */
+    --line-1:#24282c;
+    --line-2:#2c3136;
+    --line-3:#383e44;
 
-:root {
+    --text-1:#e6e9ec;
+    --text-2:#b0b6bd;
+    --text-3:#7c838a;
+    --text-4:#5d646b;
 
-    --bg-0: #0d0f11;
-    --bg-1: #121416;
-    --bg-2: #181b1e;
-    --bg-3: #1d2024;
+    --accent:#91afd0;
+    --accent-bg:rgba(145,175,208,.10);
+    --accent-line:rgba(145,175,208,.28);
 
-    --line-1: #24282c;
-    --line-2: #2c3136;
-    --line-3: #383e44;
+    --danger:#c98282;
 
-    --text-1: #e6e9ec;
-    --text-2: #b0b6bd;
-    --text-3: #7c838a;
-    --text-4: #5d646b;
-
-    --accent: #91afd0;
-    --accent-bg: rgba(145,175,208,0.10);
-    --accent-line: rgba(145,175,208,0.28);
-
-    --success: #8eaa95;
-    --warning: #b5a074;
-    --danger: #b87878;
-
-    --topbar: 48px;
-    --bottombar: 28px;
-    --rail: 48px;
-
-    --radius-xs: 3px;
-    --radius-sm: 5px;
-    --radius-md: 7px;
-
-    --font:
-        Inter,
-        "Segoe UI",
-        Roboto,
-        Helvetica,
-        Arial,
-        sans-serif;
+    --topbar:48px;
+    --rail:48px;
+    --bottombar:28px;
 }
 
-
-/* =========================================================
-   RESET
-========================================================= */
-
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+*{
+    box-sizing:border-box;
+    -webkit-tap-highlight-color:transparent;
 }
 
 html,
-body {
-
-    width: 100%;
-    height: 100%;
-
-    overflow: hidden;
-
-    background: var(--bg-0);
-
-    color: var(--text-1);
-
-    font-family: var(--font);
-
-    -webkit-font-smoothing: antialiased;
-
-    touch-action: none;
+body{
+    margin:0;
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    background:var(--bg-0);
+    color:var(--text-1);
+    font-family:
+        Inter,
+        ui-sans-serif,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
 }
 
+button{
+    font:inherit;
+}
+
+#app{
+    position:fixed;
+    inset:0;
+    width:100%;
+    height:100%;
+    background:var(--bg-0);
+    overflow:hidden;
+}
 
 /* =========================================================
-   APPLICATION
-========================================================= */
+   INVISIBLE CAMERA TRACKING LAYER
+   ========================================================= */
 
-#app {
+#camera{
+    position:fixed;
+    inset:0;
 
-    position: fixed;
+    width:100vw;
+    height:100vh;
 
-    inset: 0;
+    object-fit:cover;
 
-    width: 100vw;
-    height: 100vh;
+    /*
+       IMPORTANT:
+       The video remains active and rendered internally so
+       MediaPipe continues receiving frames.
 
-    overflow: hidden;
+       But the user sees absolutely nothing.
+    */
+    opacity:0;
+    visibility:visible;
+    pointer-events:none;
 
-    background: var(--bg-0);
+    z-index:-10;
 }
-
-
-/* =========================================================
-   CAMERA
-========================================================= */
-
-#video {
-
-    position: fixed;
-
-    inset: 0;
-
-    width: 100vw;
-    height: 100vh;
-
-    object-fit: cover;
-
-    transform: scaleX(-1);
-
-    opacity: 0.045;
-
-    z-index: 0;
-
-    pointer-events: none;
-
-    background: #000;
-}
-
-
-/* =========================================================
-   WORKSPACE
-========================================================= */
-
-#workspace {
-
-    position: fixed;
-
-    top: var(--topbar);
-    left: var(--rail);
-    right: 0;
-    bottom: var(--bottombar);
-
-    background: var(--bg-1);
-
-    z-index: 1;
-
-    overflow: hidden;
-}
-
-
-/* =========================================================
-   GRID
-========================================================= */
-
-#grid {
-
-    position: absolute;
-
-    inset: 0;
-
-    opacity: 0.085;
-
-    pointer-events: none;
-
-    background-image:
-
-        linear-gradient(
-            rgba(255,255,255,0.055) 1px,
-            transparent 1px
-        ),
-
-        linear-gradient(
-            90deg,
-            rgba(255,255,255,0.055) 1px,
-            transparent 1px
-        );
-
-    background-size: 64px 64px;
-}
-
-
-/* =========================================================
-   CANVAS
-========================================================= */
-
-#canvas {
-
-    position: fixed;
-
-    inset: 0;
-
-    width: 100vw;
-    height: 100vh;
-
-    z-index: 5;
-
-    pointer-events: none;
-
-    display: block;
-}
-
 
 /* =========================================================
    TOP BAR
-========================================================= */
+   ========================================================= */
 
-#topbar {
+.topbar{
+    position:absolute;
+    left:0;
+    right:0;
+    top:0;
 
-    position: fixed;
+    height:var(--topbar);
 
-    top: 0;
-    left: 0;
+    display:flex;
+    align-items:center;
 
-    width: 100%;
-    height: var(--topbar);
+    border-bottom:1px solid var(--line-1);
 
-    z-index: 30;
+    background:rgba(13,15,17,.97);
 
-    display: flex;
-
-    align-items: center;
-
-    background: var(--bg-2);
-
-    border-bottom: 1px solid var(--line-1);
+    z-index:20;
 }
 
+.brand{
+    width:var(--rail);
+    height:100%;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    border-right:1px solid var(--line-1);
+
+    font-size:12px;
+    font-weight:700;
+    letter-spacing:.08em;
+
+    color:var(--text-1);
+}
+
+.document{
+    height:100%;
+
+    display:flex;
+    align-items:center;
+
+    padding:0 16px;
+
+    min-width:190px;
+
+    border-right:1px solid var(--line-1);
+}
+
+.document-name{
+    font-size:12px;
+    color:var(--text-1);
+}
+
+.document-type{
+    margin-left:9px;
+
+    font-size:10px;
+    color:var(--text-4);
+
+    letter-spacing:.08em;
+    text-transform:uppercase;
+}
+
+.menu{
+    display:flex;
+    height:100%;
+    align-items:center;
+    gap:2px;
+    padding-left:8px;
+}
+
+.menu button,
+.top-action{
+    height:30px;
+
+    border:0;
+    background:transparent;
+
+    color:var(--text-3);
+
+    padding:0 10px;
+
+    font-size:10px;
+    letter-spacing:.08em;
+
+    cursor:pointer;
+}
+
+.menu button:hover,
+.top-action:hover{
+    color:var(--text-1);
+    background:var(--bg-2);
+}
+
+.top-right{
+    margin-left:auto;
+
+    height:100%;
+
+    display:flex;
+    align-items:center;
+    gap:8px;
+
+    padding-right:10px;
+}
+
+.connection{
+    display:flex;
+    align-items:center;
+    gap:6px;
+
+    padding:0 9px;
+
+    height:26px;
+
+    border:1px solid var(--line-2);
+
+    color:var(--text-3);
+
+    font-size:9px;
+    letter-spacing:.08em;
+}
+
+.connection-dot{
+    width:5px;
+    height:5px;
+
+    border-radius:50%;
+
+    background:var(--text-4);
+}
+
+.connection.active .connection-dot{
+    background:#8eaa91;
+}
+
+.version{
+    color:var(--text-4);
+    font-size:9px;
+    letter-spacing:.08em;
+}
 
 /* =========================================================
-   BRAND
-========================================================= */
+   LEFT TOOL RAIL
+   ========================================================= */
 
-#brand {
+.toolrail{
+    position:absolute;
 
-    width: var(--rail);
-    height: 100%;
+    left:0;
+    top:var(--topbar);
+    bottom:var(--bottombar);
 
-    display: flex;
+    width:var(--rail);
 
-    align-items: center;
-    justify-content: center;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
 
-    border-right: 1px solid var(--line-1);
+    border-right:1px solid var(--line-1);
 
-    color: var(--text-1);
+    background:var(--bg-1);
 
-    font-size: 12px;
-
-    font-weight: 700;
-
-    letter-spacing: -0.4px;
+    z-index:15;
 }
 
+.tool-group{
+    width:100%;
+    padding:8px 0;
+
+    border-bottom:1px solid var(--line-1);
+}
+
+.tool{
+    position:relative;
+
+    width:100%;
+    height:38px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    border:0;
+    background:transparent;
+
+    color:var(--text-4);
+
+    cursor:pointer;
+}
+
+.tool:hover{
+    color:var(--text-2);
+    background:var(--bg-2);
+}
+
+.tool.active{
+    color:var(--accent);
+    background:var(--accent-bg);
+}
+
+.tool.active::before{
+    content:"";
+
+    position:absolute;
+
+    left:0;
+    top:8px;
+    bottom:8px;
+
+    width:2px;
+
+    background:var(--accent);
+}
+
+.tool-symbol{
+    font-size:11px;
+    font-weight:600;
+    letter-spacing:.04em;
+}
+
+.tool-bottom{
+    margin-top:auto;
+
+    width:100%;
+
+    padding:8px 0;
+
+    border-top:1px solid var(--line-1);
+}
 
 /* =========================================================
-   DOCUMENT
-========================================================= */
+   WORKSPACE
+   ========================================================= */
 
-#document {
+.workspace{
+    position:absolute;
 
-    height: 100%;
+    left:var(--rail);
+    right:0;
 
-    display: flex;
+    top:var(--topbar);
+    bottom:var(--bottombar);
 
-    align-items: center;
+    overflow:hidden;
 
-    gap: 9px;
+    background:
+        linear-gradient(
+            rgba(255,255,255,.018) 1px,
+            transparent 1px
+        ),
+        linear-gradient(
+            90deg,
+            rgba(255,255,255,.018) 1px,
+            transparent 1px
+        ),
+        var(--bg-0);
 
-    padding: 0 14px;
+    background-size:32px 32px;
 }
 
-#documentName {
+/* subtle center workspace boundary */
 
-    color: var(--text-1);
+.board-shell{
+    position:absolute;
 
-    font-size: 11px;
+    inset:18px;
 
-    font-weight: 600;
+    border:1px solid var(--line-2);
+
+    background:
+        radial-gradient(
+            circle at center,
+            rgba(145,175,208,.025),
+            transparent 55%
+        ),
+        rgba(12,14,16,.38);
+
+    overflow:hidden;
 }
 
-#documentType {
+/* canvas fills actual board */
 
-    color: var(--text-4);
+#drawCanvas{
+    position:absolute;
 
-    font-size: 9px;
+    inset:0;
 
-    padding-left: 9px;
+    width:100%;
+    height:100%;
 
-    border-left: 1px solid var(--line-2);
+    display:block;
+
+    touch-action:none;
+
+    z-index:3;
 }
-
-
-/* =========================================================
-   TOP ACTIONS
-========================================================= */
-
-#topActions {
-
-    margin-left: 14px;
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 2px;
-}
-
-.topButton {
-
-    height: 28px;
-
-    padding: 0 9px;
-
-    border: 1px solid transparent;
-
-    background: transparent;
-
-    color: var(--text-3);
-
-    border-radius: var(--radius-xs);
-
-    font-family: var(--font);
-
-    font-size: 9px;
-
-    cursor: default;
-}
-
-.topButton:hover {
-
-    color: var(--text-1);
-
-    background: var(--bg-3);
-
-    border-color: var(--line-2);
-}
-
-
-/* =========================================================
-   TOP STATUS
-========================================================= */
-
-#topStatus {
-
-    margin-left: auto;
-
-    height: 100%;
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 16px;
-
-    padding: 0 14px;
-}
-
-.topStatusItem {
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 6px;
-
-    color: var(--text-4);
-
-    font-size: 8px;
-
-    letter-spacing: 0.35px;
-}
-
-.statusDot {
-
-    width: 5px;
-    height: 5px;
-
-    border-radius: 50%;
-
-    background: var(--text-4);
-}
-
-.statusDot.online {
-    background: var(--success);
-}
-
-
-/* =========================================================
-   LEFT RAIL
-========================================================= */
-
-#rail {
-
-    position: fixed;
-
-    top: var(--topbar);
-    left: 0;
-    bottom: var(--bottombar);
-
-    width: var(--rail);
-
-    z-index: 30;
-
-    display: flex;
-
-    flex-direction: column;
-
-    align-items: center;
-
-    padding-top: 8px;
-
-    background: var(--bg-2);
-
-    border-right: 1px solid var(--line-1);
-}
-
-.toolGroup {
-
-    width: 100%;
-
-    padding-bottom: 8px;
-
-    margin-bottom: 8px;
-
-    border-bottom: 1px solid var(--line-1);
-}
-
-.toolGroup:last-child {
-    border-bottom: none;
-}
-
-.tool {
-
-    position: relative;
-
-    width: 36px;
-    height: 36px;
-
-    margin: 2px auto;
-
-    display: flex;
-
-    align-items: center;
-    justify-content: center;
-
-    border: 1px solid transparent;
-
-    border-radius: var(--radius-sm);
-
-    background: transparent;
-
-    color: var(--text-4);
-
-    font-size: 12px;
-}
-
-.tool.active {
-
-    background: var(--accent-bg);
-
-    border-color: var(--accent-line);
-
-    color: var(--accent);
-}
-
-.tool.active::before {
-
-    content: "";
-
-    position: absolute;
-
-    left: -7px;
-
-    width: 2px;
-    height: 16px;
-
-    background: var(--accent);
-
-    border-radius: 2px;
-}
-
-
-/* =========================================================
-   INSPECTOR
-========================================================= */
-
-#inspector {
-
-    position: fixed;
-
-    top: calc(var(--topbar) + 12px);
-
-    right: 12px;
-
-    width: 220px;
-
-    z-index: 25;
-
-    background: rgba(24,27,30,0.96);
-
-    border: 1px solid var(--line-2);
-
-    border-radius: var(--radius-md);
-
-    overflow: hidden;
-}
-
-.inspectorHeader {
-
-    height: 34px;
-
-    padding: 0 11px;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: space-between;
-
-    border-bottom: 1px solid var(--line-1);
-
-    color: var(--text-2);
-
-    font-size: 9px;
-
-    font-weight: 600;
-
-    letter-spacing: 0.4px;
-
-    text-transform: uppercase;
-}
-
-.closeInspector {
-
-    color: var(--text-4);
-
-    font-size: 12px;
-}
-
-.inspectorSection {
-
-    padding: 10px 11px;
-
-    border-bottom: 1px solid var(--line-1);
-}
-
-.inspectorSection:last-child {
-    border-bottom: none;
-}
-
-.sectionTitle {
-
-    margin-bottom: 8px;
-
-    color: var(--text-4);
-
-    font-size: 8px;
-
-    font-weight: 600;
-
-    letter-spacing: 0.7px;
-
-    text-transform: uppercase;
-}
-
-.property {
-
-    min-height: 25px;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: space-between;
-}
-
-.propertyLabel {
-    color: var(--text-3);
-    font-size: 9px;
-}
-
-.propertyValue {
-
-    color: var(--text-2);
-
-    font-size: 9px;
-
-    font-variant-numeric: tabular-nums;
-}
-
-
-/* =========================================================
-   WORKSPACE STATUS
-========================================================= */
-
-#workspaceStatus {
-
-    position: fixed;
-
-    top: calc(var(--topbar) + 10px);
-
-    left: calc(
-        var(--rail) +
-        (100vw - var(--rail)) / 2
-    );
-
-    transform: translateX(-50%);
-
-    z-index: 20;
-
-    height: 24px;
-
-    padding: 0 9px;
-
-    display: flex;
-
-    align-items: center;
-
-    background: rgba(18,20,22,0.88);
-
-    border: 1px solid var(--line-1);
-
-    border-radius: var(--radius-xs);
-
-    color: var(--text-4);
-
-    font-size: 8px;
-
-    letter-spacing: 0.35px;
-}
-
-
-/* =========================================================
-   START BUTTON
-========================================================= */
-
-#startButton {
-
-    position: fixed;
-
-    left: calc(
-        var(--rail) +
-        (100vw - var(--rail)) / 2
-    );
-
-    top: calc(
-        var(--topbar) +
-        (
-            100vh -
-            var(--topbar) -
-            var(--bottombar)
-        ) / 2
-    );
-
-    transform: translate(-50%, -50%);
-
-    z-index: 50;
-
-    height: 34px;
-
-    padding: 0 18px;
-
-    background: var(--bg-3);
-
-    border: 1px solid var(--line-3);
-
-    border-radius: var(--radius-sm);
-
-    color: var(--text-1);
-
-    font-family: var(--font);
-
-    font-size: 9px;
-
-    font-weight: 600;
-
-    letter-spacing: 0.5px;
-
-    cursor: pointer;
-}
-
-#startButton:hover {
-    background: #23272b;
-}
-
 
 /* =========================================================
    CURSOR
-========================================================= */
+   ========================================================= */
 
-#cursor {
+#cursor{
+    position:fixed;
 
-    position: fixed;
+    width:18px;
+    height:18px;
 
-    width: 20px;
-    height: 20px;
+    border:1px solid rgba(145,175,208,.9);
 
-    transform: translate(-50%, -50%);
+    border-radius:50%;
 
-    z-index: 15;
+    transform:translate(-50%,-50%);
 
-    border: 1px solid rgba(225,232,238,0.9);
+    pointer-events:none;
 
-    border-radius: 50%;
+    opacity:0;
 
-    pointer-events: none;
+    z-index:50;
 
-    box-shadow:
-        0 0 0 1px
-        rgba(0,0,0,0.4);
+    transition:
+        opacity .15s ease,
+        width .08s linear,
+        height .08s linear;
 }
 
-#cursor::before {
+#cursor::before{
+    content:"";
 
-    content: "";
+    position:absolute;
 
-    position: absolute;
+    left:50%;
+    top:50%;
 
-    left: 50%;
-    top: 50%;
+    width:3px;
+    height:3px;
 
-    width: 3px;
-    height: 3px;
+    transform:translate(-50%,-50%);
 
-    transform: translate(-50%, -50%);
+    border-radius:50%;
 
-    background: #edf2f6;
-
-    border-radius: 50%;
+    background:var(--accent);
 }
 
+#cursor::after{
+    content:"";
+
+    position:absolute;
+
+    left:50%;
+    top:-4px;
+
+    width:1px;
+    height:26px;
+
+    transform:translateX(-50%);
+
+    background:rgba(145,175,208,.18);
+}
+
+#cursor.drawing{
+    width:14px;
+    height:14px;
+}
+
+#cursor.pause{
+    border-color:var(--text-3);
+}
+
+#cursor.clear{
+    border-color:var(--danger);
+}
 
 /* =========================================================
-   BOTTOM BAR
-========================================================= */
+   BOARD INFORMATION
+   ========================================================= */
 
-#bottomBar {
+.board-label{
+    position:absolute;
 
-    position: fixed;
+    left:18px;
+    top:14px;
 
-    left: 0;
-    bottom: 0;
+    z-index:8;
 
-    width: 100%;
-    height: var(--bottombar);
+    color:var(--text-4);
 
-    z-index: 30;
+    font-size:9px;
+    letter-spacing:.14em;
+    text-transform:uppercase;
 
-    display: flex;
-
-    align-items: center;
-
-    padding: 0 10px;
-
-    background: var(--bg-2);
-
-    border-top: 1px solid var(--line-1);
-
-    color: var(--text-4);
-
-    font-size: 8px;
+    pointer-events:none;
 }
 
-.bottomGroup {
+.board-coordinates{
+    position:absolute;
 
-    height: 100%;
+    right:18px;
+    top:14px;
 
-    display: flex;
+    z-index:8;
 
-    align-items: center;
+    color:var(--text-4);
 
-    gap: 7px;
+    font-size:9px;
 
-    padding: 0 12px;
+    letter-spacing:.08em;
 
-    border-right: 1px solid var(--line-1);
+    pointer-events:none;
 }
-
-.bottomGroup:first-child {
-    padding-left: 2px;
-}
-
-.bottomGroup:last-child {
-
-    margin-left: auto;
-
-    padding-right: 2px;
-
-    border-right: none;
-}
-
-.key {
-
-    min-width: 18px;
-
-    height: 15px;
-
-    padding: 0 4px;
-
-    display: inline-flex;
-
-    align-items: center;
-    justify-content: center;
-
-    background: var(--bg-3);
-
-    border: 1px solid var(--line-2);
-
-    border-radius: 3px;
-
-    color: var(--text-3);
-
-    font-size: 7px;
-}
-
 
 /* =========================================================
-   HIDDEN
-========================================================= */
+   CENTER INITIALIZATION PANEL
+   ========================================================= */
 
-.hidden {
-    display: none !important;
+.center-panel{
+    position:absolute;
+
+    left:50%;
+    top:50%;
+
+    transform:translate(-50%,-50%);
+
+    width:min(360px,80vw);
+
+    text-align:center;
+
+    z-index:10;
+
+    pointer-events:none;
 }
 
+.center-kicker{
+    color:var(--text-4);
+
+    font-size:9px;
+    letter-spacing:.16em;
+    text-transform:uppercase;
+
+    margin-bottom:10px;
+}
+
+.center-title{
+    color:var(--text-1);
+
+    font-size:17px;
+    font-weight:500;
+
+    letter-spacing:.01em;
+
+    margin-bottom:8px;
+}
+
+.center-description{
+    color:var(--text-3);
+
+    font-size:11px;
+    line-height:1.6;
+
+    max-width:300px;
+
+    margin:0 auto 18px;
+}
+
+#startBtn{
+    pointer-events:auto;
+
+    border:1px solid var(--accent-line);
+
+    background:var(--accent-bg);
+
+    color:var(--accent);
+
+    height:36px;
+
+    padding:0 18px;
+
+    font-size:10px;
+
+    letter-spacing:.12em;
+
+    cursor:pointer;
+
+    transition:
+        background .15s ease,
+        border-color .15s ease;
+}
+
+#startBtn:hover{
+    background:rgba(145,175,208,.15);
+    border-color:rgba(145,175,208,.45);
+}
+
+#startBtn:active{
+    transform:translateY(1px);
+}
+
+.center-panel.hidden{
+    opacity:0;
+    pointer-events:none;
+}
 
 /* =========================================================
-   MOBILE / PORTRAIT
-========================================================= */
+   RIGHT INSPECTOR
+   ========================================================= */
 
-@media (max-width: 700px) {
+.inspector{
+    position:absolute;
 
-    :root {
+    top:16px;
+    right:16px;
 
-        --topbar: 44px;
-        --bottombar: 25px;
-        --rail: 42px;
-    }
+    width:188px;
 
-    #documentType,
-    #topActions {
-        display: none;
-    }
+    border:1px solid var(--line-2);
 
-    #document {
-        padding-left: 12px;
-    }
+    background:rgba(18,20,22,.93);
 
-    #topStatus {
-
-        gap: 8px;
-
-        padding-right: 9px;
-    }
-
-    #topStatus .topStatusItem {
-        font-size: 7px;
-    }
-
-    #inspector {
-
-        width: 175px;
-
-        top: calc(
-            var(--topbar) + 8px
-        );
-
-        right: 8px;
-    }
-
-    #workspaceStatus {
-
-        top: calc(
-            var(--topbar) + 8px
-        );
-    }
-
-    .tool {
-
-        width: 32px;
-        height: 32px;
-    }
-
-    .tool.active::before {
-        left: -5px;
-    }
-
-    .bottomGroup {
-        padding: 0 7px;
-    }
-
-    .hideMobile {
-        display: none;
-    }
-
-    #cursor {
-
-        width: 18px;
-        height: 18px;
-    }
+    z-index:12;
 }
 
+.inspector-section{
+    padding:11px 12px;
+
+    border-bottom:1px solid var(--line-1);
+}
+
+.inspector-section:last-child{
+    border-bottom:0;
+}
+
+.inspector-title{
+    color:var(--text-4);
+
+    font-size:8px;
+    letter-spacing:.13em;
+
+    text-transform:uppercase;
+
+    margin-bottom:10px;
+}
+
+.inspector-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+
+    min-height:22px;
+
+    font-size:10px;
+}
+
+.inspector-name{
+    color:var(--text-3);
+}
+
+.inspector-value{
+    color:var(--text-2);
+
+    font-variant-numeric:tabular-nums;
+}
+
+.status-value{
+    display:flex;
+    align-items:center;
+    gap:6px;
+}
+
+.status-dot{
+    width:5px;
+    height:5px;
+
+    border-radius:50%;
+
+    background:var(--text-4);
+}
+
+.status-dot.ready{
+    background:#8eaa91;
+}
+
+.status-dot.warning{
+    background:#b9a37b;
+}
 
 /* =========================================================
-   LANDSCAPE PHONE
-========================================================= */
+   BOTTOM STATUS BAR
+   ========================================================= */
 
-@media
-(max-width: 900px)
-and (orientation: landscape) {
+.bottombar{
+    position:absolute;
 
-    :root {
+    left:0;
+    right:0;
+    bottom:0;
 
-        --topbar: 40px;
-        --bottombar: 24px;
-        --rail: 40px;
+    height:var(--bottombar);
+
+    display:flex;
+    align-items:center;
+
+    padding:0 10px;
+
+    border-top:1px solid var(--line-1);
+
+    background:var(--bg-1);
+
+    z-index:20;
+}
+
+.bottom-left{
+    display:flex;
+    gap:14px;
+}
+
+.bottom-item{
+    color:var(--text-4);
+
+    font-size:8px;
+
+    letter-spacing:.08em;
+    text-transform:uppercase;
+}
+
+.bottom-item strong{
+    color:var(--text-3);
+    font-weight:500;
+}
+
+.bottom-right{
+    margin-left:auto;
+
+    color:var(--text-4);
+
+    font-size:8px;
+
+    letter-spacing:.1em;
+}
+
+/* =========================================================
+   ORIENTATION / MOBILE
+   ========================================================= */
+
+@media(max-width:700px){
+
+    :root{
+        --topbar:44px;
+        --rail:42px;
+        --bottombar:25px;
     }
 
-    #document {
-        padding-left: 9px;
+    .document{
+        min-width:0;
+        padding:0 10px;
     }
 
-    #documentName {
-        font-size: 10px;
+    .document-type{
+        display:none;
     }
 
-    #inspector {
-
-        width: 165px;
-
-        top: calc(
-            var(--topbar) + 6px
-        );
-
-        right: 6px;
+    .menu{
+        display:none;
     }
 
-    .inspectorSection {
-        padding: 7px 9px;
+    .top-right{
+        gap:4px;
     }
 
-    .property {
-        min-height: 21px;
+    .connection{
+        padding:0 7px;
     }
 
-    .tool {
-
-        width: 30px;
-        height: 30px;
+    .version{
+        display:none;
     }
 
-    #workspaceStatus {
+    .workspace{
+        left:var(--rail);
+    }
 
-        top: calc(
-            var(--topbar) + 7px
-        );
+    .board-shell{
+        inset:8px;
+    }
+
+    .inspector{
+        top:10px;
+        right:10px;
+        width:160px;
+    }
+
+    .board-label{
+        left:12px;
+        top:10px;
+    }
+
+    .board-coordinates{
+        right:12px;
+        top:10px;
+    }
+
+    .center-panel{
+        width:min(320px,82vw);
+    }
+
+    .center-title{
+        font-size:15px;
     }
 }
 
+/* landscape phones */
+
+@media(max-height:500px) and (orientation:landscape){
+
+    :root{
+        --topbar:40px;
+        --rail:40px;
+        --bottombar:24px;
+    }
+
+    .board-shell{
+        inset:6px;
+    }
+
+    .inspector{
+        top:8px;
+        right:8px;
+        width:150px;
+    }
+
+    .inspector-section{
+        padding:7px 9px;
+    }
+
+    .inspector-title{
+        margin-bottom:5px;
+    }
+
+    .inspector-row{
+        min-height:18px;
+    }
+
+    .center-description{
+        margin-bottom:10px;
+    }
+
+    #startBtn{
+        height:31px;
+    }
+
+    .bottom-left{
+        gap:8px;
+    }
+}
 </style>
 </head>
-
 
 <body>
 
 <div id="app">
 
+    <!-- =====================================================
+         INVISIBLE CAMERA
+         ===================================================== -->
 
-<video
-    id="video"
-    autoplay
-    playsinline>
-</video>
+    <video
+        id="camera"
+        autoplay
+        muted
+        playsinline
+    ></video>
 
 
-<div id="workspace">
+    <!-- =====================================================
+         TOP BAR
+         ===================================================== -->
 
-    <div id="grid"></div>
+    <header class="topbar">
+
+        <div class="brand">
+            AM
+        </div>
+
+        <div class="document">
+            <span class="document-name">
+                Untitled Board
+            </span>
+
+            <span class="document-type">
+                Mathematics
+            </span>
+        </div>
+
+        <nav class="menu">
+            <button>FILE</button>
+            <button>EDIT</button>
+            <button>VIEW</button>
+            <button>TOOLS</button>
+        </nav>
+
+        <div class="top-right">
+
+            <div
+                class="connection"
+                id="connectionStatus"
+            >
+                <span
+                    class="connection-dot"
+                    id="connectionDot"
+                ></span>
+
+                <span id="connectionText">
+                    OFFLINE
+                </span>
+            </div>
+
+            <div class="version">
+                V5
+            </div>
+
+        </div>
+
+    </header>
+
+
+    <!-- =====================================================
+         TOOL RAIL
+         ===================================================== -->
+
+    <aside class="toolrail">
+
+        <div class="tool-group">
+
+            <button
+                class="tool active"
+                id="penTool"
+                title="Pen"
+            >
+                <span class="tool-symbol">P</span>
+            </button>
+
+            <button
+                class="tool"
+                id="selectTool"
+                title="Select"
+            >
+                <span class="tool-symbol">S</span>
+            </button>
+
+            <button
+                class="tool"
+                id="measureTool"
+                title="Measure"
+            >
+                <span class="tool-symbol">M</span>
+            </button>
+
+        </div>
+
+        <div class="tool-group">
+
+            <button
+                class="tool"
+                id="undoBtn"
+                title="Undo"
+            >
+                <span class="tool-symbol">↶</span>
+            </button>
+
+            <button
+                class="tool"
+                id="redoBtn"
+                title="Redo"
+            >
+                <span class="tool-symbol">↷</span>
+            </button>
+
+            <button
+                class="tool"
+                id="clearBtn"
+                title="Clear"
+            >
+                <span class="tool-symbol">×</span>
+            </button>
+
+        </div>
+
+        <div class="tool-bottom">
+
+            <button
+                class="tool"
+                id="gridBtn"
+                title="Grid"
+            >
+                <span class="tool-symbol">⊞</span>
+            </button>
+
+            <button
+                class="tool"
+                id="zoomBtn"
+                title="Zoom"
+            >
+                <span class="tool-symbol">⌕</span>
+            </button>
+
+        </div>
+
+    </aside>
+
+
+    <!-- =====================================================
+         MAIN WORKSPACE
+         ===================================================== -->
+
+    <main class="workspace">
+
+        <div class="board-shell">
+
+            <div class="board-label">
+                AIR MATHS / WORKSPACE
+            </div>
+
+            <div
+                class="board-coordinates"
+                id="coordinates"
+            >
+                0, 0
+            </div>
+
+            <canvas id="drawCanvas"></canvas>
+
+            <div
+                class="center-panel"
+                id="centerPanel"
+            >
+
+                <div class="center-kicker">
+                    HAND TRACKING SYSTEM
+                </div>
+
+                <div class="center-title">
+                    Initialize camera
+                </div>
+
+                <p class="center-description">
+                    Your camera remains active for hand tracking,
+                    but the camera image is hidden from the workspace.
+                </p>
+
+                <button id="startBtn">
+                    INITIALIZE CAMERA
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             INSPECTOR
+             ================================================= -->
+
+        <aside class="inspector">
+
+            <section class="inspector-section">
+
+                <div class="inspector-title">
+                    Tracking
+                </div>
+
+                <div class="inspector-row">
+
+                    <span class="inspector-name">
+                        Camera
+                    </span>
+
+                    <span
+                        class="inspector-value"
+                        id="cameraState"
+                    >
+                        OFF
+                    </span>
+
+                </div>
+
+                <div class="inspector-row">
+
+                    <span class="inspector-name">
+                        Hand
+                    </span>
+
+                    <span
+                        class="inspector-value"
+                        id="handState"
+                    >
+                        NONE
+                    </span>
+
+                </div>
+
+            </section>
+
+
+            <section class="inspector-section">
+
+                <div class="inspector-title">
+                    System
+                </div>
+
+                <div class="inspector-row">
+
+                    <span class="inspector-name">
+                        Engine
+                    </span>
+
+                    <span class="inspector-value">
+                        V5
+                    </span>
+
+                </div>
+
+                <div class="inspector-row">
+
+                    <span class="inspector-name">
+                        Mode
+                    </span>
+
+                    <span
+                        class="inspector-value"
+                        id="modeState"
+                    >
+                        READY
+                    </span>
+
+                </div>
+
+            </section>
+
+
+            <section class="inspector-section">
+
+                <div class="inspector-title">
+                    Input
+                </div>
+
+                <div class="inspector-row">
+
+                    <span class="inspector-name">
+                        Gesture
+                    </span>
+
+                    <span
+                        class="inspector-value"
+                        id="gestureState"
+                    >
+                        NONE
+                    </span>
+
+                </div>
+
+                <div class="inspector-row">
+
+                    <span class="inspector-name">
+                        Tracking
+                    </span>
+
+                    <span class="inspector-value status-value">
+
+                        <span
+                            class="status-dot"
+                            id="trackingDot"
+                        ></span>
+
+                        <span id="trackingState">
+                            WAITING
+                        </span>
+
+                    </span>
+
+                </div>
+
+            </section>
+
+        </aside>
+
+    </main>
+
+
+    <!-- =====================================================
+         CURSOR
+         ===================================================== -->
+
+    <div id="cursor"></div>
+
+
+    <!-- =====================================================
+         BOTTOM BAR
+         ===================================================== -->
+
+    <footer class="bottombar">
+
+        <div class="bottom-left">
+
+            <div class="bottom-item">
+                <strong>INDEX</strong> Draw
+            </div>
+
+            <div class="bottom-item">
+                <strong>PINCH</strong> Pause
+            </div>
+
+            <div class="bottom-item">
+                <strong>OPEN</strong> Clear
+            </div>
+
+        </div>
+
+        <div class="bottom-right">
+            AIR MATHS BOARD
+        </div>
+
+    </footer>
 
 </div>
-
-
-<canvas id="canvas"></canvas>
-
-
-<header id="topbar">
-
-    <div id="brand">
-        AM
-    </div>
-
-    <div id="document">
-
-        <span id="documentName">
-            Untitled Board
-        </span>
-
-        <span id="documentType">
-            Mathematics
-        </span>
-
-    </div>
-
-    <div id="topActions">
-
-        <button class="topButton">
-            FILE
-        </button>
-
-        <button class="topButton">
-            EDIT
-        </button>
-
-        <button class="topButton">
-            VIEW
-        </button>
-
-        <button class="topButton">
-            TOOLS
-        </button>
-
-    </div>
-
-    <div id="topStatus">
-
-        <div class="topStatusItem">
-
-            <span
-                id="systemIndicator"
-                class="statusDot">
-            </span>
-
-            <span id="topStatusText">
-                OFFLINE
-            </span>
-
-        </div>
-
-        <div class="topStatusItem hideMobile">
-            V5
-        </div>
-
-    </div>
-
-</header>
-
-
-<aside id="rail">
-
-    <div class="toolGroup">
-
-        <div class="tool active">
-            P
-        </div>
-
-        <div class="tool">
-            S
-        </div>
-
-        <div class="tool">
-            M
-        </div>
-
-    </div>
-
-    <div class="toolGroup">
-
-        <div class="tool">
-            ↶
-        </div>
-
-        <div class="tool">
-            ↷
-        </div>
-
-        <div class="tool">
-            C
-        </div>
-
-    </div>
-
-    <div class="toolGroup">
-
-        <div class="tool">
-            #
-        </div>
-
-        <div class="tool">
-            Z
-        </div>
-
-    </div>
-
-</aside>
-
-
-<div id="workspaceStatus">
-    PRESS INITIALIZE CAMERA
-</div>
-
-
-<aside id="inspector">
-
-    <div class="inspectorHeader">
-
-        <span>
-            Inspector
-        </span>
-
-        <span class="closeInspector">
-            •••
-        </span>
-
-    </div>
-
-
-    <section class="inspectorSection">
-
-        <div class="sectionTitle">
-            Tracking
-        </div>
-
-        <div class="property">
-
-            <span class="propertyLabel">
-                Hand
-            </span>
-
-            <span
-                id="handState"
-                class="propertyValue">
-                Searching
-            </span>
-
-        </div>
-
-        <div class="property">
-
-            <span class="propertyLabel">
-                Gesture
-            </span>
-
-            <span
-                id="modeState"
-                class="propertyValue">
-                Standby
-            </span>
-
-        </div>
-
-    </section>
-
-
-    <section class="inspectorSection">
-
-        <div class="sectionTitle">
-            System
-        </div>
-
-        <div class="property">
-
-            <span class="propertyLabel">
-                Camera
-            </span>
-
-            <span
-                id="systemState"
-                class="propertyValue">
-                Offline
-            </span>
-
-        </div>
-
-        <div class="property">
-
-            <span class="propertyLabel">
-                Tracking
-            </span>
-
-            <span class="propertyValue">
-                MediaPipe
-            </span>
-
-        </div>
-
-    </section>
-
-
-    <section class="inspectorSection">
-
-        <div class="sectionTitle">
-            Input
-        </div>
-
-        <div class="property">
-
-            <span class="propertyLabel">
-                Draw
-            </span>
-
-            <span class="propertyValue">
-                Index
-            </span>
-
-        </div>
-
-        <div class="property">
-
-            <span class="propertyLabel">
-                Pause
-            </span>
-
-            <span class="propertyValue">
-                Pinch
-            </span>
-
-        </div>
-
-        <div class="property">
-
-            <span class="propertyLabel">
-                Clear
-            </span>
-
-            <span class="propertyValue">
-                Open hand
-            </span>
-
-        </div>
-
-    </section>
-
-</aside>
-
-
-<div
-    id="cursor"
-    class="hidden">
-</div>
-
-
-<button id="startButton">
-    INITIALIZE CAMERA
-</button>
-
-
-<footer id="bottomBar">
-
-    <div class="bottomGroup">
-
-        <span class="key">
-            INDEX
-        </span>
-
-        <span>
-            Draw
-        </span>
-
-    </div>
-
-    <div class="bottomGroup">
-
-        <span class="key">
-            PINCH
-        </span>
-
-        <span>
-            Pause
-        </span>
-
-    </div>
-
-    <div class="bottomGroup hideMobile">
-
-        <span class="key">
-            OPEN
-        </span>
-
-        <span>
-            Clear
-        </span>
-
-    </div>
-
-    <div class="bottomGroup">
-
-        AIR MATHS BOARD
-
-    </div>
-
-</footer>
-
-</div>
-
-
-<script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js"></script>
-
-<script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
 
 
 <script>
+/* ============================================================
+   AIR MATHS BOARD
+   V5 PROFESSIONAL HAND DRAWING ENGINE
+   ============================================================ */
 
-/* =========================================================
-   ELEMENTS
-========================================================= */
+"use strict";
+
+
+/* ============================================================
+   DOM
+   ============================================================ */
 
 const video =
-    document.getElementById("video");
+    document.getElementById("camera");
 
 const canvas =
-    document.getElementById("canvas");
+    document.getElementById("drawCanvas");
 
 const ctx =
-    canvas.getContext("2d");
+    canvas.getContext("2d", {
+        alpha:true,
+        desynchronized:true
+    });
 
 const cursor =
     document.getElementById("cursor");
 
-const startButton =
-    document.getElementById("startButton");
+const startBtn =
+    document.getElementById("startBtn");
 
-const workspaceStatus =
-    document.getElementById("workspaceStatus");
+const centerPanel =
+    document.getElementById("centerPanel");
+
+const connectionStatus =
+    document.getElementById("connectionStatus");
+
+const connectionDot =
+    document.getElementById("connectionDot");
+
+const connectionText =
+    document.getElementById("connectionText");
+
+const cameraState =
+    document.getElementById("cameraState");
 
 const handState =
     document.getElementById("handState");
@@ -1336,262 +1285,240 @@ const handState =
 const modeState =
     document.getElementById("modeState");
 
-const systemState =
-    document.getElementById("systemState");
+const gestureState =
+    document.getElementById("gestureState");
 
-const systemIndicator =
-    document.getElementById("systemIndicator");
+const trackingDot =
+    document.getElementById("trackingDot");
 
-const topStatusText =
-    document.getElementById("topStatusText");
+const trackingState =
+    document.getElementById("trackingState");
+
+const coordinates =
+    document.getElementById("coordinates");
 
 
-/* =========================================================
-   CAMERA / SCREEN GEOMETRY
-========================================================= */
+/* ============================================================
+   GLOBAL STATE
+   ============================================================ */
 
-let viewportWidth = 0;
-let viewportHeight = 0;
+let stream = null;
 
-let devicePixelRatioValue = 1;
+let cameraRunning = false;
+
+let lastVideoWidth = 0;
+let lastVideoHeight = 0;
+
+
+/* ============================================================
+   CANVAS / VIEWPORT
+   ============================================================ */
+
+let viewWidth = 1;
+let viewHeight = 1;
+let dpr = 1;
 
 
 /*
-   MediaPipe receives the actual camera frame.
+    Resize the drawing surface to the actual visible viewport.
 
-   The video is displayed using:
-
-       object-fit: cover
-
-   Therefore the displayed camera image can be
-   cropped on either axis.
-
-   This function calculates that crop exactly.
+    IMPORTANT:
+    The canvas is aligned to the full workspace, not the
+    camera's native resolution.
 */
 
-function getVideoGeometry() {
+function resizeCanvas(){
 
-    const vw =
-        video.videoWidth ||
-        1280;
+    const rect =
+        canvas.getBoundingClientRect();
 
-    const vh =
-        video.videoHeight ||
-        720;
+    viewWidth =
+        Math.max(1, rect.width);
 
-    const sw =
-        window.innerWidth;
+    viewHeight =
+        Math.max(1, rect.height);
 
-    const sh =
-        window.innerHeight;
-
-
-    const videoAspect =
-        vw / vh;
-
-    const screenAspect =
-        sw / sh;
-
-
-    let renderedWidth;
-    let renderedHeight;
-
-
-    if (
-        screenAspect >
-        videoAspect
-    ) {
-
-        renderedWidth =
-            sw;
-
-        renderedHeight =
-            sw /
-            videoAspect;
-
-    }
-    else {
-
-        renderedHeight =
-            sh;
-
-        renderedWidth =
-            sh *
-            videoAspect;
-
-    }
-
-
-    const offsetX =
-        (
-            sw -
-            renderedWidth
-        ) / 2;
-
-    const offsetY =
-        (
-            sh -
-            renderedHeight
-        ) / 2;
-
-
-    return {
-
-        videoWidth: vw,
-
-        videoHeight: vh,
-
-        renderedWidth,
-
-        renderedHeight,
-
-        offsetX,
-
-        offsetY
-
-    };
-}
-
-
-/* =========================================================
-   CANVAS RESIZE
-========================================================= */
-
-function resizeCanvas() {
-
-    viewportWidth =
-        window.innerWidth;
-
-    viewportHeight =
-        window.innerHeight;
-
-
-    devicePixelRatioValue =
+    dpr =
         Math.min(
             window.devicePixelRatio || 1,
             2
         );
 
-
-    /*
-       CSS size.
-    */
-
-    canvas.style.width =
-        viewportWidth + "px";
-
-    canvas.style.height =
-        viewportHeight + "px";
-
-
-    /*
-       Internal resolution.
-
-       The drawing engine continues using
-       normal CSS-pixel coordinates.
-    */
-
     canvas.width =
-        Math.round(
-            viewportWidth *
-            devicePixelRatioValue
-        );
+        Math.round(viewWidth * dpr);
 
     canvas.height =
-        Math.round(
-            viewportHeight *
-            devicePixelRatioValue
-        );
-
+        Math.round(viewHeight * dpr);
 
     ctx.setTransform(
-        devicePixelRatioValue,
+        dpr,
         0,
         0,
-        devicePixelRatioValue,
+        dpr,
         0,
         0
     );
 
+    /*
+       Do NOT clear the canvas here.
+       Browser resize should not destroy existing work.
+    */
 
-    ctx.lineCap =
-        "round";
+    resetDrawingState();
 
-    ctx.lineJoin =
-        "round";
+    lastVideoWidth =
+        video.videoWidth || 0;
+
+    lastVideoHeight =
+        video.videoHeight || 0;
 }
 
 
-/* Initial */
+/* ============================================================
+   CAMERA GEOMETRY
+   ============================================================ */
 
-resizeCanvas();
+/*
+    The camera uses:
 
+        object-fit: cover
 
-window.addEventListener(
-    "resize",
-    function() {
+    Therefore the camera image is NOT necessarily mapped
+    1:1 onto the phone screen.
 
-        resizeCanvas();
+    This function calculates exactly how the source video
+    is displayed inside the viewport.
+*/
 
-        resetDrawingState();
+function getVideoGeometry(){
 
-    },
-    {
-        passive: true
-    }
-);
+    const vw =
+        window.innerWidth;
 
+    const vh =
+        window.innerHeight;
 
-window.addEventListener(
-    "orientationchange",
-    function() {
+    const videoWidth =
+        video.videoWidth || 1280;
 
-        /*
-           Give the browser a moment to finish
-           changing the viewport dimensions.
-        */
+    const videoHeight =
+        video.videoHeight || 720;
 
-        setTimeout(
-            function() {
-
-                resizeCanvas();
-
-                resetDrawingState();
-
-            },
-            150
+    const scale =
+        Math.max(
+            vw / videoWidth,
+            vh / videoHeight
         );
 
-    },
-    {
-        passive: true
-    }
-);
+    const renderedWidth =
+        videoWidth * scale;
+
+    const renderedHeight =
+        videoHeight * scale;
+
+    const cropX =
+        (renderedWidth - vw) / 2;
+
+    const cropY =
+        (renderedHeight - vh) / 2;
+
+    return {
+        videoWidth,
+        videoHeight,
+        renderedWidth,
+        renderedHeight,
+        cropX,
+        cropY,
+        viewportWidth:vw,
+        viewportHeight:vh
+    };
+}
 
 
-/* =========================================================
+/* ============================================================
+   HAND → SCREEN COORDINATE MAPPING
+   ============================================================ */
+
+function mapHandToScreen(
+    normalizedX,
+    normalizedY
+){
+
+    const geometry =
+        getVideoGeometry();
+
+    /*
+       MediaPipe X:
+
+            0 = left
+            1 = right
+
+       Because this is a front-facing camera,
+       we mirror the horizontal axis so the board
+       behaves naturally like a mirror.
+    */
+
+    const sourceX =
+        (1 - normalizedX)
+        * geometry.videoWidth;
+
+    const sourceY =
+        normalizedY
+        * geometry.videoHeight;
+
+    const renderedX =
+        sourceX
+        * (
+            geometry.renderedWidth /
+            geometry.videoWidth
+        );
+
+    const renderedY =
+        sourceY
+        * (
+            geometry.renderedHeight /
+            geometry.videoHeight
+        );
+
+    let screenX =
+        renderedX - geometry.cropX;
+
+    let screenY =
+        renderedY - geometry.cropY;
+
+    /*
+       Convert full-screen coordinates into the actual
+       canvas workspace coordinates.
+    */
+
+    const canvasRect =
+        canvas.getBoundingClientRect();
+
+    screenX -= canvasRect.left;
+    screenY -= canvasRect.top;
+
+    screenX =
+        Math.max(
+            0,
+            Math.min(viewWidth, screenX)
+        );
+
+    screenY =
+        Math.max(
+            0,
+            Math.min(viewHeight, screenY)
+        );
+
+    return {
+        x:screenX,
+        y:screenY
+    };
+}
+
+
+/* ============================================================
    V5 DRAWING ENGINE
-========================================================= */
-
-let isDrawing = false;
-
-let previousX = null;
-let previousY = null;
-
-let smoothX = null;
-let smoothY = null;
-
-let previousRawX = null;
-let previousRawY = null;
-
-let previousTime = null;
-
-let currentSpeed = 0;
-
-let currentDirection = null;
-
-let strokeBuffer = [];
-
+   ============================================================ */
 
 const SLOW_SMOOTHING = 0.20;
 
@@ -1611,319 +1538,340 @@ const MAX_INK_WIDTH = 5.4;
 
 const CURVE_TENSION = 1 / 6;
 
-let clearFrames = 0;
 
-const CLEAR_REQUIRED_FRAMES = 5;
+let drawing = false;
+
+let hasPreviousPoint = false;
+
+let lastPoint = {
+    x:0,
+    y:0
+};
+
+let smoothedPoint = {
+    x:0,
+    y:0
+};
+
+let lastTime = 0;
+
+let lastSpeed = 0;
+
+let strokePoints = [];
+
+let clearFrames = 0;
 
 let clearCooldown = 0;
 
-const CLEAR_COOLDOWN_FRAMES = 15;
 
-
-/* =========================================================
+/* ============================================================
    DISTANCE
-========================================================= */
+   ============================================================ */
 
-function distanceBetween(
-    x1,
-    y1,
-    x2,
-    y2
-) {
+function distance(a,b){
 
     const dx =
-        x2 - x1;
+        b.x - a.x;
 
     const dy =
-        y2 - y1;
+        b.y - a.y;
 
     return Math.sqrt(
-        dx * dx +
-        dy * dy
+        dx * dx + dy * dy
     );
 }
 
 
-/* =========================================================
-   ANGLE
-========================================================= */
+/* ============================================================
+   RESET DRAWING STATE
+   ============================================================ */
 
-function angleDifference(
-    a,
-    b
-) {
+function resetDrawingState(){
 
-    let difference =
-        a - b;
+    drawing = false;
 
-    while (
-        difference > Math.PI
-    ) {
+    hasPreviousPoint = false;
 
-        difference -=
-            Math.PI * 2;
-    }
+    strokePoints = [];
 
-    while (
-        difference < -Math.PI
-    ) {
+    lastSpeed = 0;
 
-        difference +=
-            Math.PI * 2;
-    }
-
-    return Math.abs(
-        difference
-    );
+    lastTime = performance.now();
 }
 
 
-/* =========================================================
-   DIRECTION
-========================================================= */
+/* ============================================================
+   SMOOTH POINT
+   ============================================================ */
 
-function getDirection(
-    p1,
-    p2
-) {
+function smoothPoint(
+    target,
+    now
+){
 
-    if (
-        !p1 ||
-        !p2
-    ) {
+    if(!hasPreviousPoint){
 
-        return null;
+        smoothedPoint.x =
+            target.x;
+
+        smoothedPoint.y =
+            target.y;
+
+        lastPoint.x =
+            target.x;
+
+        lastPoint.y =
+            target.y;
+
+        lastTime =
+            now;
+
+        hasPreviousPoint = true;
+
+        return {
+            x:target.x,
+            y:target.y
+        };
     }
 
-    return Math.atan2(
-        p2.y - p1.y,
-        p2.x - p1.x
-    );
-}
 
-
-/* =========================================================
-   SMOOTHING
-========================================================= */
-
-function getSmoothing(
-    speed,
-    directionChange
-) {
-
-    if (
-        speed <= 50
-    ) {
-
-        return SLOW_SMOOTHING;
-    }
-
-    if (
-        speed >= FAST_SPEED
-    ) {
-
-        return FAST_SMOOTHING;
-    }
-
-    const ratio =
-        (
-            speed - 50
-        ) /
-        (
-            FAST_SPEED - 50
+    const dt =
+        Math.max(
+            0.001,
+            (now - lastTime) / 1000
         );
 
-    let smoothing =
+
+    const dx =
+        target.x - lastPoint.x;
+
+    const dy =
+        target.y - lastPoint.y;
+
+
+    const rawDistance =
+        Math.sqrt(
+            dx * dx +
+            dy * dy
+        );
+
+
+    const speed =
+        rawDistance / dt;
+
+
+    lastSpeed =
+        lastSpeed * .7 +
+        speed * .3;
+
+
+    /*
+       Fast hand movement:
+       less smoothing → responsive.
+
+       Slow movement:
+       more smoothing → stable.
+    */
+
+    const speedRatio =
+        Math.min(
+            1,
+            lastSpeed / FAST_SPEED
+        );
+
+
+    const smoothing =
         SLOW_SMOOTHING +
         (
             FAST_SMOOTHING -
             SLOW_SMOOTHING
-        ) *
-        ratio;
-
-    if (
-        directionChange > 1.6
-    ) {
-
-        smoothing *= 0.78;
-    }
-
-    return Math.max(
-        0.15,
-        Math.min(
-            smoothing,
-            0.90
-        )
-    );
-}
+        ) * speedRatio;
 
 
-/* =========================================================
-   SMOOTH POINT
-========================================================= */
+    /*
+       Reject impossible tracking jumps.
+    */
 
-function getSmoothPoint(
-    targetX,
-    targetY,
-    speed,
-    directionChange
-) {
+    if(
+        rawDistance >
+        MAX_REASONABLE_JUMP
+    ){
 
-    if (
-        smoothX === null ||
-        smoothY === null
-    ) {
+        smoothedPoint.x =
+            target.x;
 
-        smoothX =
-            targetX;
+        smoothedPoint.y =
+            target.y;
 
-        smoothY =
-            targetY;
+        lastPoint.x =
+            target.x;
+
+        lastPoint.y =
+            target.y;
+
+        lastTime =
+            now;
 
         return {
-            x: smoothX,
-            y: smoothY
+            x:target.x,
+            y:target.y
         };
     }
 
-    const smoothing =
-        getSmoothing(
-            speed,
-            directionChange
-        );
 
-    smoothX +=
-        (
-            targetX -
-            smoothX
-        ) *
-        smoothing;
+    /*
+       Ignore extremely tiny jitter.
+    */
 
-    smoothY +=
+    if(
+        rawDistance <
+        MICRO_JITTER_DISTANCE
+    ){
+
+        lastTime =
+            now;
+
+        return {
+            x:smoothedPoint.x,
+            y:smoothedPoint.y
+        };
+    }
+
+
+    smoothedPoint.x +=
         (
-            targetY -
-            smoothY
-        ) *
-        smoothing;
+            target.x -
+            smoothedPoint.x
+        ) * smoothing;
+
+
+    smoothedPoint.y +=
+        (
+            target.y -
+            smoothedPoint.y
+        ) * smoothing;
+
+
+    lastPoint.x =
+        target.x;
+
+    lastPoint.y =
+        target.y;
+
+    lastTime =
+        now;
+
 
     return {
-        x: smoothX,
-        y: smoothY
+        x:smoothedPoint.x,
+        y:smoothedPoint.y
     };
 }
 
 
-/* =========================================================
+/* ============================================================
    PEN WIDTH
-========================================================= */
+   ============================================================ */
 
-function getPenWidth(
-    speed,
-    directionChange
-) {
+function getPenWidth(){
 
-    const ratio =
+    /*
+       Faster motion → slightly thinner line.
+       Slower motion → slightly thicker line.
+    */
+
+    const speedRatio =
         Math.min(
-            speed / FAST_SPEED,
-            1
+            1,
+            lastSpeed / FAST_SPEED
         );
 
-    let width =
+    return (
         MAX_INK_WIDTH -
         (
             MAX_INK_WIDTH -
             MIN_INK_WIDTH
-        ) *
-        ratio;
-
-    if (
-        directionChange > 1.7
-    ) {
-
-        width *= 1.06;
-    }
-
-    return width;
-}
-
-
-/* =========================================================
-   GLOW
-========================================================= */
-
-function getGlowAlpha(
-    speed
-) {
-
-    const ratio =
-        Math.min(
-            speed / FAST_SPEED,
-            1
-        );
-
-    return (
-        0.23 -
-        ratio * 0.09
+        ) * speedRatio
     );
 }
 
 
-/* =========================================================
-   CURVE
-========================================================= */
+/* ============================================================
+   BEZIER STROKE
+   ============================================================ */
 
-function drawCurve(
-    p0,
-    p1,
-    p2,
-    p3,
-    speed,
-    directionChange
-) {
+function drawSmoothSegment(){
+
+    if(
+        strokePoints.length <
+        2
+    ){
+        return;
+    }
+
+
+    const len =
+        strokePoints.length;
+
+
+    const p0 =
+        strokePoints[
+            Math.max(0,len - 4)
+        ];
+
+    const p1 =
+        strokePoints[
+            Math.max(0,len - 3)
+        ];
+
+    const p2 =
+        strokePoints[
+            Math.max(0,len - 2)
+        ];
+
+    const p3 =
+        strokePoints[
+            Math.max(0,len - 1)
+        ];
+
 
     const cp1x =
         p1.x +
-        (
-            p2.x -
-            p0.x
-        ) *
-        CURVE_TENSION;
+        (p2.x - p0.x)
+        * CURVE_TENSION;
 
     const cp1y =
         p1.y +
-        (
-            p2.y -
-            p0.y
-        ) *
-        CURVE_TENSION;
+        (p2.y - p0.y)
+        * CURVE_TENSION;
+
 
     const cp2x =
         p2.x -
-        (
-            p3.x -
-            p1.x
-        ) *
-        CURVE_TENSION;
+        (p3.x - p1.x)
+        * CURVE_TENSION;
 
     const cp2y =
         p2.y -
-        (
-            p3.y -
-            p1.y
-        ) *
-        CURVE_TENSION;
+        (p3.y - p1.y)
+        * CURVE_TENSION;
 
-    const width =
-        getPenWidth(
-            speed,
-            directionChange
-        );
 
-    const glowAlpha =
-        getGlowAlpha(
-            speed
-        );
+    ctx.save();
 
+    ctx.lineCap =
+        "round";
+
+    ctx.lineJoin =
+        "round";
+
+    ctx.globalCompositeOperation =
+        "source-over";
+
+
+    /*
+       Main ink.
+    */
 
     ctx.beginPath();
 
@@ -1937,67 +1885,29 @@ function drawCurve(
         cp1y,
         cp2x,
         cp2y,
-        p2.x,
-        p2.y
+        p3.x,
+        p3.y
     );
 
-    ctx.strokeStyle =
-        `rgba(120,180,225,${glowAlpha})`;
 
     ctx.lineWidth =
-        width * 2.6;
-
-    ctx.lineCap =
-        "round";
-
-    ctx.lineJoin =
-        "round";
-
-    ctx.shadowColor =
-        "rgba(100,170,220,0.45)";
-
-    ctx.shadowBlur =
-        18;
-
-    ctx.stroke();
-
-
-    ctx.beginPath();
-
-    ctx.moveTo(
-        p1.x,
-        p1.y
-    );
-
-    ctx.bezierCurveTo(
-        cp1x,
-        cp1y,
-        cp2x,
-        cp2y,
-        p2.x,
-        p2.y
-    );
+        getPenWidth();
 
     ctx.strokeStyle =
-        "rgba(160,205,235,0.96)";
-
-    ctx.lineWidth =
-        width;
-
-    ctx.lineCap =
-        "round";
-
-    ctx.lineJoin =
-        "round";
-
-    ctx.shadowColor =
-        "rgba(100,180,230,0.55)";
+        "rgba(145,175,208,.96)";
 
     ctx.shadowBlur =
         7;
 
+    ctx.shadowColor =
+        "rgba(145,175,208,.18)";
+
     ctx.stroke();
 
+
+    /*
+       Fine inner pass for a more digital-pen feel.
+    */
 
     ctx.beginPath();
 
@@ -2011,581 +1921,201 @@ function drawCurve(
         cp1y,
         cp2x,
         cp2y,
-        p2.x,
-        p2.y
+        p3.x,
+        p3.y
     );
-
-    ctx.strokeStyle =
-        "rgba(245,248,250,0.88)";
 
     ctx.lineWidth =
         Math.max(
-            1.15,
-            width * 0.30
+            1.1,
+            getPenWidth() * .45
         );
 
-    ctx.lineCap =
-        "round";
-
-    ctx.lineJoin =
-        "round";
-
-    ctx.shadowColor =
-        "rgba(255,255,255,0.30)";
+    ctx.strokeStyle =
+        "rgba(220,230,240,.30)";
 
     ctx.shadowBlur =
-        3;
+        0;
 
     ctx.stroke();
 
-    ctx.shadowBlur = 0;
+    ctx.restore();
 }
 
 
-/* =========================================================
+/* ============================================================
    DOT
-========================================================= */
+   ============================================================ */
 
-function drawDot(point) {
+function drawDot(point){
+
+    ctx.save();
 
     ctx.beginPath();
 
     ctx.arc(
         point.x,
         point.y,
-        MAX_INK_WIDTH / 2,
+        getPenWidth() / 2,
         0,
         Math.PI * 2
     );
 
     ctx.fillStyle =
-        "rgba(245,248,250,0.92)";
-
-    ctx.shadowColor =
-        "rgba(120,180,225,0.65)";
+        "rgba(145,175,208,.96)";
 
     ctx.shadowBlur =
-        8;
+        7;
+
+    ctx.shadowColor =
+        "rgba(145,175,208,.18)";
 
     ctx.fill();
 
-    ctx.shadowBlur = 0;
+    ctx.restore();
 }
 
 
-/* =========================================================
-   ADD POINT
-========================================================= */
+/* ============================================================
+   START STROKE
+   ============================================================ */
 
-function addStrokePoint(point) {
+function startStroke(point){
 
-    const last =
-        strokeBuffer[
-            strokeBuffer.length - 1
-        ];
+    drawing = true;
 
-    if (last) {
-
-        const d =
-            distanceBetween(
-                last.x,
-                last.y,
-                point.x,
-                point.y
-            );
-
-        if (
-            d <
-            MICRO_JITTER_DISTANCE
-        ) {
-            return;
+    strokePoints = [
+        {
+            x:point.x,
+            y:point.y
         }
+    ];
 
-        if (
-            d <
-            MIN_POINT_DISTANCE
-        ) {
-            return;
-        }
-    }
-
-    strokeBuffer.push(point);
-
-    if (
-        strokeBuffer.length === 4
-    ) {
-
-        const p0 =
-            strokeBuffer[0];
-
-        const p1 =
-            strokeBuffer[1];
-
-        const p2 =
-            strokeBuffer[2];
-
-        const p3 =
-            strokeBuffer[3];
-
-        const direction1 =
-            getDirection(
-                p0,
-                p1
-            );
-
-        const direction2 =
-            getDirection(
-                p1,
-                p2
-            );
-
-        let corner = 0;
-
-        if (
-            direction1 !== null &&
-            direction2 !== null
-        ) {
-
-            corner =
-                angleDifference(
-                    direction1,
-                    direction2
-                );
-        }
-
-        drawCurve(
-            p0,
-            p0,
-            p1,
-            p2,
-            currentSpeed,
-            corner
-        );
-
-        drawCurve(
-            p0,
-            p1,
-            p2,
-            p3,
-            currentSpeed,
-            corner
-        );
-
-        strokeBuffer.shift();
-    }
+    drawDot(point);
 }
 
 
-/* =========================================================
-   FLUSH
-========================================================= */
+/* ============================================================
+   DRAW
+   ============================================================ */
 
-function flushStrokeBuffer() {
-
-    const count =
-        strokeBuffer.length;
-
-    if (
-        count === 0
-    ) {
-        return;
-    }
-
-    if (
-        count === 1
-    ) {
-
-        drawDot(
-            strokeBuffer[0]
-        );
-
-        return;
-    }
-
-    if (
-        count === 2
-    ) {
-
-        const p0 =
-            strokeBuffer[0];
-
-        const p1 =
-            strokeBuffer[1];
-
-        ctx.beginPath();
-
-        ctx.moveTo(
-            p0.x,
-            p0.y
-        );
-
-        ctx.lineTo(
-            p1.x,
-            p1.y
-        );
-
-        ctx.strokeStyle =
-            "rgba(160,205,235,0.96)";
-
-        ctx.lineWidth =
-            MAX_INK_WIDTH;
-
-        ctx.lineCap =
-            "round";
-
-        ctx.lineJoin =
-            "round";
-
-        ctx.stroke();
-
-        return;
-    }
-
-    if (
-        count === 3
-    ) {
-
-        const p0 =
-            strokeBuffer[0];
-
-        const p1 =
-            strokeBuffer[1];
-
-        const p2 =
-            strokeBuffer[2];
-
-        drawCurve(
-            p0,
-            p0,
-            p1,
-            p2,
-            currentSpeed,
-            0
-        );
-
-        drawCurve(
-            p0,
-            p1,
-            p2,
-            p2,
-            currentSpeed,
-            0
-        );
-
-        return;
-    }
-
-    const p0 =
-        strokeBuffer[count - 3];
-
-    const p1 =
-        strokeBuffer[count - 2];
-
-    const p2 =
-        strokeBuffer[count - 1];
-
-    drawCurve(
-        p0,
-        p1,
-        p2,
-        p2,
-        currentSpeed,
-        0
-    );
-}
-
-
-/* =========================================================
-   RESET
-========================================================= */
-
-function resetDrawingState() {
-
-    isDrawing = false;
-
-    previousX = null;
-    previousY = null;
-
-    smoothX = null;
-    smoothY = null;
-
-    previousRawX = null;
-    previousRawY = null;
-
-    previousTime = null;
-
-    currentSpeed = 0;
-
-    currentDirection = null;
-
-    strokeBuffer = [];
-}
-
-
-/* =========================================================
-   STOP
-========================================================= */
-
-function stopDrawing() {
-
-    if (
-        isDrawing
-    ) {
-        flushStrokeBuffer();
-    }
-
-    resetDrawingState();
-}
-
-
-/* =========================================================
-   CLEAR
-========================================================= */
-
-function clearCanvas() {
-
-    ctx.clearRect(
-        0,
-        0,
-        viewportWidth,
-        viewportHeight
-    );
-
-    resetDrawingState();
-}
-
-
-/* =========================================================
-   DRAW LINE
-========================================================= */
-
-function drawLine(
-    targetX,
-    targetY
-) {
+function drawLine(point){
 
     const now =
         performance.now();
 
-    if (
-        previousRawX === null
-    ) {
 
-        previousRawX =
-            targetX;
+    const smooth =
+        smoothPoint(
+            point,
+            now
+        );
 
-        previousRawY =
-            targetY;
 
-        previousTime =
-            now;
+    if(!drawing){
 
-        smoothX =
-            targetX;
-
-        smoothY =
-            targetY;
-
-        previousX =
-            targetX;
-
-        previousY =
-            targetY;
-
-        strokeBuffer = [
-            {
-                x: targetX,
-                y: targetY
-            }
-        ];
-
-        isDrawing = true;
+        startStroke(
+            smooth
+        );
 
         return;
     }
 
 
-    const rawDistance =
-        distanceBetween(
-            previousRawX,
-            previousRawY,
-            targetX,
-            targetY
-        );
-
-
-    const deltaTime =
-        Math.max(
-            now -
-            previousTime,
-            1
-        );
-
-
-    const instantSpeed =
-        (
-            rawDistance /
-            deltaTime
-        ) * 1000;
-
-
-    currentSpeed =
-        currentSpeed * 0.65 +
-        instantSpeed * 0.35;
-
-
-    const newDirection =
-        Math.atan2(
-            targetY -
-            previousRawY,
-            targetX -
-            previousRawX
-        );
-
-
-    let directionChange = 0;
-
-
-    if (
-        currentDirection !== null
-    ) {
-
-        directionChange =
-            angleDifference(
-                currentDirection,
-                newDirection
-            );
-    }
-
-
-    currentDirection =
-        newDirection;
-
-
-    previousRawX =
-        targetX;
-
-    previousRawY =
-        targetY;
-
-    previousTime =
-        now;
-
-
-    if (
-        rawDistance >
-        MAX_REASONABLE_JUMP
-    ) {
-
-        smoothX =
-            targetX;
-
-        smoothY =
-            targetY;
-
-        previousX =
-            targetX;
-
-        previousY =
-            targetY;
-
-        strokeBuffer = [
-            {
-                x: targetX,
-                y: targetY
-            }
+    const previous =
+        strokePoints[
+            strokePoints.length - 1
         ];
 
+
+    const d =
+        distance(
+            previous,
+            smooth
+        );
+
+
+    if(
+        d <
+        MIN_POINT_DISTANCE
+    ){
         return;
     }
 
 
-    const smoothPoint =
-        getSmoothPoint(
-            targetX,
-            targetY,
-            currentSpeed,
-            directionChange
-        );
-
-
-    if (
-        previousX !== null &&
-        previousY !== null
-    ) {
-
-        const movement =
-            distanceBetween(
-                previousX,
-                previousY,
-                smoothPoint.x,
-                smoothPoint.y
-            );
-
-        if (
-            movement <
-            MICRO_JITTER_DISTANCE
-        ) {
-            return;
-        }
-    }
-
-
-    previousX =
-        smoothPoint.x;
-
-    previousY =
-        smoothPoint.y;
-
-
-    addStrokePoint({
-        x: smoothPoint.x,
-        y: smoothPoint.y
+    strokePoints.push({
+        x:smooth.x,
+        y:smooth.y
     });
 
 
-    isDrawing = true;
+    /*
+       Keep a compact buffer.
+    */
+
+    if(
+        strokePoints.length >
+        8
+    ){
+
+        strokePoints.shift();
+    }
+
+
+    drawSmoothSegment();
 }
 
 
-/* =========================================================
-   CURSOR
-========================================================= */
+/* ============================================================
+   STOP DRAWING
+   ============================================================ */
 
-function updateCursor(
-    x,
-    y
-) {
+function stopDrawing(){
 
-    cursor.style.left =
-        x + "px";
+    drawing = false;
 
-    cursor.style.top =
-        y + "px";
+    strokePoints = [];
 
-    cursor.classList.remove(
-        "hidden"
+    hasPreviousPoint = false;
+
+    lastSpeed = 0;
+}
+
+
+/* ============================================================
+   CLEAR BOARD
+   ============================================================ */
+
+function clearBoard(){
+
+    clearFrames = 0;
+
+    clearCooldown = 15;
+
+    ctx.save();
+
+    ctx.clearRect(
+        0,
+        0,
+        viewWidth,
+        viewHeight
     );
+
+    ctx.restore();
+
+    resetDrawingState();
 }
 
 
-function hideCursor() {
+/* ============================================================
+   GESTURE CLASSIFICATION
+   ============================================================ */
 
-    cursor.classList.add(
-        "hidden"
-    );
-}
-
-
-/* =========================================================
-   FINGER DETECTION
-========================================================= */
-
-function isFingerUp(
+function fingerUp(
     landmarks,
     tip,
     pip
-) {
+){
 
     return (
         landmarks[tip].y <
@@ -2594,404 +2124,439 @@ function isFingerUp(
 }
 
 
-/* =========================================================
-   MEDIAPIPE
-========================================================= */
-
-const hands =
-    new Hands({
-
-        locateFile:
-        function(file) {
-
-            return (
-                "https://cdn.jsdelivr.net/npm/" +
-                "@mediapipe/hands/" +
-                file
-            );
-        }
-
-    });
-
-
-hands.setOptions({
-
-    maxNumHands: 1,
-
-    modelComplexity: 1,
-
-    minDetectionConfidence: 0.6,
-
-    minTrackingConfidence: 0.6
-
-});
-
-
-/* =========================================================
-   NORMALIZED CAMERA → SCREEN COORDINATES
-========================================================= */
-
-function mapHandToScreen(
-    normalizedX,
-    normalizedY
-) {
-
-    const geometry =
-        getVideoGeometry();
-
+function classifyGesture(
+    landmarks
+){
 
     /*
-       MediaPipe coordinates are based on the
-       original camera frame.
-
-       object-fit: cover enlarges that frame
-       and crops the excess.
-
-       We reproduce that exact transformation.
+       Finger states.
     */
-
-    const displayedX =
-        normalizedX *
-        geometry.renderedWidth;
-
-    const displayedY =
-        normalizedY *
-        geometry.renderedHeight;
-
-
-    let screenX =
-        displayedX +
-        geometry.offsetX;
-
-    let screenY =
-        displayedY +
-        geometry.offsetY;
-
-
-    /*
-       The displayed video is mirrored.
-
-       MediaPipe itself gives us the original
-       camera coordinate, so mirror X here.
-    */
-
-    screenX =
-        window.innerWidth -
-        screenX;
-
-
-    /*
-       Keep the coordinate inside the screen.
-    */
-
-    screenX =
-        Math.max(
-            0,
-            Math.min(
-                window.innerWidth,
-                screenX
-            )
-        );
-
-    screenY =
-        Math.max(
-            0,
-            Math.min(
-                window.innerHeight,
-                screenY
-            )
-        );
-
-
-    return {
-
-        x: screenX,
-
-        y: screenY
-
-    };
-}
-
-
-/* =========================================================
-   HAND RESULTS
-========================================================= */
-
-hands.onResults(
-function(results) {
-
-    if (
-        clearCooldown > 0
-    ) {
-        clearCooldown--;
-    }
-
-
-    if (
-        !results.multiHandLandmarks ||
-        results.multiHandLandmarks.length === 0
-    ) {
-
-        handState.textContent =
-            "Searching";
-
-        modeState.textContent =
-            "Standby";
-
-        stopDrawing();
-
-        hideCursor();
-
-        clearFrames = 0;
-
-        return;
-    }
-
-
-    const landmarks =
-        results.multiHandLandmarks[0];
-
 
     const indexUp =
-        isFingerUp(
+        fingerUp(
             landmarks,
             8,
             6
         );
 
     const middleUp =
-        isFingerUp(
+        fingerUp(
             landmarks,
             12,
             10
         );
 
     const ringUp =
-        isFingerUp(
+        fingerUp(
             landmarks,
             16,
             14
         );
 
     const pinkyUp =
-        isFingerUp(
+        fingerUp(
             landmarks,
             20,
             18
         );
 
 
-    const fingersUp =
-        Number(indexUp) +
-        Number(middleUp) +
-        Number(ringUp) +
-        Number(pinkyUp);
-
-
-    const openHand =
-        fingersUp >= 3;
-
+    /*
+       Thumb/index pinch.
+    */
 
     const thumb =
         landmarks[4];
 
-    const indexTip =
+    const index =
         landmarks[8];
 
 
     const pinchDistance =
         Math.sqrt(
-
             Math.pow(
-                thumb.x -
-                indexTip.x,
+                thumb.x - index.x,
                 2
             ) +
-
             Math.pow(
-                thumb.y -
-                indexTip.y,
+                thumb.y - index.y,
                 2
             )
-
         );
 
 
-    const isPinching =
-        pinchDistance < 0.055;
+    const pinch =
+        pinchDistance <
+        0.055;
 
 
     /*
-       IMPORTANT:
-
-       Do NOT directly multiply normalized
-       MediaPipe coordinates by window dimensions.
-
-       Use the camera projection function.
+       Open hand.
     */
 
-    const screenPoint =
+    const openCount =
+        [
+            indexUp,
+            middleUp,
+            ringUp,
+            pinkyUp
+        ]
+        .filter(Boolean)
+        .length;
+
+
+    const openHand =
+        openCount >= 3;
+
+
+    /*
+       Draw gesture:
+       index up
+       remaining fingers down
+       not pinching
+    */
+
+    const draw =
+        indexUp &&
+        !middleUp &&
+        !ringUp &&
+        !pinkyUp &&
+        !pinch;
+
+
+    if(openHand){
+
+        return {
+            name:"OPEN",
+            type:"clear",
+            indexUp,
+            pinch
+        };
+    }
+
+
+    if(pinch){
+
+        return {
+            name:"PINCH",
+            type:"pause",
+            indexUp,
+            pinch
+        };
+    }
+
+
+    if(draw){
+
+        return {
+            name:"DRAW",
+            type:"draw",
+            indexUp,
+            pinch
+        };
+    }
+
+
+    return {
+        name:"NONE",
+        type:"none",
+        indexUp,
+        pinch
+    };
+}
+
+
+/* ============================================================
+   MEDIAPIPE
+   ============================================================ */
+
+const hands =
+    new Hands({
+        locateFile:
+            file =>
+                `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`
+    });
+
+
+hands.setOptions({
+
+    maxNumHands:1,
+
+    modelComplexity:1,
+
+    minDetectionConfidence:.60,
+
+    minTrackingConfidence:.60
+});
+
+
+hands.onResults(
+    onHandsResults
+);
+
+
+/* ============================================================
+   MEDIAPIPE RESULTS
+   ============================================================ */
+
+function onHandsResults(results){
+
+    if(!cameraRunning){
+        return;
+    }
+
+
+    const landmarks =
+        results.multiHandLandmarks &&
+        results.multiHandLandmarks[0];
+
+
+    if(!landmarks){
+
+        handState.textContent =
+            "NONE";
+
+        trackingState.textContent =
+            "SEARCHING";
+
+        trackingDot.className =
+            "status-dot warning";
+
+        gestureState.textContent =
+            "NONE";
+
+        cursor.style.opacity =
+            "0";
+
+        stopDrawing();
+
+        return;
+    }
+
+
+    /*
+       Hand detected.
+    */
+
+    handState.textContent =
+        "DETECTED";
+
+    trackingState.textContent =
+        "ACTIVE";
+
+    trackingDot.className =
+        "status-dot ready";
+
+
+    /*
+       Index fingertip.
+    */
+
+    const indexTip =
+        landmarks[8];
+
+
+    const point =
         mapHandToScreen(
             indexTip.x,
             indexTip.y
         );
 
 
-    const x =
-        screenPoint.x;
-
-    const y =
-        screenPoint.y;
-
+    /*
+       Cursor follows exactly the same coordinate
+       transformation as the drawing engine.
+    */
 
     updateCursor(
-        x,
-        y
+        point
     );
 
 
-    handState.textContent =
-        "Detected";
+    coordinates.textContent =
+        `${Math.round(point.x)}, ${Math.round(point.y)}`;
 
 
-    if (
-        openHand
-    ) {
+    /*
+       Gesture classification.
+    */
+
+    const gesture =
+        classifyGesture(
+            landmarks
+        );
+
+
+    gestureState.textContent =
+        gesture.name;
+
+
+    if(
+        gesture.type ===
+        "draw"
+    ){
+
+        modeState.textContent =
+            "DRAWING";
+
+        cursor.classList.add(
+            "drawing"
+        );
+
+        cursor.classList.remove(
+            "pause",
+            "clear"
+        );
+
+        drawLine(point);
+
+        return;
+    }
+
+
+    if(
+        gesture.type ===
+        "pause"
+    ){
+
+        modeState.textContent =
+            "PAUSED";
+
+        cursor.classList.add(
+            "pause"
+        );
+
+        cursor.classList.remove(
+            "drawing",
+            "clear"
+        );
 
         stopDrawing();
 
+        return;
+    }
+
+
+    if(
+        gesture.type ===
+        "clear"
+    ){
+
         modeState.textContent =
-            "Clearing";
+            "CLEAR";
+
+        cursor.classList.add(
+            "clear"
+        );
+
+        cursor.classList.remove(
+            "drawing",
+            "pause"
+        );
+
+        stopDrawing();
+
+        /*
+           Require several consecutive open-hand frames.
+           This prevents accidental clearing.
+        */
+
+        if(clearCooldown > 0){
+
+            clearCooldown--;
+
+            return;
+        }
+
 
         clearFrames++;
 
 
-        if (
-            clearFrames >=
-            CLEAR_REQUIRED_FRAMES
-        ) {
+        if(clearFrames >= 5){
 
-            if (
-                clearCooldown <= 0
-            ) {
-
-                clearCanvas();
-
-                clearCooldown =
-                    CLEAR_COOLDOWN_FRAMES;
-            }
-
-            clearFrames = 0;
+            clearBoard();
         }
 
         return;
     }
 
 
+    modeState.textContent =
+        "READY";
+
+    cursor.classList.remove(
+        "drawing",
+        "pause",
+        "clear"
+    );
+
     clearFrames = 0;
 
-
-    if (
-        isPinching
-    ) {
-
-        stopDrawing();
-
-        modeState.textContent =
-            "Paused";
-
-        return;
-    }
-
-
-    if (
-
-        indexUp &&
-        !middleUp &&
-        !ringUp &&
-        !pinkyUp &&
-        !isPinching
-
-    ) {
-
-        modeState.textContent =
-            "Drawing";
-
-        drawLine(
-            x,
-            y
-        );
-
-        return;
-    }
-
-
     stopDrawing();
-
-    modeState.textContent =
-        "Standby";
-
-});
+}
 
 
-/* =========================================================
-   CAMERA
-========================================================= */
+/* ============================================================
+   CURSOR
+   ============================================================ */
 
-let cameraInstance = null;
+function updateCursor(point){
 
-let cameraStarted = false;
+    cursor.style.left =
+        `${point.x + canvas.getBoundingClientRect().left}px`;
+
+    cursor.style.top =
+        `${point.y + canvas.getBoundingClientRect().top}px`;
+
+    cursor.style.opacity =
+        "1";
+}
 
 
-/* =========================================================
+/* ============================================================
    START CAMERA
-========================================================= */
+   ============================================================ */
 
-startButton.addEventListener(
-"click",
-async function() {
+async function initializeCamera(){
 
-    if (
-        cameraStarted
-    ) {
+    if(cameraRunning){
         return;
     }
 
 
-    try {
+    startBtn.disabled =
+        true;
 
-        workspaceStatus.textContent =
-            "INITIALIZING CAMERA";
-
-        systemState.textContent =
-            "Starting";
-
-        topStatusText.textContent =
-            "STARTING";
+    startBtn.textContent =
+        "INITIALIZING";
 
 
-        const stream =
-            await navigator
-            .mediaDevices
-            .getUserMedia({
+    try{
 
-                video: {
+        /*
+           User-facing camera.
 
-                    facingMode: {
-                        ideal: "user"
+           The video itself is invisible.
+        */
+
+        stream =
+            await navigator.mediaDevices.getUserMedia({
+
+                video:{
+                    facingMode:{
+                        ideal:"user"
                     },
 
-                    width: {
-                        ideal: 1280
+                    width:{
+                        ideal:1280
                     },
 
-                    height: {
-                        ideal: 720
+                    height:{
+                        ideal:720
                     }
-
                 },
 
-                audio: false
+                audio:false
 
             });
 
@@ -3004,139 +2569,593 @@ async function() {
 
 
         /*
-           Wait until the browser knows the actual
-           camera dimensions.
+           Give the browser a frame to establish
+           video dimensions.
         */
 
-        if (
-            video.readyState <
-            2
-        ) {
+        await new Promise(
+            resolve =>
+                requestAnimationFrame(resolve)
+        );
 
-            await new Promise(
-                function(resolve) {
-
-                    video.onloadedmetadata =
-                        resolve;
-
-                }
-            );
-
-        }
-
-
-        /*
-           Recalculate screen/camera geometry.
-        */
 
         resizeCanvas();
 
 
-        cameraInstance =
+        cameraRunning =
+            true;
+
+
+        cameraState.textContent =
+            "ON";
+
+        connectionText.textContent =
+            "ONLINE";
+
+        connectionStatus.classList.add(
+            "active"
+        );
+
+        connectionDot.classList.add(
+            "active"
+        );
+
+        trackingState.textContent =
+            "SEARCHING";
+
+        trackingDot.className =
+            "status-dot warning";
+
+
+        centerPanel.classList.add(
+            "hidden"
+        );
+
+
+        startBtn.textContent =
+            "CAMERA ACTIVE";
+
+
+        /*
+           MediaPipe camera utility.
+
+           It receives the actual video frames even though
+           the user cannot see the camera image.
+        */
+
+        const camera =
             new Camera(
                 video,
                 {
 
                     onFrame:
-                    async function() {
+                        async () => {
 
-                        if (
-                            video.readyState >= 2
-                        ) {
+                            if(
+                                cameraRunning &&
+                                video.readyState >= 2
+                            ){
 
-                            await hands.send({
-                                image: video
-                            });
+                                await hands.send({
+                                    image:video
+                                });
 
-                        }
+                            }
 
-                    },
+                        },
 
-                    width: 1280,
+                    width:1280,
 
-                    height: 720
+                    height:720
 
                 }
             );
 
 
-        cameraInstance.start();
+        camera.start();
 
 
-        cameraStarted = true;
+        /*
+           Keep reference available for debugging.
+        */
+
+        window.airMathsCamera =
+            camera;
 
 
-        workspaceStatus.textContent =
-            "READY";
+    }catch(error){
 
-        systemState.textContent =
-            "Online";
-
-        topStatusText.textContent =
-            "ONLINE";
-
-
-        systemIndicator.classList.add(
-            "online"
+        console.error(
+            "Camera initialization failed:",
+            error
         );
 
 
-        startButton.style.display =
-            "none";
-
-    }
-
-    catch (error) {
-
-        console.error(error);
+        cameraRunning =
+            false;
 
 
-        workspaceStatus.textContent =
-            "CAMERA INITIALIZATION FAILED";
-
-        systemState.textContent =
-            "Error";
-
-        topStatusText.textContent =
+        cameraState.textContent =
             "ERROR";
 
+        connectionText.textContent =
+            "OFFLINE";
 
-        alert(
-            "Failed to start camera.\n\n" +
-            error.message
+        connectionStatus.classList.remove(
+            "active"
         );
 
+
+        trackingState.textContent =
+            "ERROR";
+
+        trackingDot.className =
+            "status-dot warning";
+
+
+        centerPanel.classList.remove(
+            "hidden"
+        );
+
+
+        startBtn.disabled =
+            false;
+
+        startBtn.textContent =
+            "RETRY CAMERA";
+
+
+        let message =
+            "Camera could not be initialized.";
+
+
+        if(
+            error &&
+            error.name ===
+            "NotAllowedError"
+        ){
+
+            message =
+                "Camera permission was denied.";
+        }
+
+        else if(
+            error &&
+            error.name ===
+            "NotFoundError"
+        ){
+
+            message =
+                "No camera was found.";
+        }
+
+        else if(
+            error &&
+            error.name ===
+            "NotReadableError"
+        ){
+
+            message =
+                "Camera is already being used by another application.";
+        }
+
+
+        document.querySelector(
+            ".center-description"
+        ).textContent =
+            message;
+    }
+}
+
+
+/* ============================================================
+   STOP CAMERA
+   ============================================================ */
+
+function stopCamera(){
+
+    cameraRunning =
+        false;
+
+
+    if(stream){
+
+        stream
+            .getTracks()
+            .forEach(
+                track =>
+                    track.stop()
+            );
+
+        stream =
+            null;
     }
 
-});
+
+    video.srcObject =
+        null;
 
 
-/* =========================================================
-   KEEP CAMERA GEOMETRY SYNCHRONIZED
-========================================================= */
+    cameraState.textContent =
+        "OFF";
 
-video.addEventListener(
-    "loadedmetadata",
-    function() {
+    connectionText.textContent =
+        "OFFLINE";
 
-        resizeCanvas();
+    connectionStatus.classList.remove(
+        "active"
+    );
+
+    trackingState.textContent =
+        "WAITING";
+
+    trackingDot.className =
+        "status-dot";
+
+
+    cursor.style.opacity =
+        "0";
+
+
+    stopDrawing();
+}
+
+
+/* ============================================================
+   RESIZE / ORIENTATION
+   ============================================================ */
+
+let resizeTimer = null;
+
+
+function handleResize(){
+
+    clearTimeout(
+        resizeTimer
+    );
+
+
+    resizeTimer =
+        setTimeout(
+            () => {
+
+                resizeCanvas();
+
+            },
+            100
+        );
+}
+
+
+window.addEventListener(
+    "resize",
+    handleResize
+);
+
+
+window.addEventListener(
+    "orientationchange",
+    () => {
+
+        setTimeout(
+            () => {
+
+                resizeCanvas();
+
+            },
+            250
+        );
 
     }
 );
 
 
-/* =========================================================
-   INITIAL STATE
-========================================================= */
+/*
+   Also check video dimensions.
 
-workspaceStatus.textContent =
-    "PRESS INITIALIZE CAMERA";
+   Some Android browsers report the camera dimensions
+   only after playback begins.
+*/
 
-systemState.textContent =
-    "Offline";
+setInterval(
+    () => {
 
-topStatusText.textContent =
-    "OFFLINE";
+        if(
+            cameraRunning &&
+            (
+                video.videoWidth !==
+                lastVideoWidth ||
+
+                video.videoHeight !==
+                lastVideoHeight
+            )
+        ){
+
+            resizeCanvas();
+        }
+
+    },
+    500
+);
+
+
+/* ============================================================
+   CLEAR BUTTON
+   ============================================================ */
+
+document
+    .getElementById("clearBtn")
+    .addEventListener(
+        "click",
+        () => {
+
+            clearBoard();
+
+        }
+    );
+
+
+/* ============================================================
+   START BUTTON
+   ============================================================ */
+
+startBtn.addEventListener(
+    "click",
+    initializeCamera
+);
+
+
+/* ============================================================
+   TOOL BUTTONS
+   ============================================================ */
+
+document
+    .getElementById("penTool")
+    .addEventListener(
+        "click",
+        () => {
+
+            setActiveTool(
+                "penTool"
+            );
+
+        }
+    );
+
+
+document
+    .getElementById("selectTool")
+    .addEventListener(
+        "click",
+        () => {
+
+            setActiveTool(
+                "selectTool"
+            );
+
+        }
+    );
+
+
+document
+    .getElementById("measureTool")
+    .addEventListener(
+        "click",
+        () => {
+
+            setActiveTool(
+                "measureTool"
+            );
+
+        }
+    );
+
+
+function setActiveTool(id){
+
+    document
+        .querySelectorAll(".tool")
+        .forEach(
+            button =>
+                button.classList.remove(
+                    "active"
+                )
+        );
+
+
+    document
+        .getElementById(id)
+        .classList.add(
+            "active"
+        );
+}
+
+
+/* ============================================================
+   GRID TOGGLE
+   ============================================================ */
+
+let gridEnabled =
+    true;
+
+
+document
+    .getElementById("gridBtn")
+    .addEventListener(
+        "click",
+        () => {
+
+            gridEnabled =
+                !gridEnabled;
+
+
+            const workspace =
+                document.querySelector(
+                    ".workspace"
+                );
+
+
+            if(gridEnabled){
+
+                workspace.style.background =
+                    `
+                    linear-gradient(
+                        rgba(255,255,255,.018) 1px,
+                        transparent 1px
+                    ),
+                    linear-gradient(
+                        90deg,
+                        rgba(255,255,255,.018) 1px,
+                        transparent 1px
+                    ),
+                    var(--bg-0)
+                    `;
+
+                workspace.style.backgroundSize =
+                    "32px 32px";
+
+            }else{
+
+                workspace.style.background =
+                    "var(--bg-0)";
+            }
+
+        }
+    );
+
+
+/* ============================================================
+   UNDO / REDO PLACEHOLDERS
+   ============================================================ */
+
+document
+    .getElementById("undoBtn")
+    .addEventListener(
+        "click",
+        () => {
+
+            /*
+               History engine will be added in the
+               next system stage.
+            */
+
+        }
+    );
+
+
+document
+    .getElementById("redoBtn")
+    .addEventListener(
+        "click",
+        () => {
+
+            /*
+               History engine will be added in the
+               next system stage.
+            */
+
+        }
+    );
+
+
+/* ============================================================
+   ZOOM BUTTON
+   ============================================================ */
+
+let zoomLevel =
+    1;
+
+
+document
+    .getElementById("zoomBtn")
+    .addEventListener(
+        "click",
+        () => {
+
+            zoomLevel += .1;
+
+            if(zoomLevel > 2){
+                zoomLevel = 1;
+            }
+
+            canvas.style.transform =
+                `scale(${zoomLevel})`;
+
+            canvas.style.transformOrigin =
+                "center center";
+
+        }
+    );
+
+
+/* ============================================================
+   INITIAL CANVAS SETUP
+   ============================================================ */
+
+resizeCanvas();
+
+
+/* ============================================================
+   PREVENT PAGE SCROLLING / GESTURE INTERFERENCE
+   ============================================================ */
+
+document.addEventListener(
+    "touchmove",
+    event => {
+
+        if(
+            event.target === canvas ||
+            event.target.closest(".workspace")
+        ){
+
+            event.preventDefault();
+        }
+
+    },
+    {
+        passive:false
+    }
+);
+
+
+/* ============================================================
+   PAGE VISIBILITY
+   ============================================================ */
+
+document.addEventListener(
+    "visibilitychange",
+    () => {
+
+        if(
+            document.hidden &&
+            cameraRunning
+        ){
+
+            stopDrawing();
+        }
+
+    }
+);
+
+
+/* ============================================================
+   INITIAL STATUS
+   ============================================================ */
+
+cameraState.textContent =
+    "OFF";
+
+handState.textContent =
+    "NONE";
+
+modeState.textContent =
+    "READY";
+
+gestureState.textContent =
+    "NONE";
+
+trackingState.textContent =
+    "WAITING";
 
 </script>
 
