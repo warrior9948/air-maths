@@ -3,1081 +3,905 @@
 <head>
 
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<meta name="viewport"
-      content="width=device-width,
-               initial-scale=1.0,
-               maximum-scale=1.0,
-               user-scalable=no">
-
-<title>Air Maths Board</title>
-
-<script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js"></script>
+<title>Air Maths Board - Stage 2</title>
 
 <style>
 
-:root{
-    --bg-0:#0d0f11;
-    --bg-1:#121416;
-    --bg-2:#181b1e;
-    --bg-3:#1d2024;
+/* =====================================
+   GLOBAL
+===================================== */
 
-    --line-1:#24282c;
-    --line-2:#2c3136;
-    --line-3:#383e44;
-
-    --text-1:#e6e9ec;
-    --text-2:#b0b6bd;
-    --text-3:#7c838a;
-    --text-4:#5d646b;
-
-    --accent:#91afd0;
-    --accent-bg:rgba(145,175,208,.10);
-    --accent-line:rgba(145,175,208,.28);
-
-    --danger:#c98282;
-
-    --topbar:48px;
-    --rail:48px;
-    --bottombar:28px;
+* {
+    box-sizing: border-box;
 }
 
-*{
-    box-sizing:border-box;
-    -webkit-tap-highlight-color:transparent;
-}
-
-html,
-body{
-    margin:0;
-    width:100%;
-    height:100%;
-    overflow:hidden;
-    background:var(--bg-0);
-    color:var(--text-1);
-
-    font-family:
-        Inter,
-        ui-sans-serif,
-        system-ui,
-        -apple-system,
-        BlinkMacSystemFont,
-        "Segoe UI",
-        sans-serif;
-
-    touch-action:none;
-}
-
-button{
-    font:inherit;
+body {
+    margin: 0;
+    overflow: hidden;
+    background: #020008;
+    font-family: Arial, sans-serif;
 }
 
 
-/* =========================================================
+/* =====================================
    CAMERA
-   ONLY CHANGE: z-index is now 60
-   ========================================================= */
+===================================== */
 
-#camera{
+#camera {
 
-    position:fixed;
+    position: fixed;
 
-    left:0;
-    top:0;
+    width: 100vw;
+    height: 100vh;
 
-    width:100vw;
-    height:100vh;
+    object-fit: cover;
 
-    object-fit:cover;
+    transform: scaleX(-1);
 
-    opacity:1;
+    opacity: 0.30;
 
-    pointer-events:none;
-
-    z-index:60;
-
-    transition:
-        opacity .15s ease;
+    z-index: 0;
 }
 
 
-/* =========================================================
-   APP
-   ========================================================= */
+/* =====================================
+   DRAWING CANVAS
+===================================== */
 
-#app{
+#canvas {
 
-    position:fixed;
+    position: fixed;
 
-    inset:0;
+    top: 0;
+    left: 0;
 
-    width:100%;
-    height:100%;
+    width: 100vw;
+    height: 100vh;
 
-    overflow:hidden;
+    z-index: 2;
 
-    background:var(--bg-0);
-
-    z-index:10;
+    pointer-events: none;
 }
 
 
-/* =========================================================
-   TOP BAR
-   ========================================================= */
+/* =====================================
+   FUTURISTIC GRID
+===================================== */
 
-.topbar{
+#grid {
 
-    position:absolute;
+    position: fixed;
 
-    left:0;
-    right:0;
-    top:0;
+    inset: 0;
 
-    height:var(--topbar);
+    z-index: 1;
 
-    display:flex;
-    align-items:center;
+    pointer-events: none;
 
-    border-bottom:1px solid var(--line-1);
-
-    background:#0d0f11;
-
-    z-index:20;
-}
-
-.brand{
-
-    width:var(--rail);
-    height:100%;
-
-    display:flex;
-    align-items:center;
-    justify-content:center;
-
-    border-right:1px solid var(--line-1);
-
-    font-size:12px;
-
-    font-weight:700;
-
-    letter-spacing:.08em;
-}
-
-.document{
-
-    height:100%;
-
-    display:flex;
-    align-items:center;
-
-    padding:0 16px;
-
-    min-width:190px;
-
-    border-right:1px solid var(--line-1);
-}
-
-.document-name{
-    font-size:12px;
-}
-
-.document-type{
-
-    margin-left:9px;
-
-    font-size:10px;
-
-    color:var(--text-4);
-
-    letter-spacing:.08em;
-
-    text-transform:uppercase;
-}
-
-.menu{
-
-    display:flex;
-
-    height:100%;
-
-    align-items:center;
-
-    gap:2px;
-
-    padding-left:8px;
-}
-
-.menu button{
-
-    height:30px;
-
-    border:0;
-
-    background:transparent;
-
-    color:var(--text-3);
-
-    padding:0 10px;
-
-    font-size:10px;
-
-    letter-spacing:.08em;
-
-    cursor:pointer;
-}
-
-.menu button:hover{
-
-    color:var(--text-1);
-
-    background:var(--bg-2);
-}
-
-.top-right{
-
-    margin-left:auto;
-
-    height:100%;
-
-    display:flex;
-
-    align-items:center;
-
-    gap:8px;
-
-    padding-right:10px;
-}
-
-
-/* =========================================================
-   CONNECTION
-   ========================================================= */
-
-.connection{
-
-    display:flex;
-
-    align-items:center;
-
-    gap:6px;
-
-    height:26px;
-
-    padding:0 9px;
-
-    border:1px solid var(--line-2);
-
-    color:var(--text-3);
-
-    font-size:9px;
-
-    letter-spacing:.08em;
-}
-
-.connection-dot{
-
-    width:5px;
-    height:5px;
-
-    border-radius:50%;
-
-    background:var(--text-4);
-}
-
-.connection.active .connection-dot{
-    background:#8eaa91;
-}
-
-.version{
-
-    color:var(--text-4);
-
-    font-size:9px;
-
-    letter-spacing:.08em;
-}
-
-
-/* =========================================================
-   CAMERA BUTTON
-   ========================================================= */
-
-.debug-button{
-
-    height:26px;
-
-    padding:0 8px;
-
-    border:1px solid var(--line-2);
-
-    background:transparent;
-
-    color:var(--text-4);
-
-    font-size:8px;
-
-    letter-spacing:.08em;
-
-    cursor:pointer;
-
-    border-radius:3px;
-}
-
-.debug-button:hover{
-
-    color:var(--text-2);
-
-    background:var(--bg-2);
-}
-
-.debug-button.active{
-
-    color:var(--accent);
-
-    border-color:var(--accent-line);
-
-    background:var(--accent-bg);
-}
-
-
-/* =========================================================
-   TOOL RAIL
-   ========================================================= */
-
-.toolrail{
-
-    position:absolute;
-
-    left:0;
-
-    top:var(--topbar);
-
-    bottom:var(--bottombar);
-
-    width:var(--rail);
-
-    display:flex;
-
-    flex-direction:column;
-
-    align-items:center;
-
-    border-right:1px solid var(--line-1);
-
-    background:#121416;
-
-    z-index:20;
-}
-
-.tool-group{
-
-    width:100%;
-
-    padding:8px 0;
-
-    border-bottom:1px solid var(--line-1);
-}
-
-.tool{
-
-    position:relative;
-
-    width:100%;
-
-    height:38px;
-
-    display:flex;
-
-    align-items:center;
-
-    justify-content:center;
-
-    border:0;
-
-    background:transparent;
-
-    color:var(--text-4);
-
-    cursor:pointer;
-}
-
-.tool:hover{
-
-    color:var(--text-2);
-
-    background:var(--bg-2);
-}
-
-.tool.active{
-
-    color:var(--accent);
-
-    background:var(--accent-bg);
-}
-
-.tool.active::before{
-
-    content:"";
-
-    position:absolute;
-
-    left:0;
-
-    top:8px;
-    bottom:8px;
-
-    width:2px;
-
-    background:var(--accent);
-}
-
-.tool-symbol{
-
-    font-size:11px;
-
-    font-weight:600;
-}
-
-.tool-bottom{
-
-    margin-top:auto;
-
-    width:100%;
-
-    padding:8px 0;
-
-    border-top:1px solid var(--line-1);
-}
-
-
-/* =========================================================
-   WORKSPACE
-   ========================================================= */
-
-.workspace{
-
-    position:absolute;
-
-    left:var(--rail);
-    right:0;
-
-    top:var(--topbar);
-    bottom:var(--bottombar);
-
-    overflow:hidden;
-
-    background-color:var(--bg-0);
+    opacity: 0.16;
 
     background-image:
 
         linear-gradient(
-            rgba(255,255,255,.018) 1px,
+            rgba(255, 0, 255, 0.18) 1px,
             transparent 1px
         ),
 
         linear-gradient(
             90deg,
-            rgba(255,255,255,.018) 1px,
+            rgba(255, 0, 255, 0.18) 1px,
             transparent 1px
         );
 
-    background-size:32px 32px;
+    background-size:
+        50px 50px;
 
-    z-index:11;
+    mask-image:
+        linear-gradient(
+            to bottom,
+            rgba(0,0,0,0.8),
+            rgba(0,0,0,0.25)
+        );
 }
 
 
-/* =========================================================
-   BOARD
-   ========================================================= */
+/* =====================================
+   CORNER HUD
+===================================== */
 
-.board-shell{
+.corner {
 
-    position:absolute;
+    position: fixed;
 
-    inset:18px;
+    width: 55px;
+    height: 55px;
 
-    overflow:hidden;
+    z-index: 5;
 
-    border:1px solid var(--line-2);
+    pointer-events: none;
 
-    background:#0d0f11;
+    opacity: 0.75;
+}
 
-    z-index:12;
+.corner::before,
+.corner::after {
+
+    content: "";
+
+    position: absolute;
+
+    background: #ff00ff;
+
+    box-shadow:
+        0 0 8px #ff00ff,
+        0 0 15px #ff00ff;
 }
 
 
-/* =========================================================
-   CANVAS
-   ========================================================= */
+/* TOP LEFT */
 
-#drawCanvas{
+.corner.topLeft {
 
-    position:absolute;
+    top: 12px;
+    left: 12px;
+}
 
-    inset:0;
+.corner.topLeft::before {
 
-    width:100%;
-    height:100%;
+    width: 40px;
+    height: 2px;
 
-    display:block;
+    top: 0;
+    left: 0;
+}
 
-    touch-action:none;
+.corner.topLeft::after {
 
-    z-index:3;
+    width: 2px;
+    height: 40px;
+
+    top: 0;
+    left: 0;
 }
 
 
-/* =========================================================
+/* TOP RIGHT */
+
+.corner.topRight {
+
+    top: 12px;
+    right: 12px;
+}
+
+.corner.topRight::before {
+
+    width: 40px;
+    height: 2px;
+
+    top: 0;
+    right: 0;
+}
+
+.corner.topRight::after {
+
+    width: 2px;
+    height: 40px;
+
+    top: 0;
+    right: 0;
+}
+
+
+/* BOTTOM LEFT */
+
+.corner.bottomLeft {
+
+    bottom: 12px;
+    left: 12px;
+}
+
+.corner.bottomLeft::before {
+
+    width: 40px;
+    height: 2px;
+
+    bottom: 0;
+    left: 0;
+}
+
+.corner.bottomLeft::after {
+
+    width: 2px;
+    height: 40px;
+
+    bottom: 0;
+    left: 0;
+}
+
+
+/* BOTTOM RIGHT */
+
+.corner.bottomRight {
+
+    bottom: 12px;
+    right: 12px;
+}
+
+.corner.bottomRight::before {
+
+    width: 40px;
+    height: 2px;
+
+    bottom: 0;
+    right: 0;
+}
+
+.corner.bottomRight::after {
+
+    width: 2px;
+    height: 40px;
+
+    bottom: 0;
+    right: 0;
+}
+
+
+/* =====================================
+   TOP HUD
+===================================== */
+
+#topHUD {
+
+    position: fixed;
+
+    top: 15px;
+    left: 75px;
+
+    z-index: 10;
+
+    color: white;
+
+    pointer-events: none;
+}
+
+
+/* =====================================
+   TITLE
+===================================== */
+
+#title {
+
+    color: white;
+
+    font-size: 25px;
+
+    font-weight: bold;
+
+    letter-spacing: 1px;
+
+    text-shadow:
+        0 0 8px #ff00ff,
+        0 0 18px #ff00ff,
+        0 0 35px #ff00ff;
+}
+
+
+/* =====================================
+   STATUS
+===================================== */
+
+#status {
+
+    margin-top: 7px;
+
+    color: white;
+
+    font-size: 14px;
+
+    text-shadow:
+        0 0 8px #ff00ff;
+}
+
+
+/* =====================================
+   SYSTEM HUD
+===================================== */
+
+#systemHUD {
+
+    position: fixed;
+
+    left: 15px;
+    top: 105px;
+
+    z-index: 10;
+
+    min-width: 180px;
+
+    padding: 10px 13px;
+
+    color: white;
+
+    background:
+        rgba(5, 0, 15, 0.55);
+
+    border-left:
+        2px solid #ff00ff;
+
+    border-top:
+        1px solid rgba(255,0,255,0.35);
+
+    border-bottom:
+        1px solid rgba(255,0,255,0.35);
+
+    box-shadow:
+        0 0 12px rgba(255,0,255,0.25),
+        inset 0 0 15px rgba(255,0,255,0.06);
+
+    backdrop-filter:
+        blur(6px);
+
+    font-size: 11px;
+
+    letter-spacing: 0.5px;
+}
+
+.hudLine {
+
+    margin: 4px 0;
+
+    white-space: nowrap;
+}
+
+.hudLabel {
+
+    opacity: 0.65;
+}
+
+.hudValue {
+
+    color: #ff66ff;
+
+    text-shadow:
+        0 0 7px #ff00ff;
+}
+
+
+/* =====================================
+   HAND STATUS DOT
+===================================== */
+
+#handDot {
+
+    display: inline-block;
+
+    width: 7px;
+    height: 7px;
+
+    margin-right: 5px;
+
+    border-radius: 50%;
+
+    background: #777;
+
+    box-shadow: none;
+
+    transition: 0.2s;
+}
+
+#handDot.active {
+
+    background: #ff00ff;
+
+    box-shadow:
+        0 0 6px #ff00ff,
+        0 0 12px #ff00ff;
+}
+
+
+/* =====================================
+   INSTRUCTIONS
+===================================== */
+
+#instructions {
+
+    position: fixed;
+
+    right: 25px;
+    top: 25px;
+
+    z-index: 10;
+
+    color: white;
+
+    background:
+        rgba(5, 0, 15, 0.68);
+
+    padding: 13px 16px;
+
+    border-radius: 12px;
+
+    border:
+        1px solid
+        rgba(255, 0, 255, 0.6);
+
+    box-shadow:
+
+        0 0 10px
+        rgba(255, 0, 255, 0.35),
+
+        inset 0 0 15px
+        rgba(255, 0, 255, 0.08);
+
+    font-size: 13px;
+
+    line-height: 1.65;
+
+    backdrop-filter:
+        blur(8px);
+}
+
+
+/* =====================================
+   START BUTTON
+===================================== */
+
+#startButton {
+
+    position: fixed;
+
+    z-index: 20;
+
+    top: 50%;
+    left: 50%;
+
+    transform:
+        translate(-50%, -50%);
+
+    padding: 18px 30px;
+
+    border:
+        2px solid #ff00ff;
+
+    border-radius: 15px;
+
+    background:
+        rgba(255, 0, 255, 0.15);
+
+    color: white;
+
+    font-size: 20px;
+
+    font-weight: bold;
+
+    letter-spacing: 1px;
+
+    box-shadow:
+
+        0 0 10px #ff00ff,
+        0 0 25px #ff00ff,
+
+        inset 0 0 15px
+        rgba(255, 0, 255, 0.2);
+
+    backdrop-filter:
+        blur(8px);
+
+    cursor: pointer;
+
+    transition:
+        transform 0.15s,
+        box-shadow 0.15s,
+        background 0.15s;
+}
+
+
+/* BUTTON HOVER */
+
+#startButton:hover {
+
+    transform:
+        translate(-50%, -50%)
+        scale(1.05);
+
+    background:
+        rgba(255, 0, 255, 0.25);
+
+    box-shadow:
+
+        0 0 15px #ff00ff,
+        0 0 35px #ff00ff,
+
+        inset 0 0 20px
+        rgba(255, 0, 255, 0.25);
+}
+
+
+/* BUTTON PRESS */
+
+#startButton:active {
+
+    transform:
+        translate(-50%, -50%)
+        scale(0.96);
+}
+
+
+/* =====================================
    CURSOR
-   ========================================================= */
+===================================== */
 
-#cursor{
+#cursor {
 
-    position:fixed;
+    position: fixed;
 
-    width:18px;
-    height:18px;
+    width: 42px;
+    height: 42px;
 
-    border:1px solid rgba(145,175,208,.9);
+    border:
+        3px solid #ff00ff;
 
-    border-radius:50%;
+    border-radius: 50%;
 
-    transform:translate(-50%,-50%);
+    pointer-events: none;
 
-    pointer-events:none;
+    z-index: 99999;
 
-    opacity:0;
+    display: none;
 
-    z-index:70;
+    transform:
+        translate(-50%, -50%);
 
-    transition:
+    background:
+        rgba(255, 0, 255, 0.08);
 
-        opacity .08s ease,
+    box-shadow:
 
-        width .08s linear,
+        0 0 8px #ff00ff,
+        0 0 18px #ff00ff,
+        0 0 35px #ff00ff,
 
-        height .08s linear,
-
-        border-color .08s linear;
-}
-
-#cursor::before{
-
-    content:"";
-
-    position:absolute;
-
-    left:50%;
-    top:50%;
-
-    width:3px;
-    height:3px;
-
-    transform:translate(-50%,-50%);
-
-    border-radius:50%;
-
-    background:var(--accent);
-}
-
-#cursor::after{
-
-    content:"";
-
-    position:absolute;
-
-    left:50%;
-    top:-4px;
-
-    width:1px;
-    height:26px;
-
-    transform:translateX(-50%);
-
-    background:rgba(145,175,208,.18);
-}
-
-#cursor.drawing{
-
-    width:14px;
-    height:14px;
-}
-
-#cursor.pause{
-
-    border-color:var(--text-3);
-}
-
-#cursor.clear{
-
-    border-color:var(--danger);
-}
-
-
-/* =========================================================
-   BOARD LABEL
-   ========================================================= */
-
-.board-label{
-
-    position:absolute;
-
-    left:18px;
-    top:14px;
-
-    z-index:8;
-
-    color:var(--text-4);
-
-    font-size:9px;
-
-    letter-spacing:.14em;
-
-    pointer-events:none;
-}
-
-.board-coordinates{
-
-    position:absolute;
-
-    right:18px;
-    top:14px;
-
-    z-index:8;
-
-    color:var(--text-4);
-
-    font-size:9px;
-
-    pointer-events:none;
-
-    font-variant-numeric:tabular-nums;
-}
-
-
-/* =========================================================
-   CENTER PANEL
-   ========================================================= */
-
-.center-panel{
-
-    position:absolute;
-
-    left:50%;
-    top:50%;
-
-    transform:translate(-50%,-50%);
-
-    width:min(360px,80vw);
-
-    text-align:center;
-
-    z-index:10;
-
-    pointer-events:none;
+        inset 0 0 12px #ff00ff;
 
     transition:
-        opacity .2s ease;
-}
-
-.center-kicker{
-
-    color:var(--text-4);
-
-    font-size:9px;
-
-    letter-spacing:.16em;
-
-    margin-bottom:10px;
-}
-
-.center-title{
-
-    color:var(--text-1);
-
-    font-size:17px;
-
-    font-weight:500;
-
-    margin-bottom:8px;
-}
-
-.center-description{
-
-    color:var(--text-3);
-
-    font-size:11px;
-
-    line-height:1.6;
-
-    max-width:300px;
-
-    margin:0 auto 18px;
-}
-
-#startBtn{
-
-    pointer-events:auto;
-
-    height:36px;
-
-    border:1px solid var(--accent-line);
-
-    background:var(--accent-bg);
-
-    color:var(--accent);
-
-    padding:0 18px;
-
-    font-size:10px;
-
-    letter-spacing:.12em;
-
-    cursor:pointer;
-}
-
-#startBtn:disabled{
-
-    opacity:.55;
-
-    cursor:default;
-}
-
-.center-panel.hidden{
-
-    opacity:0;
-
-    pointer-events:none;
+        border-color 0.12s,
+        box-shadow 0.12s;
 }
 
 
-/* =========================================================
-   INSPECTOR
-   ========================================================= */
+/* =====================================
+   CURSOR DRAWING STATE
+===================================== */
 
-.inspector{
+#cursor.drawing {
 
-    position:absolute;
+    border-color: #ffffff;
 
-    top:16px;
-    right:16px;
+    box-shadow:
 
-    width:188px;
+        0 0 8px white,
+        0 0 18px #ff00ff,
+        0 0 40px #ff00ff,
 
-    border:1px solid var(--line-2);
-
-    background:#121416;
-
-    z-index:12;
-}
-
-.inspector-section{
-
-    padding:11px 12px;
-
-    border-bottom:1px solid var(--line-1);
-}
-
-.inspector-section:last-child{
-
-    border-bottom:0;
-}
-
-.inspector-title{
-
-    color:var(--text-4);
-
-    font-size:8px;
-
-    letter-spacing:.13em;
-
-    margin-bottom:10px;
-}
-
-.inspector-row{
-
-    display:flex;
-
-    align-items:center;
-
-    justify-content:space-between;
-
-    min-height:22px;
-
-    font-size:10px;
-}
-
-.inspector-name{
-
-    color:var(--text-3);
-}
-
-.inspector-value{
-
-    color:var(--text-2);
-
-    font-variant-numeric:tabular-nums;
-
-    text-align:right;
-}
-
-.status-value{
-
-    display:flex;
-
-    align-items:center;
-
-    gap:6px;
-}
-
-.status-dot{
-
-    width:5px;
-    height:5px;
-
-    border-radius:50%;
-
-    background:var(--text-4);
-}
-
-.status-dot.ready{
-    background:#8eaa91;
-}
-
-.status-dot.warning{
-    background:#b9a37b;
-}
-
-.performance-good{
-    color:#8eaa91;
-}
-
-.performance-warning{
-    color:#b9a37b;
-}
-
-.performance-bad{
-    color:var(--danger);
+        inset 0 0 15px #ff00ff;
 }
 
 
-/* =========================================================
-   BOTTOM BAR
-   ========================================================= */
+/* =====================================
+   CURSOR PINCH STATE
+===================================== */
 
-.bottombar{
+#cursor.pinch {
 
-    position:absolute;
+    border-color: #ff66ff;
 
-    left:0;
-    right:0;
-    bottom:0;
+    box-shadow:
 
-    height:var(--bottombar);
-
-    display:flex;
-
-    align-items:center;
-
-    padding:0 10px;
-
-    border-top:1px solid var(--line-1);
-
-    background:#121416;
-
-    z-index:20;
-}
-
-.bottom-left{
-
-    display:flex;
-
-    gap:14px;
-}
-
-.bottom-item{
-
-    color:var(--text-4);
-
-    font-size:8px;
-
-    letter-spacing:.08em;
-}
-
-.bottom-item strong{
-
-    color:var(--text-3);
-
-    font-weight:500;
-}
-
-.bottom-right{
-
-    margin-left:auto;
-
-    color:var(--text-4);
-
-    font-size:8px;
-
-    letter-spacing:.1em;
+        0 0 8px #ff66ff,
+        0 0 22px #ff00ff,
+        0 0 45px #ff00ff;
 }
 
 
-/* =========================================================
+/* =====================================
+   CURSOR CENTER
+===================================== */
+
+#cursor::after {
+
+    content: "";
+
+    position: absolute;
+
+    width: 7px;
+    height: 7px;
+
+    background: white;
+
+    border-radius: 50%;
+
+    top: 50%;
+    left: 50%;
+
+    transform:
+        translate(-50%, -50%);
+
+    box-shadow:
+
+        0 0 8px white,
+        0 0 15px #ff00ff;
+}
+
+
+/* =====================================
+   CURSOR TARGET MARKS
+===================================== */
+
+.cursorMark {
+
+    position: absolute;
+
+    background: #ff66ff;
+
+    box-shadow:
+        0 0 8px #ff00ff;
+}
+
+
+#markTop {
+
+    width: 3px;
+    height: 10px;
+
+    left: 50%;
+    top: -13px;
+
+    transform:
+        translateX(-50%);
+}
+
+
+#markBottom {
+
+    width: 3px;
+    height: 10px;
+
+    left: 50%;
+    bottom: -13px;
+
+    transform:
+        translateX(-50%);
+}
+
+
+#markLeft {
+
+    width: 10px;
+    height: 3px;
+
+    left: -13px;
+    top: 50%;
+
+    transform:
+        translateY(-50%);
+}
+
+
+#markRight {
+
+    width: 10px;
+    height: 3px;
+
+    right: -13px;
+    top: 50%;
+
+    transform:
+        translateY(-50%);
+}
+
+
+/* =====================================
+   CLEAR FLASH
+===================================== */
+
+#clearFlash {
+
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 9999;
+
+    pointer-events: none;
+
+    opacity: 0;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(255,0,255,0.28),
+            transparent 65%
+        );
+}
+
+
+#clearFlash.active {
+
+    animation:
+        clearFlashAnimation 0.45s ease-out;
+}
+
+
+@keyframes clearFlashAnimation {
+
+    0% {
+        opacity: 0;
+    }
+
+    25% {
+        opacity: 0.8;
+    }
+
+    100% {
+        opacity: 0;
+    }
+}
+
+
+/* =====================================
    MOBILE
-   ========================================================= */
+===================================== */
 
-@media(max-width:700px){
+@media (max-width: 600px) {
 
-    :root{
+    #topHUD {
 
-        --topbar:44px;
-        --rail:42px;
-        --bottombar:25px;
+        top: 13px;
+        left: 58px;
     }
 
-    .document{
+    #title {
 
-        min-width:0;
+        font-size: 19px;
 
-        padding:0 10px;
+        letter-spacing: 0.5px;
     }
 
-    .document-type,
-    .menu,
-    .version{
+    #status {
 
-        display:none;
+        margin-top: 5px;
+
+        font-size: 11px;
     }
 
-    .workspace{
+    #systemHUD {
 
-        left:var(--rail);
+        left: 10px;
+        top: 92px;
+
+        min-width: 155px;
+
+        padding: 8px 10px;
+
+        font-size: 9px;
     }
 
-    .board-shell{
+    #instructions {
 
-        inset:8px;
+        right: 10px;
+        top: 10px;
+
+        padding: 9px 11px;
+
+        font-size: 10px;
+
+        line-height: 1.5;
     }
 
-    .inspector{
+    #cursor {
 
-        top:10px;
-        right:10px;
+        width: 38px;
+        height: 38px;
 
-        width:160px;
+        border-width: 3px;
     }
 
-    .board-label{
+    #startButton {
 
-        left:12px;
-        top:10px;
+        padding: 15px 24px;
+
+        font-size: 17px;
     }
 
-    .board-coordinates{
+    .corner {
 
-        right:12px;
-        top:10px;
+        width: 40px;
+        height: 40px;
     }
 
-    .center-panel{
+    .corner.topLeft,
+    .corner.topRight {
 
-        width:min(320px,82vw);
+        top: 8px;
     }
 
-    .center-title{
+    .corner.bottomLeft,
+    .corner.bottomRight {
 
-        font-size:15px;
+        bottom: 8px;
     }
 
-    .debug-button{
+    .corner.topLeft,
+    .corner.bottomLeft {
 
-        padding:0 6px;
+        left: 8px;
     }
 
-}
+    .corner.topRight,
+    .corner.bottomRight {
 
-
-/* =========================================================
-   LANDSCAPE PHONE
-   ========================================================= */
-
-@media(
-    max-height:500px
-) and (
-    orientation:landscape
-){
-
-    :root{
-
-        --topbar:40px;
-        --rail:40px;
-        --bottombar:24px;
-    }
-
-    .board-shell{
-
-        inset:6px;
-    }
-
-    .inspector{
-
-        top:8px;
-        right:8px;
-
-        width:150px;
-    }
-
-    .inspector-section{
-
-        padding:7px 9px;
-    }
-
-    .inspector-title{
-
-        margin-bottom:5px;
-    }
-
-    .inspector-row{
-
-        min-height:18px;
-    }
-
-    .center-description{
-
-        margin-bottom:10px;
-    }
-
-    #startBtn{
-
-        height:31px;
-    }
-
-    .bottom-left{
-
-        gap:8px;
+        right: 8px;
     }
 
 }
 
 
-/* =========================================================
-   REDUCED MOTION
-   ========================================================= */
+/* =====================================
+   VERY SMALL PHONES
+===================================== */
 
-@media(
-    prefers-reduced-motion:reduce
-){
+@media (max-width: 380px) {
 
-    *{
+    #title {
 
-        scroll-behavior:auto !important;
+        font-size: 17px;
+    }
 
-        transition:none !important;
+    #status {
 
-        animation:none !important;
+        font-size: 10px;
+    }
+
+    #systemHUD {
+
+        top: 85px;
+
+        min-width: 140px;
+    }
+
+    #instructions {
+
+        font-size: 9px;
+
+        padding: 7px 9px;
+    }
+
+}
+
+
+/* =====================================
+   LANDSCAPE MOBILE
+===================================== */
+
+@media (max-height: 500px) {
+
+    #systemHUD {
+
+        top: 75px;
+    }
+
+    #instructions {
+
+        top: 10px;
+    }
+
+    #startButton {
+
+        padding: 12px 22px;
+
+        font-size: 15px;
     }
 
 }
@@ -1089,540 +913,216 @@ button{
 <body>
 
 
+<!-- =====================================
+     CAMERA
+===================================== -->
+
 <video
     id="camera"
     autoplay
-    muted
     playsinline>
 </video>
 
 
-<div id="app">
+<!-- =====================================
+     FUTURISTIC GRID
+===================================== -->
+
+<div id="grid"></div>
 
 
-<header class="topbar">
+<!-- =====================================
+     DRAWING CANVAS
+===================================== -->
 
-    <div class="brand">
-        AM
+<canvas id="canvas"></canvas>
+
+
+<!-- =====================================
+     CORNER HUD
+===================================== -->
+
+<div class="corner topLeft"></div>
+<div class="corner topRight"></div>
+<div class="corner bottomLeft"></div>
+<div class="corner bottomRight"></div>
+
+
+<!-- =====================================
+     CURSOR
+===================================== -->
+
+<div id="cursor">
+
+    <div
+        id="markTop"
+        class="cursorMark">
     </div>
 
-
-    <div class="document">
-
-        <span class="document-name">
-            Untitled Board
-        </span>
-
-        <span class="document-type">
-            Mathematics
-        </span>
-
+    <div
+        id="markBottom"
+        class="cursorMark">
     </div>
 
-
-    <nav class="menu">
-
-        <button>FILE</button>
-        <button>EDIT</button>
-        <button>VIEW</button>
-        <button>TOOLS</button>
-
-    </nav>
-
-
-    <div class="top-right">
-
-        <button
-            class="debug-button"
-            id="debugCameraBtn">
-
-            CAM
-
-        </button>
-
-
-        <div
-            class="connection"
-            id="connectionStatus">
-
-            <span
-                class="connection-dot"
-                id="connectionDot">
-            </span>
-
-            <span id="connectionText">
-                OFFLINE
-            </span>
-
-        </div>
-
-
-        <div class="version">
-            V5.2
-        </div>
-
+    <div
+        id="markLeft"
+        class="cursorMark">
     </div>
 
-</header>
-
-
-<aside class="toolrail">
-
-
-    <div class="tool-group">
-
-        <button
-            class="tool active"
-            id="penTool">
-
-            <span class="tool-symbol">
-                P
-            </span>
-
-        </button>
-
-
-        <button
-            class="tool"
-            id="selectTool">
-
-            <span class="tool-symbol">
-                S
-            </span>
-
-        </button>
-
-
-        <button
-            class="tool"
-            id="measureTool">
-
-            <span class="tool-symbol">
-                M
-            </span>
-
-        </button>
-
+    <div
+        id="markRight"
+        class="cursorMark">
     </div>
-
-
-    <div class="tool-group">
-
-        <button
-            class="tool"
-            id="undoBtn">
-
-            <span class="tool-symbol">
-                ↶
-            </span>
-
-        </button>
-
-
-        <button
-            class="tool"
-            id="redoBtn">
-
-            <span class="tool-symbol">
-                ↷
-            </span>
-
-        </button>
-
-
-        <button
-            class="tool"
-            id="clearBtn">
-
-            <span class="tool-symbol">
-                ×
-            </span>
-
-        </button>
-
-    </div>
-
-
-    <div class="tool-bottom">
-
-        <button
-            class="tool"
-            id="gridBtn">
-
-            <span class="tool-symbol">
-                ⊞
-            </span>
-
-        </button>
-
-
-        <button
-            class="tool"
-            id="zoomBtn">
-
-            <span class="tool-symbol">
-                ⌕
-            </span>
-
-        </button>
-
-    </div>
-
-</aside>
-
-
-<main class="workspace">
-
-
-    <div class="board-shell">
-
-
-        <div class="board-label">
-            AIR MATHS / WORKSPACE
-        </div>
-
-
-        <div
-            class="board-coordinates"
-            id="coordinates">
-
-            0, 0
-
-        </div>
-
-
-        <canvas id="drawCanvas"></canvas>
-
-
-        <div
-            class="center-panel"
-            id="centerPanel">
-
-
-            <div class="center-kicker">
-                HAND TRACKING SYSTEM
-            </div>
-
-
-            <div class="center-title">
-                Initialize camera
-            </div>
-
-
-            <p
-                class="center-description"
-                id="centerDescription">
-
-                Adaptive high-performance hand tracking.
-                Processing automatically adjusts to your device.
-
-            </p>
-
-
-            <button id="startBtn">
-                INITIALIZE CAMERA
-            </button>
-
-        </div>
-
-    </div>
-
-
-    <aside class="inspector">
-
-
-        <section class="inspector-section">
-
-
-            <div class="inspector-title">
-                Tracking
-            </div>
-
-
-            <div class="inspector-row">
-
-                <span class="inspector-name">
-                    Camera
-                </span>
-
-                <span
-                    class="inspector-value"
-                    id="cameraState">
-
-                    OFF
-
-                </span>
-
-            </div>
-
-
-            <div class="inspector-row">
-
-                <span class="inspector-name">
-                    Hand
-                </span>
-
-                <span
-                    class="inspector-value"
-                    id="handState">
-
-                    NONE
-
-                </span>
-
-            </div>
-
-        </section>
-
-
-        <section class="inspector-section">
-
-
-            <div class="inspector-title">
-                System
-            </div>
-
-
-            <div class="inspector-row">
-
-                <span class="inspector-name">
-                    Engine
-                </span>
-
-                <span class="inspector-value">
-                    V5.2
-                </span>
-
-            </div>
-
-
-            <div class="inspector-row">
-
-                <span class="inspector-name">
-                    Mode
-                </span>
-
-                <span
-                    class="inspector-value"
-                    id="modeState">
-
-                    READY
-
-                </span>
-
-            </div>
-
-        </section>
-
-
-        <section class="inspector-section">
-
-
-            <div class="inspector-title">
-                Input
-            </div>
-
-
-            <div class="inspector-row">
-
-                <span class="inspector-name">
-                    Gesture
-                </span>
-
-                <span
-                    class="inspector-value"
-                    id="gestureState">
-
-                    NONE
-
-                </span>
-
-            </div>
-
-
-            <div class="inspector-row">
-
-                <span class="inspector-name">
-                    Tracking
-                </span>
-
-
-                <span class="inspector-value status-value">
-
-                    <span
-                        class="status-dot"
-                        id="trackingDot">
-                    </span>
-
-                    <span id="trackingState">
-                        WAITING
-                    </span>
-
-                </span>
-
-            </div>
-
-        </section>
-
-
-        <section class="inspector-section">
-
-
-            <div class="inspector-title">
-                PERFORMANCE
-            </div>
-
-
-            <div class="inspector-row">
-
-                <span class="inspector-name">
-                    FPS
-                </span>
-
-                <span
-                    class="inspector-value"
-                    id="fpsState">
-
-                    --
-
-                </span>
-
-            </div>
-
-
-            <div class="inspector-row">
-
-                <span class="inspector-name">
-                    Latency
-                </span>
-
-                <span
-                    class="inspector-value"
-                    id="latencyState">
-
-                    --
-
-                </span>
-
-            </div>
-
-
-            <div class="inspector-row">
-
-                <span class="inspector-name">
-                    Process
-                </span>
-
-                <span
-                    class="inspector-value"
-                    id="processState">
-
-                    --
-
-                </span>
-
-            </div>
-
-
-            <div class="inspector-row">
-
-                <span class="inspector-name">
-                    Device
-                </span>
-
-                <span
-                    class="inspector-value"
-                    id="deviceState">
-
-                    AUTO
-
-                </span>
-
-            </div>
-
-        </section>
-
-    </aside>
-
-</main>
-
-
-<div id="cursor"></div>
-
-
-<footer class="bottombar">
-
-
-    <div class="bottom-left">
-
-        <div class="bottom-item">
-            <strong>INDEX</strong> Draw
-        </div>
-
-
-        <div class="bottom-item">
-            <strong>PINCH</strong> Pause
-        </div>
-
-
-        <div class="bottom-item">
-            <strong>OPEN</strong> Clear
-        </div>
-
-    </div>
-
-
-    <div class="bottom-right">
-        AIR MATHS BOARD
-    </div>
-
-</footer>
-
 
 </div>
 
 
+<!-- =====================================
+     TOP HUD
+===================================== -->
+
+<div id="topHUD">
+
+    <div id="title">
+        ✨ AIR MATHS BOARD
+    </div>
+
+    <div id="status">
+        Press START
+    </div>
+
+</div>
+
+
+<!-- =====================================
+     SYSTEM HUD
+===================================== -->
+
+<div id="systemHUD">
+
+    <div class="hudLine">
+
+        <span id="handDot"></span>
+
+        <span class="hudLabel">
+            HAND:
+        </span>
+
+        <span
+            id="handState"
+            class="hudValue">
+
+            SEARCHING
+
+        </span>
+
+    </div>
+
+
+    <div class="hudLine">
+
+        <span class="hudLabel">
+            MODE:
+        </span>
+
+        <span
+            id="modeState"
+            class="hudValue">
+
+            STANDBY
+
+        </span>
+
+    </div>
+
+
+    <div class="hudLine">
+
+        <span class="hudLabel">
+            SYSTEM:
+        </span>
+
+        <span
+            id="systemState"
+            class="hudValue">
+
+            OFFLINE
+
+        </span>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================
+     INSTRUCTIONS
+===================================== -->
+
+<div id="instructions">
+
+    ☝️ <b>Index</b> = Draw<br>
+
+    🤏 <b>Pinch</b> = Stop<br>
+
+    ✋ <b>Open Hand</b> = Clear
+
+</div>
+
+
+<!-- =====================================
+     CLEAR FLASH
+===================================== -->
+
+<div id="clearFlash"></div>
+
+
+<!-- =====================================
+     START
+===================================== -->
+
+<button id="startButton">
+
+    START CAMERA
+
+</button>
+
+
+<!-- =====================================
+     MEDIAPIPE
+===================================== -->
+
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
+
+
 <script>
 
-/* ============================================================
-   DOM
-   ============================================================ */
+/* =====================================
+   ELEMENTS
+===================================== */
 
 const video =
     document.getElementById("camera");
 
 const canvas =
-    document.getElementById("drawCanvas");
+    document.getElementById("canvas");
 
 const ctx =
-    canvas.getContext(
-        "2d",
-        {
-            alpha:true,
-            desynchronized:true
-        }
-    );
+    canvas.getContext("2d");
 
 const cursor =
     document.getElementById("cursor");
 
-const startBtn =
-    document.getElementById("startBtn");
+const startButton =
+    document.getElementById("startButton");
 
-const centerPanel =
-    document.getElementById("centerPanel");
+const status =
+    document.getElementById("status");
 
-const centerDescription =
-    document.getElementById("centerDescription");
-
-const connectionStatus =
-    document.getElementById("connectionStatus");
-
-const connectionText =
-    document.getElementById("connectionText");
-
-const cameraState =
-    document.getElementById("cameraState");
+const handDot =
+    document.getElementById("handDot");
 
 const handState =
     document.getElementById("handState");
@@ -1630,1337 +1130,287 @@ const handState =
 const modeState =
     document.getElementById("modeState");
 
-const gestureState =
-    document.getElementById("gestureState");
+const systemState =
+    document.getElementById("systemState");
 
-const trackingDot =
-    document.getElementById("trackingDot");
+const clearFlash =
+    document.getElementById("clearFlash");
 
-const trackingState =
-    document.getElementById("trackingState");
 
-const coordinates =
-    document.getElementById("coordinates");
+let previousX = null;
+let previousY = null;
 
-const fpsState =
-    document.getElementById("fpsState");
 
-const latencyState =
-    document.getElementById("latencyState");
+/* =====================================
+   FAST CURSOR SMOOTHING
+===================================== */
 
-const processState =
-    document.getElementById("processState");
+let smoothX = null;
+let smoothY = null;
 
-const deviceState =
-    document.getElementById("deviceState");
 
-const debugCameraBtn =
-    document.getElementById("debugCameraBtn");
+function smoothPoint(targetX, targetY) {
 
+    if (smoothX === null) {
 
-/* ============================================================
-   CAMERA STATE
-   ============================================================ */
-
-let stream = null;
-
-let cameraRunning = false;
-
-let processingBusy = false;
-
-let videoFrameHandle = null;
-
-let lastVideoFrameTime = 0;
-
-let pageHidden = false;
-
-
-/* ============================================================
-   DEVICE PERFORMANCE
-   ============================================================ */
-
-function detectDeviceTier(){
-
-    const cores =
-        navigator.hardwareConcurrency || 4;
-
-    const memory =
-        navigator.deviceMemory || 4;
-
-    const ua =
-        navigator.userAgent || "";
-
-    const mobile =
-        /Android|iPhone|iPad|iPod/i.test(ua);
-
-    if(
-        cores >= 8 ||
-        memory >= 8
-    ){
-
-        return "HIGH";
-    }
-
-    if(
-        cores >= 6 ||
-        memory >= 4
-    ){
-
-        return "MID";
-    }
-
-    return "LOW";
-}
-
-
-const deviceTier =
-    detectDeviceTier();
-
-deviceState.textContent =
-    deviceTier;
-
-
-/* ============================================================
-   PROCESSING RESOLUTION
-   ============================================================ */
-
-const PROCESSING_LEVELS = [
-
-    {
-        width:480,
-        name:"480"
-    },
-
-    {
-        width:640,
-        name:"640"
-    },
-
-    {
-        width:768,
-        name:"768"
-    },
-
-    {
-        width:960,
-        name:"960"
-    },
-
-    {
-        width:1280,
-        name:"1280"
-    }
-
-];
-
-
-let processingLevel;
-
-
-if(deviceTier === "HIGH"){
-
-    processingLevel = 2;
-
-}else if(deviceTier === "MID"){
-
-    processingLevel = 1;
-
-}else{
-
-    processingLevel = 0;
-}
-
-
-let processingWidth = 640;
-
-let processingHeight = 360;
-
-
-const processingCanvas =
-    document.createElement("canvas");
-
-const processingCtx =
-    processingCanvas.getContext(
-        "2d",
-        {
-            alpha:false,
-            desynchronized:true
-        }
-    );
-
-
-function configureProcessingCanvas(){
-
-    const level =
-        PROCESSING_LEVELS[
-            processingLevel
-        ];
-
-
-    processingWidth =
-        level.width;
-
-
-    const aspect =
-        video.videoWidth &&
-        video.videoHeight
-
-        ?
-
-        video.videoWidth /
-        video.videoHeight
-
-        :
-
-        16/9;
-
-
-    processingHeight =
-        Math.max(
-            240,
-            Math.round(
-                processingWidth /
-                aspect
-            )
-        );
-
-
-    processingCanvas.width =
-        processingWidth;
-
-    processingCanvas.height =
-        processingHeight;
-}
-
-
-/* ============================================================
-   PROCESSING RATE
-   ============================================================ */
-
-let targetProcessingFPS;
-
-
-if(deviceTier === "HIGH"){
-
-    targetProcessingFPS = 40;
-
-}else if(deviceTier === "MID"){
-
-    targetProcessingFPS = 32;
-
-}else{
-
-    targetProcessingFPS = 26;
-}
-
-
-let targetFrameInterval =
-    1000 /
-    targetProcessingFPS;
-
-
-/* ============================================================
-   PERFORMANCE
-   ============================================================ */
-
-let performanceFrames = 0;
-
-let performanceStart =
-    performance.now();
-
-let measuredFPS = 0;
-
-let measuredLatency = 0;
-
-let lastProcessingStart = 0;
-
-let lastProcessingEnd = 0;
-
-let lastPerformanceAdjustment =
-    performance.now();
-
-const PERFORMANCE_ADJUST_INTERVAL =
-    3000;
-
-
-/* ============================================================
-   CANVAS
-   ============================================================ */
-
-let viewWidth = 1;
-
-let viewHeight = 1;
-
-let dpr = 1;
-
-
-function resizeCanvas(){
-
-    const rect =
-        canvas.getBoundingClientRect();
-
-
-    viewWidth =
-        Math.max(1,rect.width);
-
-
-    viewHeight =
-        Math.max(1,rect.height);
-
-
-    dpr =
-        Math.min(
-            window.devicePixelRatio || 1,
-            2
-        );
-
-
-    canvas.width =
-        Math.round(
-            viewWidth * dpr
-        );
-
-
-    canvas.height =
-        Math.round(
-            viewHeight * dpr
-        );
-
-
-    ctx.setTransform(
-        dpr,
-        0,
-        0,
-        dpr,
-        0,
-        0
-    );
-
-
-    resetPenState();
-
-    resetLandmarkSmoothing();
-}
-
-
-/* ============================================================
-   CAMERA GEOMETRY
-   ============================================================ */
-
-function getCameraGeometry(){
-
-    const cw =
-        video.videoWidth || 1280;
-
-    const ch =
-        video.videoHeight || 720;
-
-    const vw =
-        window.innerWidth;
-
-    const vh =
-        window.innerHeight;
-
-    const scale =
-        Math.max(
-            vw / cw,
-            vh / ch
-        );
-
-    const rw =
-        cw * scale;
-
-    const rh =
-        ch * scale;
-
-    const cropX =
-        (rw - vw) / 2;
-
-    const cropY =
-        (rh - vh) / 2;
-
-    return {
-
-        cw,
-        ch,
-        vw,
-        vh,
-        scale,
-        rw,
-        rh,
-        cropX,
-        cropY
-
-    };
-}
-
-
-/* ============================================================
-   CAMERA → SCREEN
-   ============================================================ */
-
-function cameraToScreen(x,y){
-
-    const g =
-        getCameraGeometry();
-
-    let px =
-        x * g.cw;
-
-    let py =
-        y * g.ch;
-
-    px =
-        g.cw - px;
-
-    let sx =
-        px * g.scale - g.cropX;
-
-    let sy =
-        py * g.scale - g.cropY;
-
-    sx =
-        Math.max(
-            0,
-            Math.min(g.vw,sx)
-        );
-
-    sy =
-        Math.max(
-            0,
-            Math.min(g.vh,sy)
-        );
-
-    return {
-        x:sx,
-        y:sy
-    };
-}
-
-
-/* ============================================================
-   SCREEN → BOARD
-   ============================================================ */
-
-function screenToBoard(point){
-
-    const rect =
-        canvas.getBoundingClientRect();
-
-    let x =
-        point.x - rect.left;
-
-    let y =
-        point.y - rect.top;
-
-    x =
-        Math.max(
-            0,
-            Math.min(rect.width,x)
-        );
-
-    y =
-        Math.max(
-            0,
-            Math.min(rect.height,y)
-        );
-
-    return {
-        x,
-        y
-    };
-}
-
-
-/* ============================================================
-   CAMERA → BOARD
-   ============================================================ */
-
-function cameraToBoard(x,y){
-
-    return screenToBoard(
-        cameraToScreen(x,y)
-    );
-}
-
-
-/* ============================================================
-   LANDMARK STABILIZATION
-   ============================================================ */
-
-let stableTip = null;
-
-let previousRawTip = null;
-
-let previousLandmarkTime = 0;
-
-let predictedTip = null;
-
-
-const CURSOR_SMOOTH_SLOW =
-    .38;
-
-const CURSOR_SMOOTH_FAST =
-    .82;
-
-const CURSOR_FAST_SPEED =
-    1.10;
-
-
-function resetLandmarkSmoothing(){
-
-    stableTip = null;
-
-    previousRawTip = null;
-
-    previousLandmarkTime = 0;
-
-    predictedTip = null;
-}
-
-
-function stabilizeIndexTip(
-    landmarks
-){
-
-    const now =
-        performance.now();
-
-    const raw =
-        landmarks[8];
-
-    if(!stableTip){
-
-        stableTip = {
-            x:raw.x,
-            y:raw.y
-        };
-
-        previousRawTip = {
-            x:raw.x,
-            y:raw.y
-        };
-
-        previousLandmarkTime =
-            now;
-
-        predictedTip = {
-            x:raw.x,
-            y:raw.y
-        };
-
-        return predictedTip;
-    }
-
-
-    const dt =
-        Math.max(
-            .001,
-            (
-                now -
-                previousLandmarkTime
-            ) / 1000
-        );
-
-
-    const vx =
-        (
-            raw.x -
-            previousRawTip.x
-        ) / dt;
-
-
-    const vy =
-        (
-            raw.y -
-            previousRawTip.y
-        ) / dt;
-
-
-    const speed =
-        Math.hypot(vx,vy);
-
-
-    const speedRatio =
-        Math.min(
-            1,
-            speed /
-            CURSOR_FAST_SPEED
-        );
-
-
-    const alpha =
-        CURSOR_SMOOTH_SLOW +
-        (
-            CURSOR_SMOOTH_FAST -
-            CURSOR_SMOOTH_SLOW
-        ) *
-        speedRatio;
-
-
-    stableTip.x +=
-        (
-            raw.x -
-            stableTip.x
-        ) *
-        alpha;
-
-
-    stableTip.y +=
-        (
-            raw.y -
-            stableTip.y
-        ) *
-        alpha;
-
-
-    const predictionSeconds =
-        Math.min(
-            .030,
-            Math.max(
-                .006,
-                measuredLatency / 1000
-            )
-        );
-
-
-    predictedTip = {
-
-        x:
-            stableTip.x +
-            vx *
-            predictionSeconds *
-            .30,
-
-        y:
-            stableTip.y +
-            vy *
-            predictionSeconds *
-            .30
-
-    };
-
-
-    predictedTip.x =
-        Math.max(
-            0,
-            Math.min(
-                1,
-                predictedTip.x
-            )
-        );
-
-
-    predictedTip.y =
-        Math.max(
-            0,
-            Math.min(
-                1,
-                predictedTip.y
-            )
-        );
-
-
-    previousRawTip = {
-        x:raw.x,
-        y:raw.y
-    };
-
-
-    previousLandmarkTime =
-        now;
-
-
-    return predictedTip;
-}
-
-
-/* ============================================================
-   HAND GEOMETRY
-   ============================================================ */
-
-function distance2D(a,b){
-
-    return Math.hypot(
-        a.x-b.x,
-        a.y-b.y
-    );
-}
-
-
-function fingerExtended(
-    landmarks,
-    tip,
-    pip,
-    mcp
-){
-
-    const wrist =
-        landmarks[0];
-
-    const tipPoint =
-        landmarks[tip];
-
-    const pipPoint =
-        landmarks[pip];
-
-    const mcpPoint =
-        landmarks[mcp];
-
-
-    const tipDistance =
-        distance2D(
-            wrist,
-            tipPoint
-        );
-
-
-    const pipDistance =
-        distance2D(
-            wrist,
-            pipPoint
-        );
-
-
-    const fingerLength =
-        distance2D(
-            mcpPoint,
-            tipPoint
-        );
-
-
-    const palmLength =
-        distance2D(
-            wrist,
-            mcpPoint
-        );
-
-
-    return (
-
-        tipDistance >
-        pipDistance * 1.12
-
-        &&
-
-        fingerLength >
-        palmLength * .72
-
-    );
-}
-
-
-/* ============================================================
-   PINCH
-   ============================================================ */
-
-function getPinchRatio(
-    landmarks
-){
-
-    const thumb =
-        landmarks[4];
-
-    const index =
-        landmarks[8];
-
-    const palm =
-        distance2D(
-            landmarks[0],
-            landmarks[9]
-        );
-
-    const pinchDistance =
-        distance2D(
-            thumb,
-            index
-        );
-
-    return (
-        pinchDistance /
-        Math.max(
-            palm,
-            .0001
-        )
-    );
-}
-
-
-function isPinching(
-    landmarks
-){
-
-    return (
-        getPinchRatio(
-            landmarks
-        ) < .50
-    );
-}
-
-
-/* ============================================================
-   RAW GESTURE
-   ============================================================ */
-
-function classifyRawGesture(
-    landmarks
-){
-
-    const indexUp =
-        fingerExtended(
-            landmarks,
-            8,
-            6,
-            5
-        );
-
-    const middleUp =
-        fingerExtended(
-            landmarks,
-            12,
-            10,
-            9
-        );
-
-    const ringUp =
-        fingerExtended(
-            landmarks,
-            16,
-            14,
-            13
-        );
-
-    const pinkyUp =
-        fingerExtended(
-            landmarks,
-            20,
-            18,
-            17
-        );
-
-    const pinch =
-        isPinching(
-            landmarks
-        );
-
-
-    const extendedCount = [
-        indexUp,
-        middleUp,
-        ringUp,
-        pinkyUp
-    ].filter(Boolean).length;
-
-
-    if(
-        !pinch &&
-        extendedCount >= 3
-    ){
-
-        return "OPEN";
-    }
-
-
-    if(pinch){
-
-        return "PINCH";
-    }
-
-
-    if(
-        indexUp &&
-        !middleUp &&
-        !ringUp &&
-        !pinkyUp
-    ){
-
-        return "DRAW";
-    }
-
-
-    return "NONE";
-}
-
-
-/* ============================================================
-   GESTURE STATE MACHINE
-   ============================================================ */
-
-const GESTURE_CONFIRM_FRAMES = 3;
-
-const GESTURE_RELEASE_FRAMES = 3;
-
-const OPEN_CLEAR_FRAMES = 8;
-
-const OPEN_CLEAR_COOLDOWN = 25;
-
-
-let committedGesture = "NONE";
-
-let candidateGesture = "NONE";
-
-let candidateFrames = 0;
-
-let releaseFrames = 0;
-
-let openFrames = 0;
-
-let clearCooldown = 0;
-
-let clearLatched = false;
-
-
-function resetGestureEngine(){
-
-    committedGesture = "NONE";
-
-    candidateGesture = "NONE";
-
-    candidateFrames = 0;
-
-    releaseFrames = 0;
-
-    openFrames = 0;
-
-    clearCooldown = 0;
-
-    clearLatched = false;
-}
-
-
-function updateGesture(
-    rawGesture
-){
-
-    if(clearCooldown > 0){
-
-        clearCooldown--;
-    }
-
-
-    if(
-        rawGesture ===
-        committedGesture
-    ){
-
-        candidateGesture =
-            rawGesture;
-
-        candidateFrames = 0;
-
-        releaseFrames = 0;
-
-    }else{
-
-        if(
-            candidateGesture !==
-            rawGesture
-        ){
-
-            candidateGesture =
-                rawGesture;
-
-            candidateFrames = 1;
-
-        }else{
-
-            candidateFrames++;
-        }
-
-
-        if(
-            rawGesture !== "NONE" &&
-            candidateFrames >=
-            GESTURE_CONFIRM_FRAMES
-        ){
-
-            committedGesture =
-                rawGesture;
-
-            candidateFrames = 0;
-
-            releaseFrames = 0;
-        }
-
-
-        if(
-            rawGesture === "NONE"
-        ){
-
-            releaseFrames++;
-
-
-            if(
-                releaseFrames >=
-                GESTURE_RELEASE_FRAMES
-            ){
-
-                committedGesture =
-                    "NONE";
-
-                releaseFrames = 0;
-            }
-        }
-    }
-
-
-    if(
-        committedGesture ===
-        "OPEN"
-    ){
-
-        openFrames++;
-
-    }else{
-
-        openFrames = 0;
-
-        clearLatched = false;
-    }
-
-
-    if(
-        committedGesture === "OPEN" &&
-        openFrames >= OPEN_CLEAR_FRAMES &&
-        !clearLatched &&
-        clearCooldown === 0
-    ){
-
-        clearLatched = true;
-
-        clearCooldown =
-            OPEN_CLEAR_COOLDOWN;
-
-
-        return {
-            gesture:"OPEN",
-            clear:true
-        };
-    }
-
-
-    return {
-        gesture:committedGesture,
-        clear:false
-    };
-}
-
-
-/* ============================================================
-   V5 PEN ENGINE
-   ============================================================ */
-
-const SLOW_SMOOTHING = .24;
-
-const FAST_SMOOTHING = .90;
-
-const FAST_SPEED = 850;
-
-const MAX_REASONABLE_JUMP = 400;
-
-const MICRO_JITTER_DISTANCE = .65;
-
-const MIN_POINT_DISTANCE = 1.0;
-
-const MIN_INK_WIDTH = 2.6;
-
-const MAX_INK_WIDTH = 5.4;
-
-const CURVE_TENSION = 1/6;
-
-
-let drawing = false;
-
-let hasPreviousPoint = false;
-
-let lastPoint = {
-    x:0,
-    y:0
-};
-
-let smoothedPoint = {
-    x:0,
-    y:0
-};
-
-let lastTime = 0;
-
-let lastSpeed = 0;
-
-let strokePoints = [];
-
-
-function resetPenState(){
-
-    drawing = false;
-
-    hasPreviousPoint = false;
-
-    strokePoints = [];
-
-    lastSpeed = 0;
-
-    lastTime =
-        performance.now();
-}
-
-
-function smoothPoint(
-    target,
-    now
-){
-
-    if(!hasPreviousPoint){
-
-        smoothedPoint.x =
-            target.x;
-
-        smoothedPoint.y =
-            target.y;
-
-        lastPoint.x =
-            target.x;
-
-        lastPoint.y =
-            target.y;
-
-        lastTime =
-            now;
-
-        hasPreviousPoint =
-            true;
-
-
-        return {
-            x:target.x,
-            y:target.y
-        };
-    }
-
-
-    const dt =
-        Math.max(
-            .001,
-            (
-                now -
-                lastTime
-            ) / 1000
-        );
-
-
-    const dx =
-        target.x -
-        lastPoint.x;
-
-
-    const dy =
-        target.y -
-        lastPoint.y;
-
-
-    const rawDistance =
-        Math.hypot(
-            dx,
-            dy
-        );
-
-
-    const speed =
-        rawDistance / dt;
-
-
-    lastSpeed =
-        lastSpeed * .7 +
-        speed * .3;
-
-
-    const speedRatio =
-        Math.min(
-            1,
-            lastSpeed /
-            FAST_SPEED
-        );
-
-
-    const smoothing =
-        SLOW_SMOOTHING +
-        (
-            FAST_SMOOTHING -
-            SLOW_SMOOTHING
-        ) *
-        speedRatio;
-
-
-    if(
-        rawDistance >
-        MAX_REASONABLE_JUMP
-    ){
-
-        smoothedPoint.x =
-            target.x;
-
-        smoothedPoint.y =
-            target.y;
-
-        lastPoint.x =
-            target.x;
-
-        lastPoint.y =
-            target.y;
-
-        lastTime =
-            now;
-
-
-        return {
-            x:target.x,
-            y:target.y
-        };
-    }
-
-
-    if(
-        rawDistance <
-        MICRO_JITTER_DISTANCE
-    ){
-
-        lastTime =
-            now;
-
-
-        return {
-            x:smoothedPoint.x,
-            y:smoothedPoint.y
-        };
-    }
-
-
-    smoothedPoint.x +=
-        (
-            target.x -
-            smoothedPoint.x
-        ) *
-        smoothing;
-
-
-    smoothedPoint.y +=
-        (
-            target.y -
-            smoothedPoint.y
-        ) *
-        smoothing;
-
-
-    lastPoint.x =
-        target.x;
-
-    lastPoint.y =
-        target.y;
-
-    lastTime =
-        now;
-
-
-    return {
-        x:smoothedPoint.x,
-        y:smoothedPoint.y
-    };
-}
-
-
-function getPenWidth(){
-
-    const speedRatio =
-        Math.min(
-            1,
-            lastSpeed /
-            FAST_SPEED
-        );
-
-
-    return (
-        MAX_INK_WIDTH -
-        (
-            MAX_INK_WIDTH -
-            MIN_INK_WIDTH
-        ) *
-        speedRatio
-    );
-}
-
-
-function drawSmoothSegment(){
-
-    if(
-        strokePoints.length < 2
-    ){
+        smoothX = targetX;
+        smoothY = targetY;
 
         return;
     }
 
 
-    const len =
-        strokePoints.length;
+    const dx =
+        targetX - smoothX;
+
+    const dy =
+        targetY - smoothY;
 
 
-    const p0 =
-        strokePoints[
-            Math.max(0,len-4)
-        ];
-
-    const p1 =
-        strokePoints[
-            Math.max(0,len-3)
-        ];
-
-    const p2 =
-        strokePoints[
-            Math.max(0,len-2)
-        ];
-
-    const p3 =
-        strokePoints[
-            Math.max(0,len-1)
-        ];
+    const distance =
+        Math.sqrt(
+            dx * dx +
+            dy * dy
+        );
 
 
-    const cp1x =
-        p1.x +
-        (
-            p2.x -
-            p0.x
-        ) *
-        CURVE_TENSION;
+    let adaptiveSmoothing;
 
 
-    const cp1y =
-        p1.y +
-        (
-            p2.y -
-            p0.y
-        ) *
-        CURVE_TENSION;
+    if (distance < 5) {
+
+        adaptiveSmoothing =
+            0.75;
+
+    }
+
+    else if (distance < 20) {
+
+        adaptiveSmoothing =
+            0.90;
+
+    }
+
+    else {
+
+        adaptiveSmoothing =
+            0.97;
+
+    }
 
 
-    const cp2x =
-        p2.x -
-        (
-            p3.x -
-            p1.x
-        ) *
-        CURVE_TENSION;
+    smoothX =
+        smoothX +
+        dx * adaptiveSmoothing;
 
 
-    const cp2y =
-        p2.y -
-        (
-            p3.y -
-            p1.y
-        ) *
-        CURVE_TENSION;
+    smoothY =
+        smoothY +
+        dy * adaptiveSmoothing;
+
+}
 
 
-    ctx.save();
+/* =====================================
+   CANVAS SIZE
+===================================== */
+
+function resizeCanvas() {
+
+    canvas.width =
+        window.innerWidth;
+
+    canvas.height =
+        window.innerHeight;
+
+}
+
+resizeCanvas();
+
+
+window.addEventListener(
+    "resize",
+    resizeCanvas
+);
+
+
+/* =====================================
+   CLEAR BOARD
+===================================== */
+
+function clearCanvas() {
+
+    ctx.clearRect(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+    );
+
+
+    clearFlash.classList.remove("active");
+
+    void clearFlash.offsetWidth;
+
+    clearFlash.classList.add("active");
+
+}
+
+
+/* =====================================
+   DISTANCE
+===================================== */
+
+function distance(a, b) {
+
+    const dx =
+        a.x - b.x;
+
+    const dy =
+        a.y - b.y;
+
+    return Math.sqrt(
+        dx * dx +
+        dy * dy
+    );
+
+}
+
+
+/* =====================================
+   FINGER UP
+===================================== */
+
+function fingerUp(
+    landmarks,
+    tip,
+    joint
+) {
+
+    return (
+        landmarks[tip].y <
+        landmarks[joint].y
+    );
+
+}
+
+
+/* =====================================
+   SHOW CURSOR
+===================================== */
+
+function showCursor(x, y) {
+
+    cursor.style.display =
+        "block";
+
+    cursor.style.left =
+        x + "px";
+
+    cursor.style.top =
+        y + "px";
+
+}
+
+
+/* =====================================
+   HIDE CURSOR
+===================================== */
+
+function hideCursor() {
+
+    cursor.style.display =
+        "none";
+
+    cursor.classList.remove("drawing");
+    cursor.classList.remove("pinch");
+
+}
+
+
+/* =====================================
+   HUD HAND STATE
+===================================== */
+
+function setHandDetected() {
+
+    handDot.classList.add("active");
+
+    handState.innerText =
+        "DETECTED";
+
+}
+
+
+function setHandSearching() {
+
+    handDot.classList.remove("active");
+
+    handState.innerText =
+        "SEARCHING";
+
+}
+
+
+/* =====================================
+   DRAWING
+===================================== */
+
+function drawContinuousLine(
+    x1,
+    y1,
+    x2,
+    y2
+) {
+
+    const dx =
+        x2 - x1;
+
+    const dy =
+        y2 - y1;
+
+    const segmentDistance =
+        Math.sqrt(
+            dx * dx +
+            dy * dy
+        );
+
+
+    const steps =
+        Math.max(
+            1,
+            Math.ceil(
+                segmentDistance / 3
+            )
+        );
+
+
+    /* OUTER GLOW */
+
+    ctx.beginPath();
+
+    ctx.moveTo(x1, y1);
+
+
+    for (
+        let i = 1;
+        i <= steps;
+        i++
+    ) {
+
+        const t =
+            i / steps;
+
+        ctx.lineTo(
+            x1 + dx * t,
+            y1 + dy * t
+        );
+
+    }
+
+
+    ctx.lineWidth =
+        13;
 
     ctx.lineCap =
         "round";
@@ -2968,1776 +1418,447 @@ function drawSmoothSegment(){
     ctx.lineJoin =
         "round";
 
+    ctx.strokeStyle =
+        "rgba(255, 0, 255, 0.35)";
+
+    ctx.shadowColor =
+        "#ff00ff";
+
+    ctx.shadowBlur =
+        25;
+
+    ctx.stroke();
+
+
+    /* INNER NEON */
 
     ctx.beginPath();
 
-
-    ctx.moveTo(
-        p1.x,
-        p1.y
-    );
+    ctx.moveTo(x1, y1);
 
 
-    ctx.bezierCurveTo(
+    for (
+        let i = 1;
+        i <= steps;
+        i++
+    ) {
 
-        cp1x,
-        cp1y,
+        const t =
+            i / steps;
 
-        cp2x,
-        cp2y,
+        ctx.lineTo(
+            x1 + dx * t,
+            y1 + dy * t
+        );
 
-        p3.x,
-        p3.y
-
-    );
+    }
 
 
     ctx.lineWidth =
-        getPenWidth();
+        5;
 
+    ctx.lineCap =
+        "round";
+
+    ctx.lineJoin =
+        "round";
 
     ctx.strokeStyle =
-        "rgba(145,175,208,.96)";
+        "#ff66ff";
+
+    ctx.shadowColor =
+        "#ff00ff";
+
+    ctx.shadowBlur =
+        12;
+
+    ctx.stroke();
+
+
+    /* WHITE CORE */
+
+    ctx.beginPath();
+
+    ctx.moveTo(x1, y1);
+
+
+    for (
+        let i = 1;
+        i <= steps;
+        i++
+    ) {
+
+        const t =
+            i / steps;
+
+        ctx.lineTo(
+            x1 + dx * t,
+            y1 + dy * t
+        );
+
+    }
+
+
+    ctx.lineWidth =
+        2;
+
+    ctx.lineCap =
+        "round";
+
+    ctx.lineJoin =
+        "round";
+
+    ctx.strokeStyle =
+        "white";
+
+    ctx.shadowColor =
+        "white";
+
+    ctx.shadowBlur =
+        5;
+
+    ctx.stroke();
 
 
     ctx.shadowBlur =
-        7;
+        0;
 
-
-    ctx.shadowColor =
-        "rgba(145,175,208,.18)";
-
-
-    ctx.stroke();
-
-
-    ctx.beginPath();
-
-
-    ctx.moveTo(
-        p1.x,
-        p1.y
-    );
-
-
-    ctx.bezierCurveTo(
-
-        cp1x,
-        cp1y,
-
-        cp2x,
-        cp2y,
-
-        p3.x,
-        p3.y
-
-    );
-
-
-    ctx.lineWidth =
-        Math.max(
-            1.1,
-            getPenWidth() * .45
-        );
-
-
-    ctx.strokeStyle =
-        "rgba(220,230,240,.30)";
-
-
-    ctx.shadowBlur = 0;
-
-    ctx.stroke();
-
-    ctx.restore();
 }
 
 
-function drawDot(point){
-
-    ctx.save();
-
-    ctx.beginPath();
-
-
-    ctx.arc(
-        point.x,
-        point.y,
-        getPenWidth()/2,
-        0,
-        Math.PI*2
-    );
-
-
-    ctx.fillStyle =
-        "rgba(145,175,208,.96)";
-
-
-    ctx.shadowBlur = 7;
-
-    ctx.shadowColor =
-        "rgba(145,175,208,.18)";
-
-
-    ctx.fill();
-
-    ctx.restore();
-}
-
-
-function startStroke(point){
-
-    drawing = true;
-
-    strokePoints = [
-        {
-            x:point.x,
-            y:point.y
-        }
-    ];
-
-    drawDot(point);
-}
-
-
-function drawLine(point){
-
-    const now =
-        performance.now();
-
-
-    const smooth =
-        smoothPoint(
-            point,
-            now
-        );
-
-
-    if(!drawing){
-
-        startStroke(
-            smooth
-        );
-
-        return;
-    }
-
-
-    const previous =
-        strokePoints[
-            strokePoints.length-1
-        ];
-
-
-    const d =
-        Math.hypot(
-            smooth.x -
-            previous.x,
-            smooth.y -
-            previous.y
-        );
-
-
-    if(
-        d <
-        MIN_POINT_DISTANCE
-    ){
-
-        return;
-    }
-
-
-    strokePoints.push({
-        x:smooth.x,
-        y:smooth.y
-    });
-
-
-    if(
-        strokePoints.length > 8
-    ){
-
-        strokePoints.shift();
-    }
-
-
-    drawSmoothSegment();
-}
-
-
-function stopDrawing(){
-
-    drawing = false;
-
-    strokePoints = [];
-
-    hasPreviousPoint = false;
-
-    lastSpeed = 0;
-}
-
-
-/* ============================================================
-   CLEAR
-   ============================================================ */
-
-function clearBoard(){
-
-    ctx.clearRect(
-        0,
-        0,
-        viewWidth,
-        viewHeight
-    );
-
-
-    resetPenState();
-}
-
-
-/* ============================================================
+/* =====================================
    MEDIAPIPE
-   ============================================================ */
+===================================== */
 
 const hands =
     new Hands({
 
-        locateFile:file =>
-            `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`
+        locateFile:
+        function(file) {
+
+            return (
+                "https://cdn.jsdelivr.net/npm/" +
+                "@mediapipe/hands/" +
+                file
+            );
+
+        }
 
     });
 
 
-let selectedModelComplexity;
-
-
-if(deviceTier === "HIGH"){
-
-    selectedModelComplexity = 1;
-
-}else{
-
-    selectedModelComplexity = 0;
-}
-
-
 hands.setOptions({
 
-    maxNumHands:1,
+    maxNumHands: 1,
 
-    modelComplexity:
-        selectedModelComplexity,
+    modelComplexity: 1,
 
-    minDetectionConfidence:.55,
+    minDetectionConfidence: 0.6,
 
-    minTrackingConfidence:.58
+    minTrackingConfidence: 0.6
 
 });
 
 
-hands.onResults(
-    onHandsResults
-);
-
-
-/* ============================================================
-   UI THROTTLING
-   ============================================================ */
-
-let lastUIUpdate = 0;
-
-const UI_UPDATE_INTERVAL = 70;
-
-
-let pendingUI = {
-
-    hand:null,
-    tracking:null,
-    gesture:null,
-    mode:null,
-    x:null,
-    y:null
-};
-
-
-function flushUI(){
-
-    const now =
-        performance.now();
-
-
-    if(
-        now -
-        lastUIUpdate <
-        UI_UPDATE_INTERVAL
-    ){
-
-        return;
-    }
-
-
-    lastUIUpdate =
-        now;
-
-
-    if(
-        pendingUI.hand !== null
-    ){
-
-        handState.textContent =
-            pendingUI.hand;
-    }
-
-
-    if(
-        pendingUI.tracking !== null
-    ){
-
-        trackingState.textContent =
-            pendingUI.tracking;
-    }
-
-
-    if(
-        pendingUI.gesture !== null
-    ){
-
-        gestureState.textContent =
-            pendingUI.gesture;
-    }
-
-
-    if(
-        pendingUI.mode !== null
-    ){
-
-        modeState.textContent =
-            pendingUI.mode;
-    }
-
-
-    if(
-        pendingUI.x !== null &&
-        pendingUI.y !== null
-    ){
-
-        coordinates.textContent =
-            `${Math.round(
-                pendingUI.x
-            )}, ${Math.round(
-                pendingUI.y
-            )}`;
-    }
-}
-
-
-/* ============================================================
-   PERFORMANCE HUD
-   ============================================================ */
-
-function updatePerformanceHUD(){
-
-    fpsState.textContent =
-        `${Math.round(
-            measuredFPS
-        )}`;
-
-
-    latencyState.textContent =
-        `${Math.round(
-            measuredLatency
-        )} ms`;
-
-
-    processState.textContent =
-        `${processingWidth}×${processingHeight}`;
-
-
-    fpsState.classList.remove(
-        "performance-good",
-        "performance-warning",
-        "performance-bad"
-    );
-
-
-    if(
-        measuredFPS >= 35
-    ){
-
-        fpsState.classList.add(
-            "performance-good"
-        );
-
-    }else if(
-        measuredFPS >= 22
-    ){
-
-        fpsState.classList.add(
-            "performance-warning"
-        );
-
-    }else{
-
-        fpsState.classList.add(
-            "performance-bad"
-        );
-    }
-}
-
-
-/* ============================================================
-   ADAPTIVE PERFORMANCE
-   ============================================================ */
-
-function adaptivePerformance(){
-
-    const now =
-        performance.now();
-
-
-    if(
-        now -
-        lastPerformanceAdjustment <
-        PERFORMANCE_ADJUST_INTERVAL
-    ){
-
-        return;
-    }
-
-
-    lastPerformanceAdjustment =
-        now;
-
-
-    if(
-        measuredLatency > 70 ||
-        measuredFPS < 20
-    ){
-
-        if(
-            processingLevel > 0
-        ){
-
-            processingLevel--;
-
-            configureProcessingCanvas();
-        }
-
-
-        targetProcessingFPS =
-            Math.max(
-                20,
-                targetProcessingFPS - 4
-            );
-
-
-        targetFrameInterval =
-            1000 /
-            targetProcessingFPS;
-
-
-        return;
-    }
-
-
-    if(
-        measuredLatency > 45 ||
-        measuredFPS < 24
-    ){
-
-        if(
-            processingLevel > 0
-        ){
-
-            processingLevel--;
-
-            configureProcessingCanvas();
-        }
-
-
-        targetProcessingFPS =
-            Math.max(
-                22,
-                targetProcessingFPS - 2
-            );
-
-
-        targetFrameInterval =
-            1000 /
-            targetProcessingFPS;
-
-
-        return;
-    }
-
-
-    if(
-        measuredLatency < 24 &&
-        measuredFPS >
-        Math.min(
-            35,
-            targetProcessingFPS - 2
-        )
-    ){
-
-        if(
-            processingLevel <
-            PROCESSING_LEVELS.length - 1
-        ){
-
-            processingLevel++;
-
-            configureProcessingCanvas();
-        }
-
-
-        targetProcessingFPS =
-            Math.min(
-                45,
-                targetProcessingFPS + 2
-            );
-
-
-        targetFrameInterval =
-            1000 /
-            targetProcessingFPS;
-    }
-}
-
-
-/* ============================================================
+/* =====================================
    HAND RESULTS
-   ============================================================ */
+===================================== */
 
-let lastHandSeenTime = 0;
-
-const HAND_LOSS_TIMEOUT = 120;
-
-
-function onHandsResults(results){
-
-    const processingEnd =
-        performance.now();
+hands.onResults(
+function(results) {
 
 
-    lastProcessingEnd =
-        processingEnd;
+    /* NO HAND */
 
+    if (
+        !results.multiHandLandmarks ||
+        results.multiHandLandmarks.length === 0
+    ) {
 
-    measuredLatency =
-        processingEnd -
-        lastProcessingStart;
+        previousX = null;
+        previousY = null;
 
+        smoothX = null;
+        smoothY = null;
 
-    performanceFrames++;
+        hideCursor();
 
+        setHandSearching();
 
-    const elapsed =
-        processingEnd -
-        performanceStart;
+        modeState.innerText =
+            "STANDBY";
 
-
-    if(
-        elapsed >= 1000
-    ){
-
-        measuredFPS =
-            (
-                performanceFrames *
-                1000
-            ) /
-            elapsed;
-
-
-        performanceFrames = 0;
-
-        performanceStart =
-            processingEnd;
-
-
-        updatePerformanceHUD();
-
-        adaptivePerformance();
-    }
-
-
-    if(!cameraRunning){
+        status.innerText =
+            "🖐️ Show your hand";
 
         return;
+
     }
 
 
-    const rawLandmarks =
-        results.multiHandLandmarks &&
+    /* HAND DETECTED */
+
+    setHandDetected();
+
+
+    const hand =
         results.multiHandLandmarks[0];
 
 
-    if(!rawLandmarks){
+    /* FINGER STATES */
 
-        pendingUI.hand =
-            "NONE";
+    const indexUp =
+        fingerUp(hand, 8, 6);
 
-        pendingUI.tracking =
-            "SEARCHING";
+    const middleUp =
+        fingerUp(hand, 12, 10);
 
-        pendingUI.gesture =
-            "NONE";
+    const ringUp =
+        fingerUp(hand, 16, 14);
 
-        pendingUI.mode =
-            "SEARCHING";
+    const pinkyUp =
+        fingerUp(hand, 20, 18);
 
 
-        trackingDot.className =
-            "status-dot warning";
+    /* INDEX */
 
+    const index =
+        hand[8];
 
-        if(
-            performance.now() -
-            lastHandSeenTime >
-            HAND_LOSS_TIMEOUT
-        ){
 
-            cursor.style.opacity =
-                "0";
+    const targetX =
+        (1 - index.x) *
+        canvas.width;
 
 
-            stopDrawing();
+    const targetY =
+        index.y *
+        canvas.height;
 
 
-            updateGesture("NONE");
-        }
-
-
-        flushUI();
-
-        return;
-    }
-
-
-    lastHandSeenTime =
-        performance.now();
-
-
-    pendingUI.hand =
-        "DETECTED";
-
-
-    pendingUI.tracking =
-        "ACTIVE";
-
-
-    trackingDot.className =
-        "status-dot ready";
-
-
-    const tip =
-        stabilizeIndexTip(
-            rawLandmarks
-        );
-
-
-    const point =
-        cameraToBoard(
-            tip.x,
-            tip.y
-        );
-
-
-    const rect =
-        canvas.getBoundingClientRect();
-
-
-    cursor.style.left =
-        `${rect.left + point.x}px`;
-
-
-    cursor.style.top =
-        `${rect.top + point.y}px`;
-
-
-    cursor.style.opacity =
-        "1";
-
-
-    pendingUI.x =
-        point.x;
-
-    pendingUI.y =
-        point.y;
-
-
-    const rawGesture =
-        classifyRawGesture(
-            rawLandmarks
-        );
-
-
-    const state =
-        updateGesture(
-            rawGesture
-        );
-
-
-    pendingUI.gesture =
-        state.gesture;
-
-
-    if(state.clear){
-
-        clearBoard();
-
-
-        pendingUI.mode =
-            "CLEARED";
-
-
-        cursor.classList.add(
-            "clear"
-        );
-
-
-        cursor.classList.remove(
-            "drawing",
-            "pause"
-        );
-
-
-        flushUI();
-
-        return;
-    }
-
-
-    if(
-        state.gesture ===
-        "DRAW"
-    ){
-
-        pendingUI.mode =
-            "DRAWING";
-
-
-        cursor.classList.add(
-            "drawing"
-        );
-
-
-        cursor.classList.remove(
-            "pause",
-            "clear"
-        );
-
-
-        drawLine(point);
-
-
-        flushUI();
-
-        return;
-    }
-
-
-    if(
-        state.gesture ===
-        "PINCH"
-    ){
-
-        pendingUI.mode =
-            "PAUSED";
-
-
-        cursor.classList.add(
-            "pause"
-        );
-
-
-        cursor.classList.remove(
-            "drawing",
-            "clear"
-        );
-
-
-        stopDrawing();
-
-
-        flushUI();
-
-        return;
-    }
-
-
-    if(
-        state.gesture ===
-        "OPEN"
-    ){
-
-        pendingUI.mode =
-            "OPEN HAND";
-
-
-        cursor.classList.add(
-            "clear"
-        );
-
-
-        cursor.classList.remove(
-            "drawing",
-            "pause"
-        );
-
-
-        stopDrawing();
-
-
-        flushUI();
-
-        return;
-    }
-
-
-    pendingUI.mode =
-        "READY";
-
-
-    cursor.classList.remove(
-        "drawing",
-        "pause",
-        "clear"
+    smoothPoint(
+        targetX,
+        targetY
     );
 
 
-    stopDrawing();
+    const x =
+        smoothX;
+
+    const y =
+        smoothY;
 
 
-    flushUI();
-}
+    showCursor(
+        x,
+        y
+    );
 
 
-/* ============================================================
-   PROCESSING LOOP
-   ============================================================ */
+    /* OPEN HAND */
 
-function requestNextVideoFrame(){
+    if (
+        indexUp &&
+        middleUp &&
+        ringUp &&
+        pinkyUp
+    ) {
 
-    if(!cameraRunning){
+        clearCanvas();
 
-        return;
-    }
+        previousX = null;
+        previousY = null;
 
+        cursor.classList.remove("drawing");
+        cursor.classList.remove("pinch");
 
-    if(
-        typeof
-        video.requestVideoFrameCallback ===
-        "function"
-    ){
+        hideCursor();
 
-        videoFrameHandle =
-            video.requestVideoFrameCallback(
-                processVideoFrame
-            );
+        modeState.innerText =
+            "CLEAR";
 
-    }else{
-
-        videoFrameHandle =
-            requestAnimationFrame(
-                timestamp =>
-                    processVideoFrame(
-                        timestamp
-                    )
-            );
-    }
-}
-
-
-/* ============================================================
-   PROCESS VIDEO FRAME
-   ============================================================ */
-
-async function processVideoFrame(now){
-
-    if(!cameraRunning){
+        status.innerText =
+            "✋ Board cleared";
 
         return;
+
     }
 
 
-    requestNextVideoFrame();
+    /* THUMB / PINCH */
+
+    const thumb =
+        hand[4];
 
 
-    if(pageHidden){
-
-        return;
-    }
-
-
-    if(processingBusy){
-
-        return;
-    }
-
-
-    if(
-        lastVideoFrameTime !== 0 &&
-        now -
-        lastVideoFrameTime <
-        targetFrameInterval
-    ){
-
-        return;
-    }
-
-
-    lastVideoFrameTime =
-        now;
-
-
-    if(
-        video.readyState < 2 ||
-        video.videoWidth <= 0 ||
-        video.videoHeight <= 0
-    ){
-
-        return;
-    }
-
-
-    processingBusy =
-        true;
-
-
-    lastProcessingStart =
-        performance.now();
-
-
-    try{
-
-        processingCtx.drawImage(
-            video,
-            0,
-            0,
-            processingWidth,
-            processingHeight
+    const pinch =
+        distance(
+            thumb,
+            index
         );
 
 
-        await hands.send({
-            image:processingCanvas
-        });
+    /* DRAW */
 
+    if (
+        indexUp &&
+        pinch > 0.07
+    ) {
 
-    }catch(error){
+        cursor.classList.add("drawing");
+        cursor.classList.remove("pinch");
 
-        console.error(
-            "MediaPipe processing error:",
-            error
-        );
+        modeState.innerText =
+            "DRAW";
 
-    }finally{
+        if (
+            previousX !== null &&
+            previousY !== null
+        ) {
 
-        processingBusy =
-            false;
-    }
-}
+            drawContinuousLine(
+                previousX,
+                previousY,
+                x,
+                y
+            );
 
-
-/* ============================================================
-   CAMERA CAPABILITIES
-   ============================================================ */
-
-function inspectCameraCapabilities(){
-
-    try{
-
-        const track =
-            stream &&
-            stream.getVideoTracks &&
-            stream.getVideoTracks()[0];
-
-
-        if(!track){
-
-            return;
         }
 
 
-        const settings =
-            track.getSettings ?
-            track.getSettings() :
-            null;
+        previousX =
+            x;
+
+        previousY =
+            y;
 
 
-        const capabilities =
-            track.getCapabilities ?
-            track.getCapabilities() :
-            null;
+        status.innerText =
+            "☝️ ✨ Drawing in the air...";
 
-
-        console.log(
-            "Camera settings:",
-            settings
-        );
-
-
-        console.log(
-            "Camera capabilities:",
-            capabilities
-        );
-
-
-    }catch(error){
-
-        console.warn(
-            "Camera capability inspection:",
-            error
-        );
-    }
-}
-
-
-/* ============================================================
-   CAMERA INITIALIZATION
-   ============================================================ */
-
-async function initializeCamera(){
-
-    if(cameraRunning){
-
-        return;
     }
 
 
-    if(
-        !navigator.mediaDevices ||
-        !navigator.mediaDevices.getUserMedia
-    ){
+    /* STOP */
 
-        centerDescription.textContent =
-            "This browser does not provide camera access.";
+    else {
 
-        return;
+        cursor.classList.remove("drawing");
+        cursor.classList.add("pinch");
+
+        previousX = null;
+        previousY = null;
+
+        modeState.innerText =
+            "READY";
+
+        status.innerText =
+            "🤏 Pinch to stop • ☝️ Point to draw";
+
     }
 
-
-    startBtn.disabled =
-        true;
+});
 
 
-    startBtn.textContent =
-        "INITIALIZING";
+/* =====================================
+   START CAMERA
+===================================== */
+
+async function startCamera() {
+
+    try {
+
+        systemState.innerText =
+            "STARTING";
+
+        status.innerText =
+            "🔄 Starting camera...";
 
 
-    try{
+        const stream =
+            await navigator.mediaDevices.getUserMedia({
 
-        stream =
-            await navigator.mediaDevices
-                .getUserMedia({
+                video: {
+                    facingMode: "user"
+                },
 
-                    video:{
+                audio: false
 
-                        facingMode:{
-                            ideal:"user"
-                        },
-
-                        width:{
-                            ideal:1920,
-                            max:1920
-                        },
-
-                        height:{
-                            ideal:1080,
-                            max:1080
-                        },
-
-                        frameRate:{
-                            ideal:60,
-                            max:60
-                        }
-
-                    },
-
-                    audio:false
-
-                });
+            });
 
 
         video.srcObject =
             stream;
 
 
-        await new Promise(
-            resolve => {
+        const camera =
+            new Camera(
+                video,
+                {
 
-                if(
-                    video.videoWidth > 0
-                ){
+                    onFrame:
+                    async function() {
 
-                    resolve();
+                        await hands.send({
+                            image: video
+                        });
 
-                    return;
+                    },
+
+                    width: 1280,
+
+                    height: 720
+
                 }
+            );
 
 
-                video.onloadedmetadata =
-                    () => resolve();
-
-            }
-        );
+        camera.start();
 
 
-        await video.play();
+        startButton.style.display =
+            "none";
 
 
-        inspectCameraCapabilities();
-
-
-        configureProcessingCanvas();
-
-
-        resizeCanvas();
-
-        resetGestureEngine();
-
-        resetLandmarkSmoothing();
-
-        resetPenState();
-
-
-        cameraRunning =
-            true;
-
-        processingBusy =
-            false;
-
-        lastVideoFrameTime =
-            0;
-
-        lastHandSeenTime =
-            performance.now();
-
-
-        measuredFPS = 0;
-
-        measuredLatency = 0;
-
-        performanceFrames = 0;
-
-        performanceStart =
-            performance.now();
-
-
-        lastPerformanceAdjustment =
-            performance.now();
-
-
-        if(deviceTier === "HIGH"){
-
-            targetProcessingFPS = 40;
-
-        }else if(deviceTier === "MID"){
-
-            targetProcessingFPS = 32;
-
-        }else{
-
-            targetProcessingFPS = 26;
-        }
-
-
-        targetFrameInterval =
-            1000 /
-            targetProcessingFPS;
-
-
-        cameraState.textContent =
-            "ON";
-
-
-        connectionText.textContent =
+        systemState.innerText =
             "ONLINE";
 
+        status.innerText =
+            "🟢 Camera ready! Show your hand.";
 
-        connectionStatus.classList.add(
-            "active"
-        );
-
-
-        trackingState.textContent =
-            "SEARCHING";
+    }
 
 
-        trackingDot.className =
-            "status-dot warning";
+    catch(error) {
+
+        console.error(error);
 
 
-        centerPanel.classList.add(
-            "hidden"
-        );
-
-
-        startBtn.textContent =
-            "CAMERA ACTIVE";
-
-
-        requestNextVideoFrame();
-
-
-    }catch(error){
-
-        console.error(
-            "Camera initialization error:",
-            error
-        );
-
-
-        cameraRunning =
-            false;
-
-        processingBusy =
-            false;
-
-
-        if(stream){
-
-            stream
-                .getTracks()
-                .forEach(
-                    track =>
-                        track.stop()
-                );
-
-            stream =
-                null;
-        }
-
-
-        video.srcObject =
-            null;
-
-
-        cameraState.textContent =
+        systemState.innerText =
             "ERROR";
 
+        status.innerText =
+            "🔴 Camera permission denied";
 
-        connectionText.textContent =
-            "OFFLINE";
 
-
-        connectionStatus.classList.remove(
-            "active"
+        alert(
+            "Camera could not be started. " +
+            "Please allow camera permission " +
+            "for this website."
         );
 
-
-        startBtn.disabled =
-            false;
-
-
-        startBtn.textContent =
-            "RETRY CAMERA";
-
-
-        centerPanel.classList.remove(
-            "hidden"
-        );
-
-
-        if(
-            error.name ===
-            "NotAllowedError"
-        ){
-
-            centerDescription.textContent =
-                "Camera permission was denied. Allow camera access and try again.";
-
-        }else if(
-            error.name ===
-            "NotFoundError"
-        ){
-
-            centerDescription.textContent =
-                "No usable camera was found.";
-
-        }else if(
-            error.name ===
-            "NotReadableError"
-        ){
-
-            centerDescription.textContent =
-                "The camera is currently being used by another application.";
-
-        }else{
-
-            centerDescription.textContent =
-                "Camera initialization failed. Please retry.";
-        }
     }
+
 }
 
 
-/* ============================================================
-   STOP CAMERA
-   ============================================================ */
-
-function stopCamera(){
-
-    cameraRunning =
-        false;
-
-    processingBusy =
-        false;
-
-
-    if(
-        videoFrameHandle !== null
-    ){
-
-        if(
-            typeof
-            video.cancelVideoFrameCallback ===
-            "function"
-        ){
-
-            try{
-
-                video.cancelVideoFrameCallback(
-                    videoFrameHandle
-                );
-
-            }catch(error){}
-
-        }else{
-
-            cancelAnimationFrame(
-                videoFrameHandle
-            );
-        }
-
-
-        videoFrameHandle =
-            null;
-    }
-
-
-    if(stream){
-
-        stream
-            .getTracks()
-            .forEach(
-                track =>
-                    track.stop()
-            );
-
-
-        stream =
-            null;
-    }
-
-
-    video.srcObject =
-        null;
-
-
-    cameraState.textContent =
-        "OFF";
-
-
-    connectionText.textContent =
-        "OFFLINE";
-
-
-    connectionStatus.classList.remove(
-        "active"
-    );
-
-
-    trackingState.textContent =
-        "WAITING";
-
-
-    trackingDot.className =
-        "status-dot";
-
-
-    cursor.style.opacity =
-        "0";
-
-
-    resetPenState();
-
-    resetLandmarkSmoothing();
-
-    resetGestureEngine();
-}
-
-
-/* ============================================================
-   RESIZE
-   ============================================================ */
-
-let resizeTimer = null;
-
-
-function handleResize(){
-
-    clearTimeout(
-        resizeTimer
-    );
-
-
-    resizeTimer =
-        setTimeout(
-            () => {
-
-                resizeCanvas();
-
-
-                if(cameraRunning){
-
-                    configureProcessingCanvas();
-
-                }
-
-            },
-            120
-        );
-}
-
-
-window.addEventListener(
-    "resize",
-    handleResize
-);
-
-
-window.addEventListener(
-    "orientationchange",
-    () => {
-
-        setTimeout(
-            () => {
-
-                resizeCanvas();
-
-
-                if(cameraRunning){
-
-                    configureProcessingCanvas();
-
-                }
-
-            },
-            250
-        );
-
-    }
-);
-
-
-/* ============================================================
-   START
-   ============================================================ */
-
-startBtn.addEventListener(
+/* =====================================
+   START BUTTON
+===================================== */
+
+startButton.addEventListener(
     "click",
-    initializeCamera
-);
-
-
-/* ============================================================
-   CAMERA DEBUG BUTTON
-   ============================================================ */
-
-let debugCamera = false;
-
-
-debugCameraBtn.addEventListener(
-    "click",
-    () => {
-
-        debugCamera =
-            !debugCamera;
-
-
-        /*
-           This only changes camera opacity.
-
-           It does NOT change the processing stream.
-        */
-
-        video.style.opacity =
-            debugCamera
-            ? ".35"
-            : "1";
-
-
-        debugCameraBtn.classList.toggle(
-            "active",
-            debugCamera
-        );
-
-    }
-);
-
-
-/* ============================================================
-   CLEAR
-   ============================================================ */
-
-document
-    .getElementById("clearBtn")
-    .addEventListener(
-        "click",
-        clearBoard
-    );
-
-
-/* ============================================================
-   TOOLS
-   ============================================================ */
-
-function setActiveTool(id){
-
-    document
-        .querySelectorAll(".tool")
-        .forEach(
-            button =>
-                button.classList.remove(
-                    "active"
-                )
-        );
-
-
-    document
-        .getElementById(id)
-        .classList.add(
-            "active"
-        );
-}
-
-
-document
-    .getElementById("penTool")
-    .addEventListener(
-        "click",
-        () =>
-            setActiveTool("penTool")
-    );
-
-
-document
-    .getElementById("selectTool")
-    .addEventListener(
-        "click",
-        () =>
-            setActiveTool("selectTool")
-    );
-
-
-document
-    .getElementById("measureTool")
-    .addEventListener(
-        "click",
-        () =>
-            setActiveTool("measureTool")
-    );
-
-
-/* ============================================================
-   GRID
-   ============================================================ */
-
-let gridEnabled = true;
-
-
-document
-    .getElementById("gridBtn")
-    .addEventListener(
-        "click",
-        () => {
-
-            gridEnabled =
-                !gridEnabled;
-
-
-            const workspace =
-                document.querySelector(
-                    ".workspace"
-                );
-
-
-            if(gridEnabled){
-
-                workspace.style.backgroundImage =
-
-                    `
-
-                    linear-gradient(
-                        rgba(255,255,255,.018) 1px,
-                        transparent 1px
-                    ),
-
-                    linear-gradient(
-                        90deg,
-                        rgba(255,255,255,.018) 1px,
-                        transparent 1px
-                    )
-
-                    `;
-
-
-                workspace.style.backgroundSize =
-                    "32px 32px";
-
-            }else{
-
-                workspace.style.backgroundImage =
-                    "none";
-
-            }
-
-        }
-    );
-
-
-/* ============================================================
-   ZOOM
-   ============================================================ */
-
-let zoomLevel = 1;
-
-
-document
-    .getElementById("zoomBtn")
-    .addEventListener(
-        "click",
-        () => {
-
-            zoomLevel += .1;
-
-
-            if(
-                zoomLevel > 2
-            ){
-
-                zoomLevel = 1;
-            }
-
-
-            canvas.style.transform =
-                `scale(${zoomLevel})`;
-
-
-            canvas.style.transformOrigin =
-                "center center";
-
-        }
-    );
-
-
-/* ============================================================
-   UNDO / REDO
-   ============================================================ */
-
-document
-    .getElementById("undoBtn")
-    .addEventListener(
-        "click",
-        () => {}
-    );
-
-
-document
-    .getElementById("redoBtn")
-    .addEventListener(
-        "click",
-        () => {}
-    );
-
-
-/* ============================================================
-   TOUCH
-   ============================================================ */
-
-document.addEventListener(
-    "touchmove",
-    event => {
-
-        if(
-            event.target === canvas ||
-            event.target.closest(".workspace")
-        ){
-
-            event.preventDefault();
-
-        }
-
-    },
-    {
-        passive:false
-    }
-);
-
-
-/* ============================================================
-   VISIBILITY
-   ============================================================ */
-
-document.addEventListener(
-    "visibilitychange",
-    () => {
-
-        pageHidden =
-            document.hidden;
-
-
-        if(
-            document.hidden
-        ){
-
-            stopDrawing();
-
-        }
-
-    }
-);
-
-
-/* ============================================================
-   INITIALIZATION
-   ============================================================ */
-
-resizeCanvas();
-
-resetGestureEngine();
-
-resetLandmarkSmoothing();
-
-resetPenState();
-
-configureProcessingCanvas();
-
-
-console.log(
-    "Air Maths Board V5.2"
-);
-
-console.log(
-    "Device tier:",
-    deviceTier
-);
-
-console.log(
-    "Model complexity:",
-    selectedModelComplexity
-);
-
-console.log(
-    "Initial processing:",
-    `${processingWidth}×${processingHeight}`
-);
-
-console.log(
-    "Target processing FPS:",
-    targetProcessingFPS
+    startCamera
 );
 
 </script>
