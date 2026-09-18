@@ -2,135 +2,237 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport"
-      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-<title>Air Maths Board — Stage 1 Basic</title>
+<meta name="viewport"
+      content="width=device-width,
+               initial-scale=1.0,
+               maximum-scale=1.0,
+               user-scalable=no">
+
+<title>Air Maths Board — Stage 1 Advanced</title>
 
 <style>
-    * {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-    }
 
-    html, body {
-        width: 100%;
-        height: 100%;
-        overflow: hidden;
-        background: #111;
-        font-family: Arial, sans-serif;
-    }
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
 
-    #app {
-        position: relative;
-        width: 100vw;
-        height: 100vh;
-        overflow: hidden;
-    }
+html,
+body {
 
-    /* Camera */
-    #video {
-        position: absolute;
-        inset: 0;
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        transform: scaleX(-1);
-    }
+    width: 100%;
+    height: 100%;
 
-    /* Drawing board */
-    #canvas {
-        position: absolute;
-        inset: 0;
-        width: 100%;
-        height: 100%;
-        pointer-events: none;
-    }
+    overflow: hidden;
 
-    /* Simple cursor */
-    #cursor {
-        position: absolute;
-        width: 24px;
-        height: 24px;
-        border: 3px solid white;
-        border-radius: 50%;
-        transform: translate(-50%, -50%);
-        pointer-events: none;
-        display: none;
-    }
+    background: #111;
 
-    /* Controls */
-    #controls {
-        position: absolute;
-        top: 15px;
-        left: 15px;
-        z-index: 10;
-        display: flex;
-        gap: 10px;
-    }
+    font-family: Arial, sans-serif;
+}
 
-    button {
-        border: none;
-        padding: 12px 18px;
-        border-radius: 8px;
-        background: white;
-        color: black;
-        font-size: 15px;
-        font-weight: bold;
-    }
+#app {
 
-    #status {
-        position: absolute;
-        bottom: 15px;
-        left: 15px;
-        z-index: 10;
-        padding: 10px 14px;
-        border-radius: 8px;
-        background: rgba(0,0,0,0.65);
-        color: white;
-        font-size: 14px;
-    }
+    position: relative;
+
+    width: 100vw;
+    height: 100vh;
+
+    overflow: hidden;
+}
+
+/* CAMERA */
+
+#video {
+
+    position: absolute;
+
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+
+    transform: scaleX(-1);
+}
+
+/* DRAWING */
+
+#canvas {
+
+    position: absolute;
+
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+
+    pointer-events: none;
+}
+
+/* CURSOR */
+
+#cursor {
+
+    position: absolute;
+
+    width: 26px;
+    height: 26px;
+
+    border: 3px solid white;
+
+    border-radius: 50%;
+
+    transform:
+        translate(-50%, -50%);
+
+    pointer-events: none;
+
+    display: none;
+
+    will-change: left, top;
+}
+
+/* CONTROLS */
+
+#controls {
+
+    position: absolute;
+
+    top: 15px;
+    left: 15px;
+
+    z-index: 20;
+
+    display: flex;
+
+    gap: 10px;
+}
+
+button {
+
+    border: none;
+
+    padding: 12px 18px;
+
+    border-radius: 8px;
+
+    background: white;
+
+    color: black;
+
+    font-size: 15px;
+
+    font-weight: bold;
+}
+
+/* STATUS */
+
+#status {
+
+    position: absolute;
+
+    bottom: 15px;
+    left: 15px;
+
+    z-index: 20;
+
+    padding: 10px 14px;
+
+    border-radius: 8px;
+
+    background:
+        rgba(0,0,0,0.65);
+
+    color: white;
+
+    font-size: 14px;
+}
+
 </style>
+
 </head>
 
 <body>
 
 <div id="app">
 
-    <video id="video" autoplay playsinline></video>
+    <video
+        id="video"
+        autoplay
+        playsinline>
+    </video>
 
     <canvas id="canvas"></canvas>
 
     <div id="cursor"></div>
 
     <div id="controls">
-        <button id="startBtn">START</button>
-        <button id="clearBtn">CLEAR</button>
+
+        <button id="startBtn">
+            START
+        </button>
+
+        <button id="clearBtn">
+            CLEAR
+        </button>
+
     </div>
 
-    <div id="status">Press START</div>
+    <div id="status">
+        Press START
+    </div>
 
 </div>
 
 
-<!-- MediaPipe Hands -->
-<script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
+<!-- MEDIAPIPE -->
+
+<script src=
+"https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js">
+</script>
+
+<script src=
+"https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js">
+</script>
 
 
 <script>
 
-const video = document.getElementById("video");
-const canvas = document.getElementById("canvas");
-const ctx = canvas.getContext("2d");
+/* =====================================================
+   ELEMENTS
+===================================================== */
 
-const cursor = document.getElementById("cursor");
-const startBtn = document.getElementById("startBtn");
-const clearBtn = document.getElementById("clearBtn");
-const status = document.getElementById("status");
+const video =
+    document.getElementById("video");
+
+const canvas =
+    document.getElementById("canvas");
+
+const ctx =
+    canvas.getContext("2d");
+
+const cursor =
+    document.getElementById("cursor");
+
+const startBtn =
+    document.getElementById("startBtn");
+
+const clearBtn =
+    document.getElementById("clearBtn");
+
+const status =
+    document.getElementById("status");
+
+
+/* =====================================================
+   STATE
+===================================================== */
 
 let camera = null;
+
 let running = false;
 
 let drawing = false;
@@ -139,28 +241,96 @@ let lastX = null;
 let lastY = null;
 
 
-/* =========================
+/* =====================================================
+   SMOOTHING STATE
+===================================================== */
+
+let smoothX = null;
+let smoothY = null;
+
+
+/*
+   Higher value:
+   → more responsive
+
+   Lower value:
+   → smoother
+*/
+
+const MIN_SMOOTH = 0.25;
+const MAX_SMOOTH = 0.72;
+
+
+/* =====================================================
+   GESTURE STATE
+===================================================== */
+
+let pinchFrames = 0;
+let releaseFrames = 0;
+
+let palmFrames = 0;
+let lastClearTime = 0;
+
+
+/* =====================================================
    CANVAS
-========================= */
+===================================================== */
 
 function resizeCanvas() {
 
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+    const oldWidth =
+        canvas.width;
+
+    const oldHeight =
+        canvas.height;
+
+
+    canvas.width =
+        window.innerWidth;
+
+    canvas.height =
+        window.innerHeight;
+
 
     ctx.lineWidth = 5;
+
     ctx.lineCap = "round";
+
     ctx.lineJoin = "round";
+
+
+    /*
+       Preserve old drawing
+       when possible.
+    */
+
+    if (
+        oldWidth > 0 &&
+        oldHeight > 0
+    ) {
+
+        /*
+           Canvas resize naturally
+           resets the drawing.
+
+           For Stage 1 Advanced,
+           we intentionally prioritize
+           coordinate correctness.
+        */
+    }
 }
 
 resizeCanvas();
 
-window.addEventListener("resize", resizeCanvas);
+window.addEventListener(
+    "resize",
+    resizeCanvas
+);
 
 
-/* =========================
-   CLEAR BOARD
-========================= */
+/* =====================================================
+   CLEAR
+===================================================== */
 
 function clearBoard() {
 
@@ -171,19 +341,36 @@ function clearBoard() {
         canvas.height
     );
 
-    lastX = null;
-    lastY = null;
+    resetDrawing();
+
 }
 
 
-/* =========================
+/* =====================================================
+   RESET DRAWING
+===================================================== */
+
+function resetDrawing() {
+
+    drawing = false;
+
+    lastX = null;
+    lastY = null;
+
+}
+
+
+/* =====================================================
    DISTANCE
-========================= */
+===================================================== */
 
 function distance(a, b) {
 
-    const dx = a.x - b.x;
-    const dy = a.y - b.y;
+    const dx =
+        a.x - b.x;
+
+    const dy =
+        a.y - b.y;
 
     return Math.sqrt(
         dx * dx +
@@ -192,59 +379,278 @@ function distance(a, b) {
 }
 
 
-/* =========================
-   FINGER DETECTION
-========================= */
+/* =====================================================
+   FINGER UP
+===================================================== */
 
-function isFingerUp(landmarks, tip, pip) {
+function isFingerUp(
+    landmarks,
+    tip,
+    pip
+) {
 
-    return landmarks[tip].y <
-           landmarks[pip].y;
+    return (
+        landmarks[tip].y <
+        landmarks[pip].y
+    );
 }
 
 
-/* =========================
+/* =====================================================
    OPEN PALM
-========================= */
+===================================================== */
 
 function isOpenPalm(hand) {
 
-    const index = isFingerUp(hand, 8, 6);
-    const middle = isFingerUp(hand, 12, 10);
-    const ring = isFingerUp(hand, 16, 14);
-    const pinky = isFingerUp(hand, 20, 18);
+    const index =
+        isFingerUp(hand, 8, 6);
 
-    return index &&
-           middle &&
-           ring &&
-           pinky;
+    const middle =
+        isFingerUp(hand, 12, 10);
+
+    const ring =
+        isFingerUp(hand, 16, 14);
+
+    const pinky =
+        isFingerUp(hand, 20, 18);
+
+    return (
+        index &&
+        middle &&
+        ring &&
+        pinky
+    );
 }
 
 
-/* =========================
+/* =====================================================
    PINCH
-========================= */
+===================================================== */
 
-function isPinching(hand) {
+function rawPinch(hand) {
 
-    const thumb = hand[4];
-    const index = hand[8];
+    const thumb =
+        hand[4];
 
-    return distance(thumb, index) < 0.06;
+    const index =
+        hand[8];
+
+    return (
+        distance(
+            thumb,
+            index
+        ) < 0.065
+    );
 }
 
 
-/* =========================
-   MEDIAPIPE
-========================= */
+/* =====================================================
+   STABLE PINCH
+===================================================== */
 
-const hands = new Hands({
-    locateFile: (file) => {
+function stablePinch(hand) {
 
-        return `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`;
+    const pinch =
+        rawPinch(hand);
+
+
+    if (pinch) {
+
+        pinchFrames++;
+
+        releaseFrames = 0;
 
     }
-});
+    else {
+
+        releaseFrames++;
+
+        pinchFrames = 0;
+
+    }
+
+
+    if (pinchFrames >= 2) {
+
+        return true;
+
+    }
+
+
+    if (releaseFrames >= 2) {
+
+        return false;
+
+    }
+
+
+    return drawing === false;
+}
+
+
+/* =====================================================
+   ADAPTIVE SMOOTHING
+===================================================== */
+
+function smoothPosition(
+    targetX,
+    targetY
+) {
+
+    if (
+        smoothX === null ||
+        smoothY === null
+    ) {
+
+        smoothX = targetX;
+        smoothY = targetY;
+
+        return {
+            x: smoothX,
+            y: smoothY
+        };
+    }
+
+
+    const movement =
+        Math.sqrt(
+            Math.pow(
+                targetX - smoothX,
+                2
+            ) +
+            Math.pow(
+                targetY - smoothY,
+                2
+            )
+        );
+
+
+    /*
+       Small movement:
+       more smoothing.
+
+       Large movement:
+       more responsiveness.
+    */
+
+    const normalized =
+        Math.min(
+            movement / 180,
+            1
+        );
+
+
+    const alpha =
+        MIN_SMOOTH +
+        (
+            MAX_SMOOTH -
+            MIN_SMOOTH
+        ) *
+        normalized;
+
+
+    smoothX +=
+        (
+            targetX -
+            smoothX
+        ) * alpha;
+
+
+    smoothY +=
+        (
+            targetY -
+            smoothY
+        ) * alpha;
+
+
+    return {
+        x: smoothX,
+        y: smoothY
+    };
+}
+
+
+/* =====================================================
+   EDGE PROTECTION
+===================================================== */
+
+function clampPosition(
+    x,
+    y
+) {
+
+    /*
+       Small safety margin.
+
+       Prevents unstable landmark
+       values from creating extreme
+       jumps outside the board.
+    */
+
+    const margin = 8;
+
+
+    x = Math.max(
+        margin,
+        Math.min(
+            canvas.width - margin,
+            x
+        )
+    );
+
+
+    y = Math.max(
+        margin,
+        Math.min(
+            canvas.height - margin,
+            y
+        )
+    );
+
+
+    return {
+        x,
+        y
+    };
+}
+
+
+/* =====================================================
+   RESET TRACKING
+===================================================== */
+
+function resetTracking() {
+
+    smoothX = null;
+    smoothY = null;
+
+    resetDrawing();
+
+    pinchFrames = 0;
+    releaseFrames = 0;
+
+}
+
+
+/* =====================================================
+   MEDIAPIPE
+===================================================== */
+
+const hands =
+    new Hands({
+
+        locateFile:
+            (file) => {
+
+                return (
+                    "https://cdn.jsdelivr.net/npm/" +
+                    "@mediapipe/hands/" +
+                    file
+                );
+
+            }
+
+    });
 
 
 hands.setOptions({
@@ -253,198 +659,318 @@ hands.setOptions({
 
     modelComplexity: 1,
 
-    minDetectionConfidence: 0.6,
+    minDetectionConfidence: 0.65,
 
-    minTrackingConfidence: 0.6
+    minTrackingConfidence: 0.65
 
 });
 
 
-/* =========================
-   HAND RESULTS
-========================= */
+/* =====================================================
+   RESULTS
+===================================================== */
 
-hands.onResults((results) => {
+hands.onResults(
+    (results) => {
 
-    if (!running) return;
+        if (!running)
+            return;
 
-    if (
-        !results.multiHandLandmarks ||
-        results.multiHandLandmarks.length === 0
-    ) {
 
-        cursor.style.display = "none";
+        /* NO HAND */
 
-        drawing = false;
+        if (
+            !results.multiHandLandmarks ||
+            results.multiHandLandmarks.length === 0
+        ) {
 
-        lastX = null;
-        lastY = null;
+            cursor.style.display =
+                "none";
 
-        status.textContent = "No hand detected";
+            resetTracking();
 
-        return;
+            status.textContent =
+                "No hand detected";
+
+            return;
+        }
+
+
+        const hand =
+            results.multiHandLandmarks[0];
+
+
+        /* INDEX */
+
+        const index =
+            hand[8];
+
+
+        /*
+           Mirrored X coordinate
+        */
+
+        let targetX =
+            (
+                1 -
+                index.x
+            ) *
+            canvas.width;
+
+
+        let targetY =
+            index.y *
+            canvas.height;
+
+
+        /* EDGE PROTECTION */
+
+        const safe =
+            clampPosition(
+                targetX,
+                targetY
+            );
+
+
+        targetX = safe.x;
+        targetY = safe.y;
+
+
+        /* SMOOTH */
+
+        const position =
+            smoothPosition(
+                targetX,
+                targetY
+            );
+
+
+        const x =
+            position.x;
+
+        const y =
+            position.y;
+
+
+        /* CURSOR */
+
+        cursor.style.display =
+            "block";
+
+        cursor.style.left =
+            `${x}px`;
+
+        cursor.style.top =
+            `${y}px`;
+
+
+        /* =================================================
+           OPEN PALM
+        ================================================= */
+
+        const palm =
+            isOpenPalm(hand);
+
+
+        if (palm) {
+
+            palmFrames++;
+
+        }
+        else {
+
+            palmFrames = 0;
+
+        }
+
+
+        /*
+           Require several consecutive
+           frames before clearing.
+        */
+
+        if (
+            palmFrames >= 5 &&
+            Date.now() -
+            lastClearTime >
+            900
+        ) {
+
+            clearBoard();
+
+            lastClearTime =
+                Date.now();
+
+            palmFrames = 0;
+
+            status.textContent =
+                "Open palm — Board cleared";
+
+            return;
+        }
+
+
+        /* =================================================
+           PINCH
+        ================================================= */
+
+        const pinched =
+            stablePinch(hand);
+
+
+        if (pinched) {
+
+            resetDrawing();
+
+            status.textContent =
+                "Pinch — Drawing OFF";
+
+            return;
+        }
+
+
+        /* =================================================
+           DRAW
+        ================================================= */
+
+        drawing = true;
+
+
+        status.textContent =
+            "Index finger — Drawing";
+
+
+        if (
+            lastX !== null &&
+            lastY !== null
+        ) {
+
+            /*
+               Ignore extremely tiny
+               movements caused by
+               tracking noise.
+            */
+
+            const movement =
+                Math.sqrt(
+                    Math.pow(
+                        x - lastX,
+                        2
+                    ) +
+                    Math.pow(
+                        y - lastY,
+                        2
+                    )
+                );
+
+
+            if (movement > 1.2) {
+
+                ctx.beginPath();
+
+                ctx.moveTo(
+                    lastX,
+                    lastY
+                );
+
+                ctx.lineTo(
+                    x,
+                    y
+                );
+
+                ctx.stroke();
+
+            }
+
+        }
+
+
+        lastX = x;
+        lastY = y;
+
     }
+);
 
 
-    const hand =
-        results.multiHandLandmarks[0];
+/* =====================================================
+   START CAMERA
+===================================================== */
+
+startBtn.addEventListener(
+    "click",
+    async () => {
+
+        if (running)
+            return;
 
 
-    /* INDEX FINGER */
+        try {
 
-    const index = hand[8];
+            camera =
+                new Camera(
+                    video,
+                    {
 
+                        onFrame:
+                            async () => {
 
-    /*
-       MediaPipe coordinates:
+                                await hands.send({
+                                    image: video
+                                });
 
-       x = 0 → left
-       x = 1 → right
+                            },
 
-       Because camera is mirrored,
-       we reverse X.
-    */
+                        width: 1280,
 
-    const x =
-        (1 - index.x) *
-        canvas.width;
+                        height: 720
 
-    const y =
-        index.y *
-        canvas.height;
-
-
-    /* CURSOR */
-
-    cursor.style.display = "block";
-
-    cursor.style.left = `${x}px`;
-    cursor.style.top = `${y}px`;
+                    }
+                );
 
 
-    /* =========================
-       PINCH
-    ========================= */
+            camera.start();
 
-    if (isPinching(hand)) {
 
-        drawing = false;
+            running = true;
 
-        lastX = null;
-        lastY = null;
 
-        status.textContent = "Pinch — Drawing OFF";
+            startBtn.textContent =
+                "RUNNING";
 
-        return;
+
+            status.textContent =
+                "Camera started — Show your hand";
+
+        }
+
+        catch (error) {
+
+            console.error(error);
+
+
+            status.textContent =
+                "Camera failed to start";
+
+        }
+
     }
+);
 
 
-    /* =========================
-       OPEN PALM
-    ========================= */
+/* =====================================================
+   CLEAR BUTTON
+===================================================== */
 
-    if (isOpenPalm(hand)) {
-
-        drawing = false;
-
-        lastX = null;
-        lastY = null;
+clearBtn.addEventListener(
+    "click",
+    () => {
 
         clearBoard();
 
         status.textContent =
-            "Open palm — Board cleared";
-
-        return;
-    }
-
-
-    /* =========================
-       DRAWING
-    ========================= */
-
-    drawing = true;
-
-    status.textContent =
-        "Index finger — Drawing";
-
-
-    if (lastX !== null && lastY !== null) {
-
-        ctx.beginPath();
-
-        ctx.moveTo(lastX, lastY);
-
-        ctx.lineTo(x, y);
-
-        ctx.stroke();
+            "Board cleared";
 
     }
-
-
-    lastX = x;
-    lastY = y;
-
-});
-
-
-/* =========================
-   CAMERA
-========================= */
-
-startBtn.addEventListener("click", async () => {
-
-    if (running) return;
-
-    try {
-
-        camera = new Camera(
-            video,
-            {
-                onFrame: async () => {
-
-                    await hands.send({
-                        image: video
-                    });
-
-                },
-
-                width: 1280,
-                height: 720
-
-            }
-        );
-
-        camera.start();
-
-        running = true;
-
-        startBtn.textContent = "RUNNING";
-
-        status.textContent =
-            "Camera started — Show your hand";
-
-    }
-
-    catch (error) {
-
-        console.error(error);
-
-        status.textContent =
-            "Camera failed to start";
-
-    }
-
-});
-
-
-/* =========================
-   CLEAR BUTTON
-========================= */
-
-clearBtn.addEventListener(
-    "click",
-    clearBoard
 );
 
 </script>
