@@ -16,12 +16,7 @@
 
 <style>
 
-/* =========================================================
-   ROOT
-   ========================================================= */
-
 :root{
-
     --bg-0:#0d0f11;
     --bg-1:#121416;
     --bg-2:#181b1e;
@@ -47,11 +42,6 @@
     --bottombar:28px;
 }
 
-
-/* =========================================================
-   GLOBAL
-   ========================================================= */
-
 *{
     box-sizing:border-box;
     -webkit-tap-highlight-color:transparent;
@@ -59,16 +49,11 @@
 
 html,
 body{
-
     margin:0;
-
     width:100%;
     height:100%;
-
     overflow:hidden;
-
     background:var(--bg-0);
-
     color:var(--text-1);
 
     font-family:
@@ -90,6 +75,7 @@ button{
 
 /* =========================================================
    CAMERA
+   ONLY CHANGE: z-index is now 60
    ========================================================= */
 
 #camera{
@@ -104,86 +90,14 @@ button{
 
     object-fit:cover;
 
-    opacity:0;
+    opacity:1;
 
     pointer-events:none;
 
-    z-index:1;
+    z-index:60;
 
     transition:
         opacity .15s ease;
-}
-
-
-/*
-   Camera preview.
-
-   The actual camera remains hidden normally.
-   CAM button reveals this small preview.
-*/
-
-body.camera-debug #camera{
-
-    left:auto;
-    top:auto;
-
-    right:12px;
-    bottom:40px;
-
-    width:220px;
-    height:124px;
-
-    object-fit:cover;
-
-    opacity:1;
-
-    z-index:80;
-
-    border:1px solid var(--line-3);
-
-    border-radius:8px;
-
-    box-shadow:
-        0 10px 30px rgba(0,0,0,.45);
-
-    transform:scaleX(-1);
-}
-
-
-/* =========================================================
-   CAMERA PREVIEW LABEL
-   ========================================================= */
-
-.camera-debug-label{
-
-    position:fixed;
-
-    right:12px;
-    bottom:164px;
-
-    padding:5px 8px;
-
-    border:1px solid var(--line-2);
-
-    background:rgba(13,15,17,.88);
-
-    color:var(--text-3);
-
-    font-size:8px;
-
-    letter-spacing:.10em;
-
-    z-index:100;
-
-    display:none;
-
-    pointer-events:none;
-
-    border-radius:4px;
-}
-
-body.camera-debug .camera-debug-label{
-    display:block;
 }
 
 
@@ -636,7 +550,7 @@ body.camera-debug .camera-debug-label{
 
     opacity:0;
 
-    z-index:50;
+    z-index:70;
 
     transition:
 
@@ -1083,21 +997,6 @@ body.camera-debug .camera-debug-label{
         padding:0 6px;
     }
 
-    body.camera-debug #camera{
-
-        right:8px;
-        bottom:34px;
-
-        width:155px;
-        height:105px;
-    }
-
-    .camera-debug-label{
-
-        right:8px;
-        bottom:144px;
-    }
-
 }
 
 
@@ -1161,19 +1060,6 @@ body.camera-debug .camera-debug-label{
         gap:8px;
     }
 
-    .camera-debug-label{
-
-        bottom:115px;
-    }
-
-    body.camera-debug #camera{
-
-        width:170px;
-        height:96px;
-
-        bottom:30px;
-    }
-
 }
 
 
@@ -1203,10 +1089,6 @@ body.camera-debug .camera-debug-label{
 <body>
 
 
-<!-- =========================================================
-     CAMERA
-     ========================================================= -->
-
 <video
     id="camera"
     autoplay
@@ -1214,14 +1096,6 @@ body.camera-debug .camera-debug-label{
     playsinline>
 </video>
 
-<div class="camera-debug-label">
-    LIVE CAMERA
-</div>
-
-
-<!-- =========================================================
-     APP
-     ========================================================= -->
 
 <div id="app">
 
@@ -1291,10 +1165,6 @@ body.camera-debug .camera-debug-label{
 
 </header>
 
-
-<!-- =========================================================
-     TOOL RAIL
-     ========================================================= -->
 
 <aside class="toolrail">
 
@@ -1401,10 +1271,6 @@ body.camera-debug .camera-debug-label{
 </aside>
 
 
-<!-- =========================================================
-     WORKSPACE
-     ========================================================= -->
-
 <main class="workspace">
 
 
@@ -1461,10 +1327,6 @@ body.camera-debug .camera-debug-label{
 
     </div>
 
-
-    <!-- =====================================================
-         INSPECTOR
-         ===================================================== -->
 
     <aside class="inspector">
 
@@ -1603,10 +1465,6 @@ body.camera-debug .camera-debug-label{
         </section>
 
 
-        <!-- =================================================
-             PERFORMANCE
-             ================================================= -->
-
         <section class="inspector-section">
 
 
@@ -1731,14 +1589,10 @@ body.camera-debug .camera-debug-label{
    ============================================================ */
 
 const video =
-    document.getElementById(
-        "camera"
-    );
+    document.getElementById("camera");
 
 const canvas =
-    document.getElementById(
-        "drawCanvas"
-    );
+    document.getElementById("drawCanvas");
 
 const ctx =
     canvas.getContext(
@@ -1750,94 +1604,58 @@ const ctx =
     );
 
 const cursor =
-    document.getElementById(
-        "cursor"
-    );
+    document.getElementById("cursor");
 
 const startBtn =
-    document.getElementById(
-        "startBtn"
-    );
+    document.getElementById("startBtn");
 
 const centerPanel =
-    document.getElementById(
-        "centerPanel"
-    );
+    document.getElementById("centerPanel");
 
 const centerDescription =
-    document.getElementById(
-        "centerDescription"
-    );
+    document.getElementById("centerDescription");
 
 const connectionStatus =
-    document.getElementById(
-        "connectionStatus"
-    );
+    document.getElementById("connectionStatus");
 
 const connectionText =
-    document.getElementById(
-        "connectionText"
-    );
+    document.getElementById("connectionText");
 
 const cameraState =
-    document.getElementById(
-        "cameraState"
-    );
+    document.getElementById("cameraState");
 
 const handState =
-    document.getElementById(
-        "handState"
-    );
+    document.getElementById("handState");
 
 const modeState =
-    document.getElementById(
-        "modeState"
-    );
+    document.getElementById("modeState");
 
 const gestureState =
-    document.getElementById(
-        "gestureState"
-    );
+    document.getElementById("gestureState");
 
 const trackingDot =
-    document.getElementById(
-        "trackingDot"
-    );
+    document.getElementById("trackingDot");
 
 const trackingState =
-    document.getElementById(
-        "trackingState"
-    );
+    document.getElementById("trackingState");
 
 const coordinates =
-    document.getElementById(
-        "coordinates"
-    );
+    document.getElementById("coordinates");
 
 const fpsState =
-    document.getElementById(
-        "fpsState"
-    );
+    document.getElementById("fpsState");
 
 const latencyState =
-    document.getElementById(
-        "latencyState"
-    );
+    document.getElementById("latencyState");
 
 const processState =
-    document.getElementById(
-        "processState"
-    );
+    document.getElementById("processState");
 
 const deviceState =
-    document.getElementById(
-        "deviceState"
-    );
+    document.getElementById("deviceState");
 
 const debugCameraBtn =
-    document.getElementById(
-        "debugCameraBtn"
-    );
+    document.getElementById("debugCameraBtn");
 
 
 /* ============================================================
@@ -1858,36 +1676,22 @@ let pageHidden = false;
 
 
 /* ============================================================
-   DEVICE PERFORMANCE DETECTION
+   DEVICE PERFORMANCE
    ============================================================ */
 
 function detectDeviceTier(){
 
     const cores =
-        navigator.hardwareConcurrency ||
-        4;
+        navigator.hardwareConcurrency || 4;
 
     const memory =
-        navigator.deviceMemory ||
-        4;
+        navigator.deviceMemory || 4;
 
     const ua =
-        navigator.userAgent ||
-        "";
+        navigator.userAgent || "";
 
     const mobile =
-        /Android|iPhone|iPad|iPod/i.test(
-            ua
-        );
-
-
-    /*
-       High performance:
-
-       >=8 logical cores
-       OR
-       >=8GB reported memory
-    */
+        /Android|iPhone|iPad|iPod/i.test(ua);
 
     if(
         cores >= 8 ||
@@ -1897,11 +1701,6 @@ function detectDeviceTier(){
         return "HIGH";
     }
 
-
-    /*
-       Mid-range.
-    */
-
     if(
         cores >= 6 ||
         memory >= 4
@@ -1910,19 +1709,12 @@ function detectDeviceTier(){
         return "MID";
     }
 
-
-    /*
-       Low-end phones /
-       older devices.
-    */
-
     return "LOW";
 }
 
 
 const deviceTier =
     detectDeviceTier();
-
 
 deviceState.textContent =
     deviceTier;
@@ -1931,18 +1723,6 @@ deviceState.textContent =
 /* ============================================================
    PROCESSING RESOLUTION
    ============================================================ */
-
-
-/*
-   These are NOT camera resolutions.
-
-   They are MediaPipe processing resolutions.
-
-   The camera itself can remain high quality.
-
-   Keeping MediaPipe input smaller is one of the
-   biggest performance improvements in this version.
-*/
 
 const PROCESSING_LEVELS = [
 
@@ -1997,9 +1777,7 @@ let processingHeight = 360;
 
 
 const processingCanvas =
-    document.createElement(
-        "canvas"
-    );
+    document.createElement("canvas");
 
 const processingCtx =
     processingCanvas.getContext(
@@ -2022,12 +1800,6 @@ function configureProcessingCanvas(){
     processingWidth =
         level.width;
 
-
-    /*
-       Maintain the actual camera aspect ratio.
-
-       This prevents stretched landmark coordinates.
-    */
 
     const aspect =
         video.videoWidth &&
@@ -2065,15 +1837,8 @@ function configureProcessingCanvas(){
    PROCESSING RATE
    ============================================================ */
 
-
-/*
-   We don't blindly run MediaPipe at 60 FPS.
-
-   Instead we run as fast as the device can handle
-   without allowing latency to accumulate.
-*/
-
 let targetProcessingFPS;
+
 
 if(deviceTier === "HIGH"){
 
@@ -2095,7 +1860,7 @@ let targetFrameInterval =
 
 
 /* ============================================================
-   PERFORMANCE MEASUREMENT
+   PERFORMANCE
    ============================================================ */
 
 let performanceFrames = 0;
@@ -2136,17 +1901,11 @@ function resizeCanvas(){
 
 
     viewWidth =
-        Math.max(
-            1,
-            rect.width
-        );
+        Math.max(1,rect.width);
 
 
     viewHeight =
-        Math.max(
-            1,
-            rect.height
-        );
+        Math.max(1,rect.height);
 
 
     dpr =
@@ -2158,15 +1917,13 @@ function resizeCanvas(){
 
     canvas.width =
         Math.round(
-            viewWidth *
-            dpr
+            viewWidth * dpr
         );
 
 
     canvas.height =
         Math.round(
-            viewHeight *
-            dpr
+            viewHeight * dpr
         );
 
 
@@ -2193,13 +1950,10 @@ function resizeCanvas(){
 function getCameraGeometry(){
 
     const cw =
-        video.videoWidth ||
-        1280;
+        video.videoWidth || 1280;
 
     const ch =
-        video.videoHeight ||
-        720;
-
+        video.videoHeight || 720;
 
     const vw =
         window.innerWidth;
@@ -2207,45 +1961,33 @@ function getCameraGeometry(){
     const vh =
         window.innerHeight;
 
-
     const scale =
         Math.max(
             vw / cw,
             vh / ch
         );
 
-
     const rw =
-        cw *
-        scale;
+        cw * scale;
 
     const rh =
-        ch *
-        scale;
-
+        ch * scale;
 
     const cropX =
-        (rw - vw) /
-        2;
+        (rw - vw) / 2;
 
     const cropY =
-        (rh - vh) /
-        2;
-
+        (rh - vh) / 2;
 
     return {
 
         cw,
         ch,
-
         vw,
         vh,
-
         scale,
-
         rw,
         rh,
-
         cropX,
         cropY
 
@@ -2257,70 +1999,41 @@ function getCameraGeometry(){
    CAMERA → SCREEN
    ============================================================ */
 
-function cameraToScreen(
-    x,
-    y
-){
+function cameraToScreen(x,y){
 
     const g =
         getCameraGeometry();
 
-
     let px =
-        x *
-        g.cw;
+        x * g.cw;
 
     let py =
-        y *
-        g.ch;
-
-
-    /*
-       Mirror front camera.
-    */
+        y * g.ch;
 
     px =
-        g.cw -
-        px;
-
+        g.cw - px;
 
     let sx =
-        px *
-        g.scale -
-        g.cropX;
-
+        px * g.scale - g.cropX;
 
     let sy =
-        py *
-        g.scale -
-        g.cropY;
-
+        py * g.scale - g.cropY;
 
     sx =
         Math.max(
             0,
-            Math.min(
-                g.vw,
-                sx
-            )
+            Math.min(g.vw,sx)
         );
-
 
     sy =
         Math.max(
             0,
-            Math.min(
-                g.vh,
-                sy
-            )
+            Math.min(g.vh,sy)
         );
 
-
     return {
-
         x:sx,
         y:sy
-
     };
 }
 
@@ -2329,49 +2042,32 @@ function cameraToScreen(
    SCREEN → BOARD
    ============================================================ */
 
-function screenToBoard(
-    point
-){
+function screenToBoard(point){
 
     const rect =
         canvas.getBoundingClientRect();
 
-
     let x =
-        point.x -
-        rect.left;
-
+        point.x - rect.left;
 
     let y =
-        point.y -
-        rect.top;
-
+        point.y - rect.top;
 
     x =
         Math.max(
             0,
-            Math.min(
-                rect.width,
-                x
-            )
+            Math.min(rect.width,x)
         );
-
 
     y =
         Math.max(
             0,
-            Math.min(
-                rect.height,
-                y
-            )
+            Math.min(rect.height,y)
         );
 
-
     return {
-
         x,
         y
-
     };
 }
 
@@ -2380,16 +2076,10 @@ function screenToBoard(
    CAMERA → BOARD
    ============================================================ */
 
-function cameraToBoard(
-    x,
-    y
-){
+function cameraToBoard(x,y){
 
     return screenToBoard(
-        cameraToScreen(
-            x,
-            y
-        )
+        cameraToScreen(x,y)
     );
 }
 
@@ -2397,19 +2087,6 @@ function cameraToBoard(
 /* ============================================================
    LANDMARK STABILIZATION
    ============================================================ */
-
-
-/*
-   IMPORTANT:
-
-   We do NOT heavily smooth all 21 landmarks.
-
-   Gesture detection gets the raw landmarks.
-
-   Only the cursor receives stabilization.
-
-   This removes a major source of artificial latency.
-*/
 
 let stableTip = null;
 
@@ -2442,10 +2119,6 @@ function resetLandmarkSmoothing(){
 }
 
 
-/* ============================================================
-   STABILIZE INDEX TIP
-   ============================================================ */
-
 function stabilizeIndexTip(
     landmarks
 ){
@@ -2453,40 +2126,28 @@ function stabilizeIndexTip(
     const now =
         performance.now();
 
-
     const raw =
         landmarks[8];
-
 
     if(!stableTip){
 
         stableTip = {
-
             x:raw.x,
             y:raw.y
-
         };
-
 
         previousRawTip = {
-
             x:raw.x,
             y:raw.y
-
         };
-
 
         previousLandmarkTime =
             now;
 
-
         predictedTip = {
-
             x:raw.x,
             y:raw.y
-
         };
-
 
         return predictedTip;
     }
@@ -2498,8 +2159,7 @@ function stabilizeIndexTip(
             (
                 now -
                 previousLandmarkTime
-            ) /
-            1000
+            ) / 1000
         );
 
 
@@ -2507,23 +2167,18 @@ function stabilizeIndexTip(
         (
             raw.x -
             previousRawTip.x
-        ) /
-        dt;
+        ) / dt;
 
 
     const vy =
         (
             raw.y -
             previousRawTip.y
-        ) /
-        dt;
+        ) / dt;
 
 
     const speed =
-        Math.hypot(
-            vx,
-            vy
-        );
+        Math.hypot(vx,vy);
 
 
     const speedRatio =
@@ -2536,7 +2191,6 @@ function stabilizeIndexTip(
 
     const alpha =
         CURSOR_SMOOTH_SLOW +
-
         (
             CURSOR_SMOOTH_FAST -
             CURSOR_SMOOTH_SLOW
@@ -2560,19 +2214,12 @@ function stabilizeIndexTip(
         alpha;
 
 
-    /*
-       Small forward prediction.
-
-       This compensates for MediaPipe inference delay.
-    */
-
     const predictionSeconds =
         Math.min(
             .030,
             Math.max(
                 .006,
-                measuredLatency /
-                1000
+                measuredLatency / 1000
             )
         );
 
@@ -2615,10 +2262,8 @@ function stabilizeIndexTip(
 
 
     previousRawTip = {
-
         x:raw.x,
         y:raw.y
-
     };
 
 
@@ -2634,14 +2279,11 @@ function stabilizeIndexTip(
    HAND GEOMETRY
    ============================================================ */
 
-function distance2D(
-    a,
-    b
-){
+function distance2D(a,b){
 
     return Math.hypot(
-        a.x - b.x,
-        a.y - b.y
+        a.x-b.x,
+        a.y-b.y
     );
 }
 
@@ -2697,14 +2339,12 @@ function fingerExtended(
     return (
 
         tipDistance >
-        pipDistance *
-        1.12
+        pipDistance * 1.12
 
         &&
 
         fingerLength >
-        palmLength *
-        .72
+        palmLength * .72
 
     );
 }
@@ -2724,13 +2364,11 @@ function getPinchRatio(
     const index =
         landmarks[8];
 
-
     const palm =
         distance2D(
             landmarks[0],
             landmarks[9]
         );
-
 
     const pinchDistance =
         distance2D(
@@ -2738,15 +2376,12 @@ function getPinchRatio(
             index
         );
 
-
     return (
-
         pinchDistance /
         Math.max(
             palm,
             .0001
         )
-
     );
 }
 
@@ -2758,8 +2393,7 @@ function isPinching(
     return (
         getPinchRatio(
             landmarks
-        ) <
-        .50
+        ) < .50
     );
 }
 
@@ -2772,12 +2406,6 @@ function classifyRawGesture(
     landmarks
 ){
 
-    /*
-       These are RAW landmarks.
-
-       No cursor smoothing delay.
-    */
-
     const indexUp =
         fingerExtended(
             landmarks,
@@ -2785,7 +2413,6 @@ function classifyRawGesture(
             6,
             5
         );
-
 
     const middleUp =
         fingerExtended(
@@ -2795,7 +2422,6 @@ function classifyRawGesture(
             9
         );
 
-
     const ringUp =
         fingerExtended(
             landmarks,
@@ -2803,7 +2429,6 @@ function classifyRawGesture(
             14,
             13
         );
-
 
     const pinkyUp =
         fingerExtended(
@@ -2813,29 +2438,19 @@ function classifyRawGesture(
             17
         );
 
-
     const pinch =
         isPinching(
             landmarks
         );
 
 
-    const extendedCount =
+    const extendedCount = [
+        indexUp,
+        middleUp,
+        ringUp,
+        pinkyUp
+    ].filter(Boolean).length;
 
-        [
-            indexUp,
-            middleUp,
-            ringUp,
-            pinkyUp
-
-        ].filter(
-            Boolean
-        ).length;
-
-
-    /*
-       OPEN HAND
-    */
 
     if(
         !pinch &&
@@ -2846,30 +2461,17 @@ function classifyRawGesture(
     }
 
 
-    /*
-       PINCH
-    */
-
     if(pinch){
 
         return "PINCH";
     }
 
 
-    /*
-       INDEX ONLY
-    */
-
     if(
-
         indexUp &&
-
         !middleUp &&
-
         !ringUp &&
-
         !pinkyUp
-
     ){
 
         return "DRAW";
@@ -2884,78 +2486,53 @@ function classifyRawGesture(
    GESTURE STATE MACHINE
    ============================================================ */
 
-const GESTURE_CONFIRM_FRAMES =
-    3;
+const GESTURE_CONFIRM_FRAMES = 3;
 
-const GESTURE_RELEASE_FRAMES =
-    3;
+const GESTURE_RELEASE_FRAMES = 3;
 
-const OPEN_CLEAR_FRAMES =
-    8;
+const OPEN_CLEAR_FRAMES = 8;
 
-const OPEN_CLEAR_COOLDOWN =
-    25;
+const OPEN_CLEAR_COOLDOWN = 25;
 
 
-let committedGesture =
-    "NONE";
+let committedGesture = "NONE";
 
-let candidateGesture =
-    "NONE";
+let candidateGesture = "NONE";
 
-let candidateFrames =
-    0;
+let candidateFrames = 0;
 
-let releaseFrames =
-    0;
+let releaseFrames = 0;
 
-let openFrames =
-    0;
+let openFrames = 0;
 
-let clearCooldown =
-    0;
+let clearCooldown = 0;
 
-let clearLatched =
-    false;
+let clearLatched = false;
 
 
 function resetGestureEngine(){
 
-    committedGesture =
-        "NONE";
+    committedGesture = "NONE";
 
-    candidateGesture =
-        "NONE";
+    candidateGesture = "NONE";
 
-    candidateFrames =
-        0;
+    candidateFrames = 0;
 
-    releaseFrames =
-        0;
+    releaseFrames = 0;
 
-    openFrames =
-        0;
+    openFrames = 0;
 
-    clearCooldown =
-        0;
+    clearCooldown = 0;
 
-    clearLatched =
-        false;
+    clearLatched = false;
 }
 
-
-/* ============================================================
-   UPDATE GESTURE
-   ============================================================ */
 
 function updateGesture(
     rawGesture
 ){
 
-    if(
-        clearCooldown >
-        0
-    ){
+    if(clearCooldown > 0){
 
         clearCooldown--;
     }
@@ -2969,11 +2546,9 @@ function updateGesture(
         candidateGesture =
             rawGesture;
 
-        candidateFrames =
-            0;
+        candidateFrames = 0;
 
-        releaseFrames =
-            0;
+        releaseFrames = 0;
 
     }else{
 
@@ -2985,42 +2560,31 @@ function updateGesture(
             candidateGesture =
                 rawGesture;
 
-            candidateFrames =
-                1;
+            candidateFrames = 1;
 
         }else{
 
             candidateFrames++;
-
         }
 
 
         if(
-
-            rawGesture !==
-            "NONE"
-
-            &&
-
+            rawGesture !== "NONE" &&
             candidateFrames >=
             GESTURE_CONFIRM_FRAMES
-
         ){
 
             committedGesture =
                 rawGesture;
 
-            candidateFrames =
-                0;
+            candidateFrames = 0;
 
-            releaseFrames =
-                0;
+            releaseFrames = 0;
         }
 
 
         if(
-            rawGesture ===
-            "NONE"
+            rawGesture === "NONE"
         ){
 
             releaseFrames++;
@@ -3034,8 +2598,7 @@ function updateGesture(
                 committedGesture =
                     "NONE";
 
-                releaseFrames =
-                    0;
+                releaseFrames = 0;
             }
         }
     }
@@ -3052,56 +2615,33 @@ function updateGesture(
 
         openFrames = 0;
 
-        clearLatched =
-            false;
+        clearLatched = false;
     }
 
 
     if(
-
-        committedGesture ===
-        "OPEN"
-
-        &&
-
-        openFrames >=
-        OPEN_CLEAR_FRAMES
-
-        &&
-
-        !clearLatched
-
-        &&
-
-        clearCooldown ===
-        0
-
+        committedGesture === "OPEN" &&
+        openFrames >= OPEN_CLEAR_FRAMES &&
+        !clearLatched &&
+        clearCooldown === 0
     ){
 
-        clearLatched =
-            true;
+        clearLatched = true;
 
         clearCooldown =
             OPEN_CLEAR_COOLDOWN;
 
 
         return {
-
             gesture:"OPEN",
-
             clear:true
-
         };
     }
 
 
     return {
-
-        gesture:
-            committedGesture,
-
+        gesture:committedGesture,
         clear:false
-
     };
 }
 
@@ -3110,32 +2650,23 @@ function updateGesture(
    V5 PEN ENGINE
    ============================================================ */
 
-const SLOW_SMOOTHING =
-    .24;
+const SLOW_SMOOTHING = .24;
 
-const FAST_SMOOTHING =
-    .90;
+const FAST_SMOOTHING = .90;
 
-const FAST_SPEED =
-    850;
+const FAST_SPEED = 850;
 
-const MAX_REASONABLE_JUMP =
-    400;
+const MAX_REASONABLE_JUMP = 400;
 
-const MICRO_JITTER_DISTANCE =
-    .65;
+const MICRO_JITTER_DISTANCE = .65;
 
-const MIN_POINT_DISTANCE =
-    1.0;
+const MIN_POINT_DISTANCE = 1.0;
 
-const MIN_INK_WIDTH =
-    2.6;
+const MIN_INK_WIDTH = 2.6;
 
-const MAX_INK_WIDTH =
-    5.4;
+const MAX_INK_WIDTH = 5.4;
 
-const CURVE_TENSION =
-    1/6;
+const CURVE_TENSION = 1/6;
 
 
 let drawing = false;
@@ -3143,17 +2674,13 @@ let drawing = false;
 let hasPreviousPoint = false;
 
 let lastPoint = {
-
     x:0,
     y:0
-
 };
 
 let smoothedPoint = {
-
     x:0,
     y:0
-
 };
 
 let lastTime = 0;
@@ -3163,32 +2690,20 @@ let lastSpeed = 0;
 let strokePoints = [];
 
 
-/* ============================================================
-   RESET PEN
-   ============================================================ */
-
 function resetPenState(){
 
-    drawing =
-        false;
+    drawing = false;
 
-    hasPreviousPoint =
-        false;
+    hasPreviousPoint = false;
 
-    strokePoints =
-        [];
+    strokePoints = [];
 
-    lastSpeed =
-        0;
+    lastSpeed = 0;
 
     lastTime =
         performance.now();
 }
 
-
-/* ============================================================
-   SMOOTH POINT
-   ============================================================ */
 
 function smoothPoint(
     target,
@@ -3217,10 +2732,8 @@ function smoothPoint(
 
 
         return {
-
             x:target.x,
             y:target.y
-
         };
     }
 
@@ -3231,8 +2744,7 @@ function smoothPoint(
             (
                 now -
                 lastTime
-            ) /
-            1000
+            ) / 1000
         );
 
 
@@ -3254,19 +2766,12 @@ function smoothPoint(
 
 
     const speed =
-        rawDistance /
-        dt;
+        rawDistance / dt;
 
 
     lastSpeed =
-
-        lastSpeed *
-        .7
-
-        +
-
-        speed *
-        .3;
+        lastSpeed * .7 +
+        speed * .3;
 
 
     const speedRatio =
@@ -3278,18 +2783,11 @@ function smoothPoint(
 
 
     const smoothing =
-
-        SLOW_SMOOTHING
-
-        +
-
+        SLOW_SMOOTHING +
         (
             FAST_SMOOTHING -
             SLOW_SMOOTHING
-        )
-
-        *
-
+        ) *
         speedRatio;
 
 
@@ -3315,10 +2813,8 @@ function smoothPoint(
 
 
         return {
-
             x:target.x,
             y:target.y
-
         };
     }
 
@@ -3333,38 +2829,25 @@ function smoothPoint(
 
 
         return {
-
-            x:
-                smoothedPoint.x,
-
-            y:
-                smoothedPoint.y
-
+            x:smoothedPoint.x,
+            y:smoothedPoint.y
         };
     }
 
 
     smoothedPoint.x +=
-
         (
             target.x -
             smoothedPoint.x
-        )
-
-        *
-
+        ) *
         smoothing;
 
 
     smoothedPoint.y +=
-
         (
             target.y -
             smoothedPoint.y
-        )
-
-        *
-
+        ) *
         smoothing;
 
 
@@ -3379,20 +2862,11 @@ function smoothPoint(
 
 
     return {
-
-        x:
-            smoothedPoint.x,
-
-        y:
-            smoothedPoint.y
-
+        x:smoothedPoint.x,
+        y:smoothedPoint.y
     };
 }
 
-
-/* ============================================================
-   PEN WIDTH
-   ============================================================ */
 
 function getPenWidth(){
 
@@ -3405,33 +2879,20 @@ function getPenWidth(){
 
 
     return (
-
-        MAX_INK_WIDTH
-
-        -
-
+        MAX_INK_WIDTH -
         (
             MAX_INK_WIDTH -
             MIN_INK_WIDTH
-        )
-
-        *
-
+        ) *
         speedRatio
-
     );
 }
 
 
-/* ============================================================
-   SMOOTH SEGMENT
-   ============================================================ */
-
 function drawSmoothSegment(){
 
     if(
-        strokePoints.length <
-        2
+        strokePoints.length < 2
     ){
 
         return;
@@ -3444,94 +2905,62 @@ function drawSmoothSegment(){
 
     const p0 =
         strokePoints[
-            Math.max(
-                0,
-                len-4
-            )
+            Math.max(0,len-4)
         ];
-
 
     const p1 =
         strokePoints[
-            Math.max(
-                0,
-                len-3
-            )
+            Math.max(0,len-3)
         ];
-
 
     const p2 =
         strokePoints[
-            Math.max(
-                0,
-                len-2
-            )
+            Math.max(0,len-2)
         ];
-
 
     const p3 =
         strokePoints[
-            Math.max(
-                0,
-                len-1
-            )
+            Math.max(0,len-1)
         ];
 
 
     const cp1x =
         p1.x +
-
         (
             p2.x -
             p0.x
-        )
-
-        *
-
+        ) *
         CURVE_TENSION;
 
 
     const cp1y =
         p1.y +
-
         (
             p2.y -
             p0.y
-        )
-
-        *
-
+        ) *
         CURVE_TENSION;
 
 
     const cp2x =
         p2.x -
-
         (
             p3.x -
             p1.x
-        )
-
-        *
-
+        ) *
         CURVE_TENSION;
 
 
     const cp2y =
         p2.y -
-
         (
             p3.y -
             p1.y
-        )
-
-        *
-
+        ) *
         CURVE_TENSION;
 
 
     ctx.save();
-
 
     ctx.lineCap =
         "round";
@@ -3582,10 +3011,6 @@ function drawSmoothSegment(){
     ctx.stroke();
 
 
-    /*
-       Inner ink.
-    */
-
     ctx.beginPath();
 
 
@@ -3612,8 +3037,7 @@ function drawSmoothSegment(){
     ctx.lineWidth =
         Math.max(
             1.1,
-            getPenWidth() *
-            .45
+            getPenWidth() * .45
         );
 
 
@@ -3621,41 +3045,27 @@ function drawSmoothSegment(){
         "rgba(220,230,240,.30)";
 
 
-    ctx.shadowBlur =
-        0;
-
+    ctx.shadowBlur = 0;
 
     ctx.stroke();
-
 
     ctx.restore();
 }
 
 
-/* ============================================================
-   DOT
-   ============================================================ */
-
-function drawDot(
-    point
-){
+function drawDot(point){
 
     ctx.save();
-
 
     ctx.beginPath();
 
 
     ctx.arc(
-
         point.x,
         point.y,
-
         getPenWidth()/2,
-
         0,
         Math.PI*2
-
     );
 
 
@@ -3663,9 +3073,7 @@ function drawDot(
         "rgba(145,175,208,.96)";
 
 
-    ctx.shadowBlur =
-        7;
-
+    ctx.shadowBlur = 7;
 
     ctx.shadowColor =
         "rgba(145,175,208,.18)";
@@ -3673,44 +3081,26 @@ function drawDot(
 
     ctx.fill();
 
-
     ctx.restore();
 }
 
 
-/* ============================================================
-   DRAW
-   ============================================================ */
+function startStroke(point){
 
-function startStroke(
-    point
-){
-
-    drawing =
-        true;
-
+    drawing = true;
 
     strokePoints = [
-
         {
-
             x:point.x,
             y:point.y
-
         }
-
     ];
 
-
-    drawDot(
-        point
-    );
+    drawDot(point);
 }
 
 
-function drawLine(
-    point
-){
+function drawLine(point){
 
     const now =
         performance.now();
@@ -3741,13 +3131,10 @@ function drawLine(
 
     const d =
         Math.hypot(
-
             smooth.x -
             previous.x,
-
             smooth.y -
             previous.y
-
         );
 
 
@@ -3761,17 +3148,13 @@ function drawLine(
 
 
     strokePoints.push({
-
         x:smooth.x,
-
         y:smooth.y
-
     });
 
 
     if(
-        strokePoints.length >
-        8
+        strokePoints.length > 8
     ){
 
         strokePoints.shift();
@@ -3782,23 +3165,15 @@ function drawLine(
 }
 
 
-/* ============================================================
-   STOP DRAWING
-   ============================================================ */
-
 function stopDrawing(){
 
-    drawing =
-        false;
+    drawing = false;
 
-    strokePoints =
-        [];
+    strokePoints = [];
 
-    hasPreviousPoint =
-        false;
+    hasPreviousPoint = false;
 
-    lastSpeed =
-        0;
+    lastSpeed = 0;
 }
 
 
@@ -3809,12 +3184,10 @@ function stopDrawing(){
 function clearBoard(){
 
     ctx.clearRect(
-
         0,
         0,
         viewWidth,
         viewHeight
-
     );
 
 
@@ -3835,26 +3208,16 @@ const hands =
     });
 
 
-/*
-   Choose model complexity based on device.
-
-   High-end devices get model 1.
-
-   Mid/low devices prioritize responsiveness.
-*/
-
 let selectedModelComplexity;
 
 
 if(deviceTier === "HIGH"){
 
-    selectedModelComplexity =
-        1;
+    selectedModelComplexity = 1;
 
 }else{
 
-    selectedModelComplexity =
-        0;
+    selectedModelComplexity = 0;
 }
 
 
@@ -3865,11 +3228,9 @@ hands.setOptions({
     modelComplexity:
         selectedModelComplexity,
 
-    minDetectionConfidence:
-        .55,
+    minDetectionConfidence:.55,
 
-    minTrackingConfidence:
-        .58
+    minTrackingConfidence:.58
 
 });
 
@@ -3883,27 +3244,19 @@ hands.onResults(
    UI THROTTLING
    ============================================================ */
 
-let lastUIUpdate =
-    0;
+let lastUIUpdate = 0;
 
-const UI_UPDATE_INTERVAL =
-    70;
+const UI_UPDATE_INTERVAL = 70;
 
 
 let pendingUI = {
 
     hand:null,
-
     tracking:null,
-
     gesture:null,
-
     mode:null,
-
     x:null,
-
     y:null
-
 };
 
 
@@ -3914,12 +3267,9 @@ function flushUI(){
 
 
     if(
-
         now -
         lastUIUpdate <
-
         UI_UPDATE_INTERVAL
-
     ){
 
         return;
@@ -3967,21 +3317,16 @@ function flushUI(){
 
 
     if(
-
         pendingUI.x !== null &&
-
         pendingUI.y !== null
-
     ){
 
         coordinates.textContent =
-
             `${Math.round(
                 pendingUI.x
             )}, ${Math.round(
                 pendingUI.y
             )}`;
-
     }
 }
 
@@ -4005,18 +3350,13 @@ function updatePerformanceHUD(){
 
 
     processState.textContent =
-
         `${processingWidth}×${processingHeight}`;
 
 
     fpsState.classList.remove(
-
         "performance-good",
-
         "performance-warning",
-
         "performance-bad"
-
     );
 
 
@@ -4046,7 +3386,7 @@ function updatePerformanceHUD(){
 
 
 /* ============================================================
-   ADAPTIVE PERFORMANCE ENGINE
+   ADAPTIVE PERFORMANCE
    ============================================================ */
 
 function adaptivePerformance(){
@@ -4056,14 +3396,9 @@ function adaptivePerformance(){
 
 
     if(
-
         now -
-        lastPerformanceAdjustment
-
-        <
-
+        lastPerformanceAdjustment <
         PERFORMANCE_ADJUST_INTERVAL
-
     ){
 
         return;
@@ -4074,41 +3409,25 @@ function adaptivePerformance(){
         now;
 
 
-    /*
-       VERY SLOW
-
-       Reduce processing immediately.
-    */
-
     if(
-
-        measuredLatency >
-        70
-
-        ||
-
-        measuredFPS <
-        20
-
+        measuredLatency > 70 ||
+        measuredFPS < 20
     ){
 
         if(
-            processingLevel >
-            0
+            processingLevel > 0
         ){
 
             processingLevel--;
 
             configureProcessingCanvas();
-
         }
 
 
         targetProcessingFPS =
             Math.max(
                 20,
-                targetProcessingFPS -
-                4
+                targetProcessingFPS - 4
             );
 
 
@@ -4121,39 +3440,25 @@ function adaptivePerformance(){
     }
 
 
-    /*
-       MODERATE LOAD.
-    */
-
     if(
-
-        measuredLatency >
-        45
-
-        ||
-
-        measuredFPS <
-        24
-
+        measuredLatency > 45 ||
+        measuredFPS < 24
     ){
 
         if(
-            processingLevel >
-            0
+            processingLevel > 0
         ){
 
             processingLevel--;
 
             configureProcessingCanvas();
-
         }
 
 
         targetProcessingFPS =
             Math.max(
                 22,
-                targetProcessingFPS -
-                2
+                targetProcessingFPS - 2
             );
 
 
@@ -4166,48 +3471,30 @@ function adaptivePerformance(){
     }
 
 
-    /*
-       DEVICE HAS HEADROOM.
-
-       Increase resolution gradually.
-    */
-
     if(
-
-        measuredLatency <
-        24
-
-        &&
-
+        measuredLatency < 24 &&
         measuredFPS >
         Math.min(
             35,
-            targetProcessingFPS -
-            2
+            targetProcessingFPS - 2
         )
-
     ){
 
         if(
-
             processingLevel <
-            PROCESSING_LEVELS.length -
-            1
-
+            PROCESSING_LEVELS.length - 1
         ){
 
             processingLevel++;
 
             configureProcessingCanvas();
-
         }
 
 
         targetProcessingFPS =
             Math.min(
                 45,
-                targetProcessingFPS +
-                2
+                targetProcessingFPS + 2
             );
 
 
@@ -4222,20 +3509,12 @@ function adaptivePerformance(){
    HAND RESULTS
    ============================================================ */
 
-let lastHandSeenTime =
-    0;
+let lastHandSeenTime = 0;
 
-const HAND_LOSS_TIMEOUT =
-    120;
+const HAND_LOSS_TIMEOUT = 120;
 
 
-/* ============================================================
-   MEDIAPIPE RESULT CALLBACK
-   ============================================================ */
-
-function onHandsResults(
-    results
-){
+function onHandsResults(results){
 
     const processingEnd =
         performance.now();
@@ -4246,7 +3525,6 @@ function onHandsResults(
 
 
     measuredLatency =
-
         processingEnd -
         lastProcessingStart;
 
@@ -4254,12 +3532,7 @@ function onHandsResults(
     performanceFrames++;
 
 
-    /*
-       FPS measurement.
-    */
-
     const elapsed =
-
         processingEnd -
         performanceStart;
 
@@ -4269,20 +3542,14 @@ function onHandsResults(
     ){
 
         measuredFPS =
-
             (
                 performanceFrames *
                 1000
-            )
-
-            /
-
+            ) /
             elapsed;
 
 
-        performanceFrames =
-            0;
-
+        performanceFrames = 0;
 
         performanceStart =
             processingEnd;
@@ -4301,15 +3568,9 @@ function onHandsResults(
 
 
     const rawLandmarks =
-
         results.multiHandLandmarks &&
-
         results.multiHandLandmarks[0];
 
-
-    /* ========================================================
-       HAND LOST
-       ======================================================== */
 
     if(!rawLandmarks){
 
@@ -4330,19 +3591,10 @@ function onHandsResults(
             "status-dot warning";
 
 
-        /*
-           Small grace period.
-        */
-
         if(
-
             performance.now() -
-            lastHandSeenTime
-
-            >
-
+            lastHandSeenTime >
             HAND_LOSS_TIMEOUT
-
         ){
 
             cursor.style.opacity =
@@ -4352,9 +3604,7 @@ function onHandsResults(
             stopDrawing();
 
 
-            updateGesture(
-                "NONE"
-            );
+            updateGesture("NONE");
         }
 
 
@@ -4363,10 +3613,6 @@ function onHandsResults(
         return;
     }
 
-
-    /* ========================================================
-       HAND DETECTED
-       ======================================================== */
 
     lastHandSeenTime =
         performance.now();
@@ -4384,12 +3630,6 @@ function onHandsResults(
         "status-dot ready";
 
 
-    /*
-       Cursor stabilization only.
-
-       Gesture detection remains RAW.
-    */
-
     const tip =
         stabilizeIndexTip(
             rawLandmarks
@@ -4403,24 +3643,16 @@ function onHandsResults(
         );
 
 
-    /* ========================================================
-       CURSOR
-       ======================================================== */
-
     const rect =
         canvas.getBoundingClientRect();
 
 
     cursor.style.left =
-
-        `${rect.left +
-          point.x}px`;
+        `${rect.left + point.x}px`;
 
 
     cursor.style.top =
-
-        `${rect.top +
-          point.y}px`;
+        `${rect.top + point.y}px`;
 
 
     cursor.style.opacity =
@@ -4430,18 +3662,9 @@ function onHandsResults(
     pendingUI.x =
         point.x;
 
-
     pendingUI.y =
         point.y;
 
-
-    /* ========================================================
-       GESTURE
-       ======================================================== */
-
-    /*
-       RAW landmarks intentionally used here.
-    */
 
     const rawGesture =
         classifyRawGesture(
@@ -4458,10 +3681,6 @@ function onHandsResults(
     pendingUI.gesture =
         state.gesture;
 
-
-    /* ========================================================
-       CLEAR
-       ======================================================== */
 
     if(state.clear){
 
@@ -4489,10 +3708,6 @@ function onHandsResults(
     }
 
 
-    /* ========================================================
-       DRAW
-       ======================================================== */
-
     if(
         state.gesture ===
         "DRAW"
@@ -4513,9 +3728,7 @@ function onHandsResults(
         );
 
 
-        drawLine(
-            point
-        );
+        drawLine(point);
 
 
         flushUI();
@@ -4523,10 +3736,6 @@ function onHandsResults(
         return;
     }
 
-
-    /* ========================================================
-       PINCH
-       ======================================================== */
 
     if(
         state.gesture ===
@@ -4557,10 +3766,6 @@ function onHandsResults(
     }
 
 
-    /* ========================================================
-       OPEN
-       ======================================================== */
-
     if(
         state.gesture ===
         "OPEN"
@@ -4590,22 +3795,14 @@ function onHandsResults(
     }
 
 
-    /* ========================================================
-       NONE
-       ======================================================== */
-
     pendingUI.mode =
         "READY";
 
 
     cursor.classList.remove(
-
         "drawing",
-
         "pause",
-
         "clear"
-
     );
 
 
@@ -4628,41 +3825,25 @@ function requestNextVideoFrame(){
     }
 
 
-    /*
-       Preferred path.
-
-       Browser only calls us when a new video frame exists.
-    */
-
     if(
-
         typeof
         video.requestVideoFrameCallback ===
         "function"
-
     ){
 
         videoFrameHandle =
-
             video.requestVideoFrameCallback(
                 processVideoFrame
             );
 
     }else{
 
-        /*
-           Fallback.
-        */
-
         videoFrameHandle =
-
             requestAnimationFrame(
-
                 timestamp =>
                     processVideoFrame(
                         timestamp
                     )
-
             );
     }
 }
@@ -4672,9 +3853,7 @@ function requestNextVideoFrame(){
    PROCESS VIDEO FRAME
    ============================================================ */
 
-async function processVideoFrame(
-    now
-){
+async function processVideoFrame(now){
 
     if(!cameraRunning){
 
@@ -4682,19 +3861,8 @@ async function processVideoFrame(
     }
 
 
-    /*
-       Schedule next frame immediately.
-
-       processingBusy prevents MediaPipe calls
-       from stacking.
-    */
-
     requestNextVideoFrame();
 
-
-    /*
-       Page hidden = no processing.
-    */
 
     if(pageHidden){
 
@@ -4702,38 +3870,17 @@ async function processVideoFrame(
     }
 
 
-    /*
-       ONE inference at a time.
-
-       This is critical.
-
-       Without this, slow devices can build a
-       queue of old frames and produce huge latency.
-    */
-
     if(processingBusy){
 
         return;
     }
 
 
-    /*
-       Rate limiter.
-    */
-
     if(
-
-        lastVideoFrameTime !== 0
-
-        &&
-
+        lastVideoFrameTime !== 0 &&
         now -
-        lastVideoFrameTime
-
-        <
-
+        lastVideoFrameTime <
         targetFrameInterval
-
     ){
 
         return;
@@ -4744,25 +3891,10 @@ async function processVideoFrame(
         now;
 
 
-    /*
-       Make sure video is ready.
-    */
-
     if(
-
-        video.readyState <
-        2
-
-        ||
-
-        video.videoWidth <=
-        0
-
-        ||
-
-        video.videoHeight <=
-        0
-
+        video.readyState < 2 ||
+        video.videoWidth <= 0 ||
+        video.videoHeight <= 0
     ){
 
         return;
@@ -4779,43 +3911,25 @@ async function processVideoFrame(
 
     try{
 
-        /*
-           Draw camera frame into a much smaller
-           processing surface.
-
-           MediaPipe receives THIS instead of
-           the full 1080p camera stream.
-        */
-
         processingCtx.drawImage(
-
             video,
-
             0,
             0,
-
             processingWidth,
             processingHeight
-
         );
 
 
         await hands.send({
-
-            image:
-                processingCanvas
-
+            image:processingCanvas
         });
 
 
     }catch(error){
 
         console.error(
-
             "MediaPipe processing error:",
-
             error
-
         );
 
     }finally{
@@ -4835,11 +3949,8 @@ function inspectCameraCapabilities(){
     try{
 
         const track =
-
             stream &&
-
             stream.getVideoTracks &&
-
             stream.getVideoTracks()[0];
 
 
@@ -4896,18 +4007,11 @@ async function initializeCamera(){
 
 
     if(
-
-        !navigator.mediaDevices
-
-        ||
-
-        !navigator.mediaDevices
-            .getUserMedia
-
+        !navigator.mediaDevices ||
+        !navigator.mediaDevices.getUserMedia
     ){
 
         centerDescription.textContent =
-
             "This browser does not provide camera access.";
 
         return;
@@ -4924,55 +4028,29 @@ async function initializeCamera(){
 
     try{
 
-        /*
-           HIGH QUALITY CAMERA CAPTURE.
-
-           These are maximum/ideal values.
-
-           The browser automatically negotiates
-           a lower mode if the device cannot provide it.
-
-           IMPORTANT:
-
-           MediaPipe will NOT process this entire
-           resolution every time.
-        */
-
         stream =
-
             await navigator.mediaDevices
                 .getUserMedia({
 
                     video:{
 
                         facingMode:{
-
                             ideal:"user"
-
                         },
 
                         width:{
-
                             ideal:1920,
-
                             max:1920
-
                         },
 
                         height:{
-
                             ideal:1080,
-
                             max:1080
-
                         },
 
                         frameRate:{
-
                             ideal:60,
-
                             max:60
-
                         }
 
                     },
@@ -4986,18 +4064,11 @@ async function initializeCamera(){
             stream;
 
 
-        /*
-           Wait for actual video dimensions.
-        */
-
         await new Promise(
             resolve => {
 
                 if(
-
-                    video.videoWidth >
-                    0
-
+                    video.videoWidth > 0
                 ){
 
                     resolve();
@@ -5007,11 +4078,7 @@ async function initializeCamera(){
 
 
                 video.onloadedmetadata =
-                    () => {
-
-                        resolve();
-
-                    };
+                    () => resolve();
 
             }
         );
@@ -5023,17 +4090,8 @@ async function initializeCamera(){
         inspectCameraCapabilities();
 
 
-        /*
-           Configure processing according
-           to actual camera aspect ratio.
-        */
-
         configureProcessingCanvas();
 
-
-        /*
-           Reset engines.
-        */
 
         resizeCanvas();
 
@@ -5043,10 +4101,6 @@ async function initializeCamera(){
 
         resetPenState();
 
-
-        /*
-           Reset performance.
-        */
 
         cameraRunning =
             true;
@@ -5061,15 +4115,11 @@ async function initializeCamera(){
             performance.now();
 
 
-        measuredFPS =
-            0;
+        measuredFPS = 0;
 
-        measuredLatency =
-            0;
+        measuredLatency = 0;
 
-
-        performanceFrames =
-            0;
+        performanceFrames = 0;
 
         performanceStart =
             performance.now();
@@ -5079,25 +4129,17 @@ async function initializeCamera(){
             performance.now();
 
 
-        /*
-           Restore device-specific starting rate.
-        */
-
         if(deviceTier === "HIGH"){
 
-            targetProcessingFPS =
-                40;
+            targetProcessingFPS = 40;
 
         }else if(deviceTier === "MID"){
 
-            targetProcessingFPS =
-                32;
+            targetProcessingFPS = 32;
 
         }else{
 
-            targetProcessingFPS =
-                26;
-
+            targetProcessingFPS = 26;
         }
 
 
@@ -5105,10 +4147,6 @@ async function initializeCamera(){
             1000 /
             targetProcessingFPS;
 
-
-        /*
-           UI.
-        */
 
         cameraState.textContent =
             "ON";
@@ -5140,10 +4178,6 @@ async function initializeCamera(){
             "CAMERA ACTIVE";
 
 
-        /*
-           Start controlled frame loop.
-        */
-
         requestNextVideoFrame();
 
 
@@ -5170,7 +4204,6 @@ async function initializeCamera(){
                     track =>
                         track.stop()
                 );
-
 
             stream =
                 null;
@@ -5213,39 +4246,29 @@ async function initializeCamera(){
         ){
 
             centerDescription.textContent =
-
                 "Camera permission was denied. Allow camera access and try again.";
 
         }else if(
-
             error.name ===
             "NotFoundError"
-
         ){
 
             centerDescription.textContent =
-
                 "No usable camera was found.";
 
         }else if(
-
             error.name ===
             "NotReadableError"
-
         ){
 
             centerDescription.textContent =
-
                 "The camera is currently being used by another application.";
 
         }else{
 
             centerDescription.textContent =
-
                 "Camera initialization failed. Please retry.";
-
         }
-
     }
 }
 
@@ -5259,22 +4282,18 @@ function stopCamera(){
     cameraRunning =
         false;
 
-
     processingBusy =
         false;
 
 
     if(
-        videoFrameHandle !==
-        null
+        videoFrameHandle !== null
     ){
 
         if(
-
             typeof
             video.cancelVideoFrameCallback ===
             "function"
-
         ){
 
             try{
@@ -5351,11 +4370,10 @@ function stopCamera(){
 
 
 /* ============================================================
-   RESIZE / ORIENTATION
+   RESIZE
    ============================================================ */
 
-let resizeTimer =
-    null;
+let resizeTimer = null;
 
 
 function handleResize(){
@@ -5371,9 +4389,8 @@ function handleResize(){
 
                 resizeCanvas();
 
-                if(
-                    cameraRunning
-                ){
+
+                if(cameraRunning){
 
                     configureProcessingCanvas();
 
@@ -5400,9 +4417,8 @@ window.addEventListener(
 
                 resizeCanvas();
 
-                if(
-                    cameraRunning
-                ){
+
+                if(cameraRunning){
 
                     configureProcessingCanvas();
 
@@ -5417,7 +4433,7 @@ window.addEventListener(
 
 
 /* ============================================================
-   START BUTTON
+   START
    ============================================================ */
 
 startBtn.addEventListener(
@@ -5427,11 +4443,10 @@ startBtn.addEventListener(
 
 
 /* ============================================================
-   CAMERA PREVIEW
+   CAMERA DEBUG BUTTON
    ============================================================ */
 
-let debugCamera =
-    false;
+let debugCamera = false;
 
 
 debugCameraBtn.addEventListener(
@@ -5442,10 +4457,16 @@ debugCameraBtn.addEventListener(
             !debugCamera;
 
 
-        document.body.classList.toggle(
-            "camera-debug",
+        /*
+           This only changes camera opacity.
+
+           It does NOT change the processing stream.
+        */
+
+        video.style.opacity =
             debugCamera
-        );
+            ? ".35"
+            : "1";
 
 
         debugCameraBtn.classList.toggle(
@@ -5458,13 +4479,11 @@ debugCameraBtn.addEventListener(
 
 
 /* ============================================================
-   CLEAR BUTTON
+   CLEAR
    ============================================================ */
 
 document
-    .getElementById(
-        "clearBtn"
-    )
+    .getElementById("clearBtn")
     .addEventListener(
         "click",
         clearBoard
@@ -5475,14 +4494,10 @@ document
    TOOLS
    ============================================================ */
 
-function setActiveTool(
-    id
-){
+function setActiveTool(id){
 
     document
-        .querySelectorAll(
-            ".tool"
-        )
+        .querySelectorAll(".tool")
         .forEach(
             button =>
                 button.classList.remove(
@@ -5492,9 +4507,7 @@ function setActiveTool(
 
 
     document
-        .getElementById(
-            id
-        )
+        .getElementById(id)
         .classList.add(
             "active"
         );
@@ -5502,41 +4515,29 @@ function setActiveTool(
 
 
 document
-    .getElementById(
-        "penTool"
-    )
+    .getElementById("penTool")
     .addEventListener(
         "click",
         () =>
-            setActiveTool(
-                "penTool"
-            )
+            setActiveTool("penTool")
     );
 
 
 document
-    .getElementById(
-        "selectTool"
-    )
+    .getElementById("selectTool")
     .addEventListener(
         "click",
         () =>
-            setActiveTool(
-                "selectTool"
-            )
+            setActiveTool("selectTool")
     );
 
 
 document
-    .getElementById(
-        "measureTool"
-    )
+    .getElementById("measureTool")
     .addEventListener(
         "click",
         () =>
-            setActiveTool(
-                "measureTool"
-            )
+            setActiveTool("measureTool")
     );
 
 
@@ -5544,18 +4545,13 @@ document
    GRID
    ============================================================ */
 
-let gridEnabled =
-    true;
+let gridEnabled = true;
 
 
 document
-    .getElementById(
-        "gridBtn"
-    )
+    .getElementById("gridBtn")
     .addEventListener(
-
         "click",
-
         () => {
 
             gridEnabled =
@@ -5599,7 +4595,6 @@ document
             }
 
         }
-
     );
 
 
@@ -5607,47 +4602,34 @@ document
    ZOOM
    ============================================================ */
 
-let zoomLevel =
-    1;
+let zoomLevel = 1;
 
 
 document
-    .getElementById(
-        "zoomBtn"
-    )
+    .getElementById("zoomBtn")
     .addEventListener(
-
         "click",
-
         () => {
 
-            zoomLevel +=
-                .1;
+            zoomLevel += .1;
 
 
             if(
-                zoomLevel >
-                2
+                zoomLevel > 2
             ){
 
-                zoomLevel =
-                    1;
-
+                zoomLevel = 1;
             }
 
 
             canvas.style.transform =
-
-                `scale(
-                    ${zoomLevel}
-                )`;
+                `scale(${zoomLevel})`;
 
 
             canvas.style.transformOrigin =
                 "center center";
 
         }
-
     );
 
 
@@ -5656,9 +4638,7 @@ document
    ============================================================ */
 
 document
-    .getElementById(
-        "undoBtn"
-    )
+    .getElementById("undoBtn")
     .addEventListener(
         "click",
         () => {}
@@ -5666,9 +4646,7 @@ document
 
 
 document
-    .getElementById(
-        "redoBtn"
-    )
+    .getElementById("redoBtn")
     .addEventListener(
         "click",
         () => {}
@@ -5680,22 +4658,12 @@ document
    ============================================================ */
 
 document.addEventListener(
-
     "touchmove",
-
     event => {
 
         if(
-
-            event.target ===
-            canvas
-
-            ||
-
-            event.target.closest(
-                ".workspace"
-            )
-
+            event.target === canvas ||
+            event.target.closest(".workspace")
         ){
 
             event.preventDefault();
@@ -5703,11 +4671,9 @@ document.addEventListener(
         }
 
     },
-
     {
         passive:false
     }
-
 );
 
 
@@ -5716,9 +4682,7 @@ document.addEventListener(
    ============================================================ */
 
 document.addEventListener(
-
     "visibilitychange",
-
     () => {
 
         pageHidden =
@@ -5734,7 +4698,6 @@ document.addEventListener(
         }
 
     }
-
 );
 
 
@@ -5752,10 +4715,6 @@ resetPenState();
 
 configureProcessingCanvas();
 
-
-/* ============================================================
-   DEBUG INFORMATION
-   ============================================================ */
 
 console.log(
     "Air Maths Board V5.2"
