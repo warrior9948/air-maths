@@ -2,197 +2,250 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-
 <meta name="viewport"
-      content="width=device-width,
-               initial-scale=1.0,
-               maximum-scale=1.0,
-               user-scalable=no">
+      content="width=device-width, initial-scale=1.0,
+               maximum-scale=1.0, user-scalable=no">
 
-<title>Air Maths Board — Stage 1 Advanced v2</title>
+<title>Air Maths Board — Stage 1 Advanced</title>
 
 <style>
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-}
+    * {
+        box-sizing: border-box;
+        -webkit-tap-highlight-color: transparent;
+    }
 
-html, body {
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    background: #111;
-    font-family: Arial, sans-serif;
-}
+    html, body {
+        margin: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background: #000;
+        font-family: Arial, sans-serif;
+        touch-action: none;
+    }
 
-#app {
-    position: relative;
-    width: 100vw;
-    height: 100vh;
-    overflow: hidden;
-}
+    #video {
+        position: fixed;
+        inset: 0;
 
-#video {
-    position: absolute;
-    inset: 0;
+        width: 100%;
+        height: 100%;
 
-    width: 100%;
-    height: 100%;
+        object-fit: cover;
 
-    object-fit: cover;
+        transform: scaleX(-1);
 
-    transform: scaleX(-1);
-}
+        background: #000;
 
-#canvas {
-    position: absolute;
-    inset: 0;
+        pointer-events: none;
+    }
 
-    width: 100%;
-    height: 100%;
+    #canvas {
+        position: fixed;
+        inset: 0;
 
-    pointer-events: none;
-}
+        width: 100%;
+        height: 100%;
 
-#cursor {
-    position: absolute;
+        pointer-events: none;
+    }
 
-    width: 25px;
-    height: 25px;
+    #cursor {
+        position: fixed;
 
-    border: 3px solid white;
-    border-radius: 50%;
+        width: 28px;
+        height: 28px;
 
-    transform: translate(-50%, -50%);
+        border: 3px solid white;
+        border-radius: 50%;
 
-    pointer-events: none;
+        transform: translate(-50%, -50%);
 
-    display: none;
+        pointer-events: none;
 
-    will-change: left, top;
-}
+        display: none;
 
-#controls {
-    position: absolute;
+        z-index: 10;
 
-    top: 15px;
-    left: 15px;
+        box-shadow:
+            0 0 5px rgba(255,255,255,0.8);
+    }
 
-    z-index: 20;
+    #controls {
+        position: fixed;
 
-    display: flex;
-    gap: 10px;
-}
+        top: 15px;
+        left: 50%;
 
-button {
-    border: none;
+        transform: translateX(-50%);
 
-    padding: 12px 18px;
+        z-index: 20;
 
-    border-radius: 8px;
+        display: flex;
+        gap: 10px;
+    }
 
-    background: white;
-    color: black;
+    button {
+        border: none;
 
-    font-size: 15px;
-    font-weight: bold;
-}
+        padding: 10px 18px;
 
-#status {
-    position: absolute;
+        border-radius: 10px;
 
-    bottom: 15px;
-    left: 15px;
+        background: rgba(20,20,20,0.8);
+        color: white;
 
-    z-index: 20;
+        font-size: 15px;
 
-    padding: 10px 14px;
+        font-weight: bold;
 
-    border-radius: 8px;
+        border: 1px solid rgba(255,255,255,0.25);
+    }
 
-    background: rgba(0,0,0,0.7);
+    button:active {
+        transform: scale(0.96);
+    }
 
-    color: white;
+    #status {
+        position: fixed;
 
-    font-size: 14px;
-}
+        bottom: 18px;
+        left: 50%;
+
+        transform: translateX(-50%);
+
+        z-index: 20;
+
+        color: white;
+
+        background: rgba(0,0,0,0.65);
+
+        padding: 8px 14px;
+
+        border-radius: 10px;
+
+        font-size: 14px;
+
+        text-align: center;
+
+        white-space: nowrap;
+    }
+
+    #instructions {
+        position: fixed;
+
+        left: 50%;
+        top: 65px;
+
+        transform: translateX(-50%);
+
+        z-index: 20;
+
+        color: white;
+
+        background: rgba(0,0,0,0.55);
+
+        padding: 8px 12px;
+
+        border-radius: 10px;
+
+        font-size: 12px;
+
+        text-align: center;
+
+        pointer-events: none;
+    }
 </style>
 </head>
 
 <body>
 
-<div id="app">
+<video id="video" autoplay playsinline muted></video>
 
-    <video id="video"
-           autoplay
-           playsinline>
-    </video>
+<canvas id="canvas"></canvas>
 
-    <canvas id="canvas"></canvas>
+<div id="cursor"></div>
 
-    <div id="cursor"></div>
-
-    <div id="controls">
-        <button id="startBtn">START</button>
-        <button id="clearBtn">CLEAR</button>
-    </div>
-
-    <div id="status">
-        Press START
-    </div>
-
+<div id="controls">
+    <button id="startBtn">START</button>
+    <button id="clearBtn">CLEAR</button>
 </div>
 
+<div id="instructions">
+    ☝ Index = Draw &nbsp; | &nbsp;
+    🤏 Pinch = Stop &nbsp; | &nbsp;
+    ✋ Open Palm = Clear
+</div>
 
+<div id="status">Press START</div>
+
+
+<!-- MediaPipe -->
 <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js"></script>
-
 <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
 
 
 <script>
 
+"use strict";
+
+
 /* =========================================================
    ELEMENTS
 ========================================================= */
 
-const video =
-    document.getElementById("video");
+const video = document.getElementById("video");
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
 
-const canvas =
-    document.getElementById("canvas");
+const cursor = document.getElementById("cursor");
 
-const ctx =
-    canvas.getContext("2d");
+const startBtn = document.getElementById("startBtn");
+const clearBtn = document.getElementById("clearBtn");
 
-const cursor =
-    document.getElementById("cursor");
-
-const startBtn =
-    document.getElementById("startBtn");
-
-const clearBtn =
-    document.getElementById("clearBtn");
-
-const status =
-    document.getElementById("status");
+const statusText = document.getElementById("status");
 
 
 /* =========================================================
-   APPLICATION STATE
+   GLOBAL STATE
 ========================================================= */
 
 let camera = null;
+let hands = null;
 
 let running = false;
 
-let gestureState = "IDLE";
+let lastFrameTime = performance.now();
 
-let lastState = "IDLE";
+let lastHandSeenTime = 0;
+
+let handVisible = false;
 
 
 /* =========================================================
-   CURSOR FILTER
+   CANVAS / DPR
+========================================================= */
+
+let dpr = Math.min(window.devicePixelRatio || 1, 3);
+
+let canvasWidth = 0;
+let canvasHeight = 0;
+
+
+/*
+    Strokes are stored as normalized coordinates.
+
+    This means if the phone rotates or the screen
+    resizes, the drawing can be reconstructed correctly.
+*/
+
+let strokes = [];
+
+let currentStroke = null;
+
+
+/* =========================================================
+   TRACKING STATE
 ========================================================= */
 
 let filteredX = null;
@@ -201,983 +254,1118 @@ let filteredY = null;
 let previousFilteredX = null;
 let previousFilteredY = null;
 
-
-/*
-    Smaller = smoother
-    Larger = faster
-
-    We dynamically change this
-    depending on hand movement.
-*/
-
-const SMOOTH_SLOW = 0.18;
-const SMOOTH_FAST = 0.72;
-
-
-/* =========================================================
-   DRAWING
-========================================================= */
-
-let drawing = false;
-
-let lastDrawX = null;
-let lastDrawY = null;
+let previousRawX = null;
+let previousRawY = null;
 
 
 /* =========================================================
    HAND LOSS
 ========================================================= */
 
-let handMissingFrames = 0;
-
-const HAND_LOSS_GRACE = 5;
+const HAND_LOSS_GRACE_MS = 180;
 
 
 /* =========================================================
-   PINCH STATE
+   ADAPTIVE FILTER
 ========================================================= */
-
-let pinchEnterFrames = 0;
-let pinchReleaseFrames = 0;
-
-let pinchActive = false;
-
 
 /*
-    Hysteresis:
+    Low movement:
+        stronger smoothing
 
-    Enter pinch:
-    smaller distance
+    Fast movement:
+        weaker smoothing
 
-    Release pinch:
-    larger distance
-
-    This prevents flickering.
+    This gives stability without making the cursor
+    feel excessively delayed.
 */
 
-const PINCH_ENTER = 0.055;
-const PINCH_RELEASE = 0.085;
+const FILTER_MIN = 0.16;
+const FILTER_MAX = 0.78;
 
-const PINCH_CONFIRM_FRAMES = 3;
+const FILTER_SPEED_SCALE = 0.035;
 
 
 /* =========================================================
-   OPEN PALM
+   TRACKING SPIKE PROTECTION
 ========================================================= */
 
-let palmFrames = 0;
-
-const PALM_CONFIRM_FRAMES = 7;
-
-let lastClearTime = 0;
-
-const CLEAR_COOLDOWN = 1000;
+const MAX_NORMALIZED_JUMP = 0.16;
 
 
 /* =========================================================
-   CANVAS
+   PINCH DETECTION
+========================================================= */
+
+const PINCH_ENTER = 0.48;
+const PINCH_RELEASE = 0.68;
+
+let pinchState = false;
+
+let pinchCandidate = false;
+
+let pinchFrames = 0;
+
+let releaseFrames = 0;
+
+const PINCH_CONFIRM_FRAMES = 3;
+const RELEASE_CONFIRM_FRAMES = 2;
+
+
+/* =========================================================
+   PALM DETECTION
+========================================================= */
+
+let palmState = false;
+
+let palmCandidateFrames = 0;
+
+const PALM_CONFIRM_FRAMES = 6;
+
+let palmClearLocked = false;
+
+
+/* =========================================================
+   GESTURE STATES
+========================================================= */
+
+const GESTURE = {
+
+    NO_HAND: "NO_HAND",
+
+    DRAW: "DRAW",
+
+    PINCH: "PINCH",
+
+    PALM: "PALM"
+
+};
+
+let gestureState = GESTURE.NO_HAND;
+
+
+/* =========================================================
+   DRAWING SETTINGS
+========================================================= */
+
+const LINE_WIDTH = 4;
+
+const MIN_DRAW_DISTANCE = 0.0025;
+
+const MAX_DRAW_DISTANCE = 0.075;
+
+
+/* =========================================================
+   STATUS
+========================================================= */
+
+function setStatus(text) {
+
+    statusText.textContent = text;
+
+}
+
+
+/* =========================================================
+   CANVAS RESIZE
 ========================================================= */
 
 function resizeCanvas() {
 
-    /*
-        Preserve current drawing by
-        copying it before resizing.
-    */
+    dpr = Math.min(window.devicePixelRatio || 1, 3);
 
-    const oldCanvas =
-        document.createElement("canvas");
+    canvasWidth = window.innerWidth;
+    canvasHeight = window.innerHeight;
 
-    oldCanvas.width = canvas.width;
-    oldCanvas.height = canvas.height;
+    canvas.width = Math.round(canvasWidth * dpr);
+    canvas.height = Math.round(canvasHeight * dpr);
 
-    if (
-        canvas.width > 0 &&
-        canvas.height > 0
-    ) {
+    canvas.style.width = canvasWidth + "px";
+    canvas.style.height = canvasHeight + "px";
 
-        oldCanvas
-            .getContext("2d")
-            .drawImage(canvas, 0, 0);
-    }
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
+    redrawAll();
 
-    canvas.width =
-        window.innerWidth;
-
-    canvas.height =
-        window.innerHeight;
-
-
-    ctx.lineWidth = 5;
-
-    ctx.lineCap = "round";
-
-    ctx.lineJoin = "round";
-
-
-    /*
-        Restore drawing using
-        proportional scaling.
-    */
-
-    if (
-        oldCanvas.width > 0 &&
-        oldCanvas.height > 0
-    ) {
-
-        ctx.drawImage(
-            oldCanvas,
-            0,
-            0,
-            oldCanvas.width,
-            oldCanvas.height,
-            0,
-            0,
-            canvas.width,
-            canvas.height
-        );
-    }
 }
 
-resizeCanvas();
 
-window.addEventListener(
-    "resize",
-    resizeCanvas
-);
+window.addEventListener("resize", () => {
+
+    resizeCanvas();
+
+    resetDrawingTracking();
+
+});
 
 
 /* =========================================================
-   CLEAR
+   DRAWING HELPERS
 ========================================================= */
 
 function clearBoard() {
 
-    ctx.clearRect(
-        0,
-        0,
-        canvas.width,
-        canvas.height
-    );
+    strokes = [];
 
-    resetDrawing();
+    currentStroke = null;
+
+    ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+
+    resetDrawingTracking();
+
 }
 
 
-/* =========================================================
-   RESET DRAWING
-========================================================= */
-
-function resetDrawing() {
-
-    drawing = false;
-
-    lastDrawX = null;
-    lastDrawY = null;
-}
-
-
-/* =========================================================
-   RESET TRACKING
-========================================================= */
-
-function resetTracking() {
-
-    filteredX = null;
-    filteredY = null;
+function resetDrawingTracking() {
 
     previousFilteredX = null;
     previousFilteredY = null;
 
-    resetDrawing();
-
-    pinchEnterFrames = 0;
-    pinchReleaseFrames = 0;
-
-    pinchActive = false;
-
-    palmFrames = 0;
-
-    gestureState = "IDLE";
 }
 
 
 /* =========================================================
-   DISTANCE
+   NORMALIZED → SCREEN
 ========================================================= */
 
-function distance(a, b) {
+function screenX(nx) {
 
-    const dx =
-        a.x - b.x;
+    return nx * canvasWidth;
 
-    const dy =
-        a.y - b.y;
+}
+
+
+function screenY(ny) {
+
+    return ny * canvasHeight;
+
+}
+
+
+/* =========================================================
+   REDRAW STORED STROKES
+========================================================= */
+
+function redrawAll() {
+
+    ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+
+    ctx.lineWidth = LINE_WIDTH;
+
+    ctx.lineCap = "round";
+    ctx.lineJoin = "round";
+
+    ctx.strokeStyle = "#ffffff";
+
+    for (const stroke of strokes) {
+
+        if (!stroke || stroke.length < 2) continue;
+
+        drawSmoothStroke(stroke);
+
+    }
+
+}
+
+
+/* =========================================================
+   SMOOTH STROKE RENDERER
+========================================================= */
+
+function drawSmoothStroke(points) {
+
+    if (points.length < 2) return;
+
+    ctx.beginPath();
+
+    const first = points[0];
+
+    ctx.moveTo(
+        screenX(first.x),
+        screenY(first.y)
+    );
+
+    if (points.length === 2) {
+
+        const p = points[1];
+
+        ctx.lineTo(
+            screenX(p.x),
+            screenY(p.y)
+        );
+
+    } else {
+
+        for (let i = 1; i < points.length - 1; i++) {
+
+            const current = points[i];
+            const next = points[i + 1];
+
+            const midX =
+                (screenX(current.x) +
+                 screenX(next.x)) / 2;
+
+            const midY =
+                (screenY(current.y) +
+                 screenY(next.y)) / 2;
+
+            ctx.quadraticCurveTo(
+                screenX(current.x),
+                screenY(current.y),
+                midX,
+                midY
+            );
+
+        }
+
+        const last = points[points.length - 1];
+
+        ctx.lineTo(
+            screenX(last.x),
+            screenY(last.y)
+        );
+
+    }
+
+    ctx.stroke();
+
+}
+
+
+/* =========================================================
+   ADD DRAW POINT
+========================================================= */
+
+function addDrawPoint(x, y) {
+
+    if (!currentStroke) {
+
+        currentStroke = [];
+
+        strokes.push(currentStroke);
+
+        currentStroke.push({
+            x,
+            y
+        });
+
+        redrawAll();
+
+        return;
+    }
+
+
+    const last =
+        currentStroke[currentStroke.length - 1];
+
+
+    const dx = x - last.x;
+    const dy = y - last.y;
+
+    const distance =
+        Math.sqrt(dx * dx + dy * dy);
+
+
+    /*
+        Ignore microscopic movement.
+    */
+
+    if (distance < MIN_DRAW_DISTANCE) {
+
+        return;
+
+    }
+
+
+    /*
+        If tracking suddenly jumps,
+        do NOT draw a giant unwanted line.
+    */
+
+    if (distance > MAX_DRAW_DISTANCE) {
+
+        currentStroke = null;
+
+        resetDrawingTracking();
+
+        return;
+
+    }
+
+
+    currentStroke.push({
+        x,
+        y
+    });
+
+
+    /*
+        Keep enough history for smooth curves,
+        but avoid unlimited memory growth.
+    */
+
+    if (currentStroke.length > 1200) {
+
+        currentStroke.shift();
+
+    }
+
+
+    redrawAll();
+
+}
+
+
+/* =========================================================
+   END CURRENT STROKE
+========================================================= */
+
+function endStroke() {
+
+    currentStroke = null;
+
+    resetDrawingTracking();
+
+}
+
+
+/* =========================================================
+   DISTANCE BETWEEN LANDMARKS
+========================================================= */
+
+function distance3D(a, b) {
+
+    const dx = a.x - b.x;
+    const dy = a.y - b.y;
+    const dz = (a.z || 0) - (b.z || 0);
 
     return Math.sqrt(
         dx * dx +
-        dy * dy
+        dy * dy +
+        dz * dz
     );
+
 }
 
 
 /* =========================================================
-   FINGER DETECTION
+   PALM SIZE
 ========================================================= */
 
-function fingerUp(
-    hand,
-    tip,
-    pip
-) {
+/*
+    We normalize pinch distance using hand size.
 
-    return (
-        hand[tip].y <
-        hand[pip].y
+    This makes pinch detection much less dependent
+    on how close the hand is to the camera.
+*/
+
+function getPalmScale(lm) {
+
+    const wrist = lm[0];
+
+    const middleMCP = lm[9];
+
+    const indexMCP = lm[5];
+
+    const a = distance3D(wrist, middleMCP);
+    const b = distance3D(wrist, indexMCP);
+
+    return Math.max(
+        (a + b) / 2,
+        0.0001
     );
+
 }
 
 
 /* =========================================================
-   OPEN PALM
+   PINCH DETECTION
 ========================================================= */
 
-function detectOpenPalm(hand) {
+function detectPinch(lm) {
+
+    const thumb = lm[4];
+
+    const index = lm[8];
+
+    const rawDistance =
+        distance3D(thumb, index);
+
+    const palmScale =
+        getPalmScale(lm);
+
+    const normalized =
+        rawDistance / palmScale;
+
+
+    /*
+        Hysteresis:
+
+        Enter pinch at a smaller distance.
+
+        Once pinched, require a noticeably larger
+        distance before releasing.
+
+        This prevents rapid ON/OFF fluctuation.
+    */
+
+    if (!pinchState) {
+
+        if (normalized < PINCH_ENTER) {
+
+            if (!pinchCandidate) {
+
+                pinchCandidate = true;
+                pinchFrames = 0;
+
+            }
+
+            pinchFrames++;
+
+            if (pinchFrames >= PINCH_CONFIRM_FRAMES) {
+
+                pinchState = true;
+
+                pinchCandidate = false;
+                pinchFrames = 0;
+
+            }
+
+        } else {
+
+            pinchCandidate = false;
+            pinchFrames = 0;
+
+        }
+
+    } else {
+
+        if (normalized > PINCH_RELEASE) {
+
+            releaseFrames++;
+
+            if (releaseFrames >= RELEASE_CONFIRM_FRAMES) {
+
+                pinchState = false;
+
+                releaseFrames = 0;
+
+            }
+
+        } else {
+
+            releaseFrames = 0;
+
+        }
+
+    }
+
+
+    return pinchState;
+
+}
+
+
+/* =========================================================
+   FINGER EXTENSION
+========================================================= */
+
+function fingerExtended(lm, tipIndex, pipIndex) {
+
+    const wrist = lm[0];
+
+    const tip = lm[tipIndex];
+
+    const pip = lm[pipIndex];
+
+    const tipDistance =
+        distance3D(tip, wrist);
+
+    const pipDistance =
+        distance3D(pip, wrist);
+
+
+    /*
+        Tip must be sufficiently farther from wrist
+        than the PIP joint.
+    */
+
+    return tipDistance >
+           pipDistance * 1.13;
+
+}
+
+
+/* =========================================================
+   OPEN PALM DETECTION
+========================================================= */
+
+function detectOpenPalm(lm) {
 
     const index =
-        fingerUp(hand, 8, 6);
+        fingerExtended(lm, 8, 6);
 
     const middle =
-        fingerUp(hand, 12, 10);
+        fingerExtended(lm, 12, 10);
 
     const ring =
-        fingerUp(hand, 16, 14);
+        fingerExtended(lm, 16, 14);
 
     const pinky =
-        fingerUp(hand, 20, 18);
+        fingerExtended(lm, 20, 18);
 
 
-    return (
-        index &&
-        middle &&
-        ring &&
-        pinky
-    );
-}
+    let extendedCount = 0;
 
-
-/* =========================================================
-   PINCH DISTANCE
-========================================================= */
-
-function getPinchDistance(hand) {
-
-    return distance(
-        hand[4],
-        hand[8]
-    );
-}
-
-
-/* =========================================================
-   PINCH STATE MACHINE
-========================================================= */
-
-function updatePinch(hand) {
-
-    const d =
-        getPinchDistance(hand);
+    if (index) extendedCount++;
+    if (middle) extendedCount++;
+    if (ring) extendedCount++;
+    if (pinky) extendedCount++;
 
 
     /*
-        Already pinching
+        Require all four main fingers extended.
     */
 
-    if (pinchActive) {
+    if (extendedCount === 4) {
 
-        if (
-            d > PINCH_RELEASE
-        ) {
+        palmCandidateFrames++;
 
-            pinchReleaseFrames++;
+        if (palmCandidateFrames >= PALM_CONFIRM_FRAMES) {
 
-        }
-        else {
-
-            pinchReleaseFrames = 0;
+            palmState = true;
 
         }
 
+    } else {
 
-        if (
-            pinchReleaseFrames >=
-            PINCH_CONFIRM_FRAMES
-        ) {
+        palmCandidateFrames = 0;
 
-            pinchActive = false;
+        palmState = false;
 
-            pinchReleaseFrames = 0;
-
-        }
-
-        return pinchActive;
-    }
-
-
-    /*
-        Not currently pinching
-    */
-
-    if (
-        d < PINCH_ENTER
-    ) {
-
-        pinchEnterFrames++;
-
-    }
-    else {
-
-        pinchEnterFrames = 0;
+        palmClearLocked = false;
 
     }
 
 
-    if (
-        pinchEnterFrames >=
-        PINCH_CONFIRM_FRAMES
-    ) {
+    return palmState;
 
-        pinchActive = true;
-
-        pinchEnterFrames = 0;
-
-    }
-
-
-    return pinchActive;
 }
 
 
 /* =========================================================
-   ADAPTIVE FINGERTIP FILTER
+   ADAPTIVE FILTER
 ========================================================= */
 
-function filterPosition(
-    targetX,
-    targetY
-) {
+function adaptiveFilter(rawX, rawY) {
 
     if (
-        filteredX === null
+        filteredX === null ||
+        filteredY === null
     ) {
 
-        filteredX = targetX;
-        filteredY = targetY;
+        filteredX = rawX;
+        filteredY = rawY;
 
-        previousFilteredX = targetX;
-        previousFilteredY = targetY;
+        previousRawX = rawX;
+        previousRawY = rawY;
 
         return {
             x: filteredX,
             y: filteredY
         };
+
     }
 
 
-    /*
-        Estimate movement speed.
-    */
+    const dx =
+        rawX - previousRawX;
 
-    const movement =
-        Math.sqrt(
-
-            Math.pow(
-                targetX - filteredX,
-                2
-            )
-
-            +
-
-            Math.pow(
-                targetY - filteredY,
-                2
-            )
-
-        );
-
-
-    /*
-        Convert movement into
-        0 → 1.
-    */
+    const dy =
+        rawY - previousRawY;
 
     const speed =
-        Math.min(
-            movement / 100,
-            1
-        );
+        Math.sqrt(dx * dx + dy * dy);
+
+
+    previousRawX = rawX;
+    previousRawY = rawY;
 
 
     /*
-        Slow hand:
-        smoother
+        Faster movement → higher alpha.
 
-        Fast hand:
-        more responsive
+        Higher alpha means the filter catches up
+        faster and feels more responsive.
     */
 
     const alpha =
-        SMOOTH_SLOW +
-
-        (
-            SMOOTH_FAST -
-            SMOOTH_SLOW
-        ) * speed;
-
-
-    previousFilteredX =
-        filteredX;
-
-    previousFilteredY =
-        filteredY;
+        Math.min(
+            FILTER_MAX,
+            FILTER_MIN +
+            speed * FILTER_SPEED_SCALE * 100
+        );
 
 
     filteredX +=
-        (
-            targetX -
-            filteredX
-        ) * alpha;
-
+        (rawX - filteredX) * alpha;
 
     filteredY +=
-        (
-            targetY -
-            filteredY
-        ) * alpha;
+        (rawY - filteredY) * alpha;
 
 
     return {
         x: filteredX,
         y: filteredY
     };
+
 }
 
 
 /* =========================================================
-   SAFE COORDINATES
+   RESET FILTER
 ========================================================= */
 
-function safeCoordinates(
-    x,
-    y
-) {
+function resetFilter() {
+
+    filteredX = null;
+    filteredY = null;
+
+    previousRawX = null;
+    previousRawY = null;
+
+}
+
+
+/* =========================================================
+   SAFE COORDINATE
+========================================================= */
+
+function clamp(value, min, max) {
+
+    return Math.max(
+        min,
+        Math.min(max, value)
+    );
+
+}
+
+
+/* =========================================================
+   LANDMARK → SCREEN COORDINATES
+========================================================= */
+
+function getFingerPosition(lm) {
 
     /*
-        Small edge buffer.
+        MediaPipe camera image is mirrored through CSS.
 
-        Important:
-
-        We DON'T shrink the
-        usable drawing area.
-
-        We only prevent impossible
-        coordinates.
+        Therefore X is reversed here.
     */
 
-    const margin = 2;
+    let x = 1 - lm[8].x;
+    let y = lm[8].y;
+
+
+    /*
+        Keep the fingertip inside a very small safe
+        boundary so it cannot disappear due to
+        numerical noise at the extreme edge.
+    */
+
+    x = clamp(x, 0.005, 0.995);
+    y = clamp(y, 0.005, 0.995);
 
 
     return {
-
-        x: Math.max(
-            margin,
-            Math.min(
-                canvas.width - margin,
-                x
-            )
-        ),
-
-        y: Math.max(
-            margin,
-            Math.min(
-                canvas.height - margin,
-                y
-            )
-        )
+        x,
+        y
     };
+
 }
 
 
 /* =========================================================
-   GESTURE STATE MACHINE
+   PROCESS LANDMARKS
 ========================================================= */
 
-function updateGestureState(
-    hand
-) {
+function processHand(lm) {
 
-    const pinch =
-        updatePinch(hand);
+    if (!lm || lm.length < 21) {
 
+        handleNoHand();
 
-    /*
-        Open palm gets priority.
-    */
-
-    const openPalm =
-        detectOpenPalm(hand);
-
-
-    if (openPalm) {
-
-        palmFrames++;
-
-    }
-    else {
-
-        palmFrames = 0;
+        return;
 
     }
 
 
-    /*
-        CLEAR
-    */
+    handVisible = true;
+
+    lastHandSeenTime =
+        performance.now();
+
+
+    /* -----------------------------------------------
+       RAW FINGER POSITION
+    ------------------------------------------------ */
+
+    const raw =
+        getFingerPosition(lm);
+
+
+    /* -----------------------------------------------
+       SPIKE REJECTION
+    ------------------------------------------------ */
 
     if (
-        palmFrames >=
-        PALM_CONFIRM_FRAMES
+        previousFilteredX !== null &&
+        previousFilteredY !== null
     ) {
 
-        if (
-            Date.now() -
-            lastClearTime >
-            CLEAR_COOLDOWN
-        ) {
+        const jumpX =
+            raw.x - previousFilteredX;
 
-            gestureState =
-                "CLEAR";
+        const jumpY =
+            raw.y - previousFilteredY;
 
-            lastClearTime =
-                Date.now();
+        const jump =
+            Math.sqrt(
+                jumpX * jumpX +
+                jumpY * jumpY
+            );
+
+
+        if (jump > MAX_NORMALIZED_JUMP) {
+
+            /*
+                Ignore this frame.
+
+                Tracking probably jumped.
+            */
 
             return;
 
         }
-    }
-
-
-    /*
-        PINCH
-    */
-
-    if (pinch) {
-
-        gestureState =
-            "PINCH";
-
-        return;
 
     }
 
 
-    /*
-        DRAW
-    */
+    /* -----------------------------------------------
+       FILTER
+    ------------------------------------------------ */
 
-    gestureState =
-        "DRAW";
-}
-
-
-/* =========================================================
-   DRAW STROKE
-========================================================= */
-
-function drawAt(
-    x,
-    y
-) {
-
-    if (
-        lastDrawX === null ||
-        lastDrawY === null
-    ) {
-
-        lastDrawX = x;
-        lastDrawY = y;
-
-        return;
-    }
-
-
-    const movement =
-        Math.sqrt(
-
-            Math.pow(
-                x - lastDrawX,
-                2
-            )
-
-            +
-
-            Math.pow(
-                y - lastDrawY,
-                2
-            )
+    const filtered =
+        adaptiveFilter(
+            raw.x,
+            raw.y
         );
 
 
-    /*
-        Ignore microscopic tracking noise.
-    */
+    previousFilteredX = filtered.x;
+    previousFilteredY = filtered.y;
 
-    if (
-        movement < 1.5
-    ) {
+
+    /* -----------------------------------------------
+       CURSOR
+    ------------------------------------------------ */
+
+    const cx =
+        screenX(filtered.x);
+
+    const cy =
+        screenY(filtered.y);
+
+
+    cursor.style.left =
+        cx + "px";
+
+    cursor.style.top =
+        cy + "px";
+
+    cursor.style.display =
+        "block";
+
+
+    /* -----------------------------------------------
+       GESTURES
+    ------------------------------------------------ */
+
+    const isPinching =
+        detectPinch(lm);
+
+    const isPalm =
+        detectOpenPalm(lm);
+
+
+    /* -----------------------------------------------
+       OPEN PALM
+    ------------------------------------------------ */
+
+    if (isPalm && !palmClearLocked) {
+
+        gestureState =
+            GESTURE.PALM;
+
+        palmClearLocked = true;
+
+        clearBoard();
+
+        setStatus("✋ Board cleared");
 
         return;
 
     }
 
 
-    /*
-        Prevent giant accidental
-        strokes caused by tracking jumps.
-    */
+    /* -----------------------------------------------
+       PINCH
+    ------------------------------------------------ */
 
-    if (
-        movement > 100
-    ) {
+    if (isPinching) {
 
-        lastDrawX = x;
-        lastDrawY = y;
+        gestureState =
+            GESTURE.PINCH;
+
+        endStroke();
+
+        setStatus("🤏 Pinch — Drawing OFF");
 
         return;
+
     }
 
 
-    ctx.beginPath();
+    /* -----------------------------------------------
+       DRAW
+    ------------------------------------------------ */
 
-    ctx.moveTo(
-        lastDrawX,
-        lastDrawY
+    gestureState =
+        GESTURE.DRAW;
+
+
+    setStatus("☝ Drawing");
+
+
+    addDrawPoint(
+        filtered.x,
+        filtered.y
     );
 
-    ctx.lineTo(
-        x,
-        y
-    );
-
-    ctx.stroke();
-
-
-    lastDrawX = x;
-    lastDrawY = y;
 }
 
 
 /* =========================================================
-   MEDIAPIPE
+   HAND LOSS
 ========================================================= */
 
-const hands =
-    new Hands({
+function handleNoHand() {
 
-        locateFile:
-            (file) => {
-
-                return (
-                    "https://cdn.jsdelivr.net/npm/" +
-                    "@mediapipe/hands/" +
-                    file
-                );
-            }
-    });
+    handVisible = false;
 
 
-hands.setOptions({
+    const now =
+        performance.now();
 
-    maxNumHands: 1,
 
-    modelComplexity: 1,
+    /*
+        Do not immediately reset everything.
 
-    minDetectionConfidence: 0.70,
+        MediaPipe can occasionally miss a frame.
+    */
 
-    minTrackingConfidence: 0.70
-});
+    if (
+        now - lastHandSeenTime <
+        HAND_LOSS_GRACE_MS
+    ) {
+
+        return;
+
+    }
+
+
+    gestureState =
+        GESTURE.NO_HAND;
+
+
+    endStroke();
+
+    resetFilter();
+
+    pinchState = false;
+
+    pinchCandidate = false;
+
+    pinchFrames = 0;
+
+    releaseFrames = 0;
+
+    palmState = false;
+
+    palmCandidateFrames = 0;
+
+    palmClearLocked = false;
+
+
+    cursor.style.display =
+        "none";
+
+
+    setStatus("🖐 Hand not detected");
+
+}
 
 
 /* =========================================================
    MEDIAPIPE RESULTS
 ========================================================= */
 
-hands.onResults(
-    (results) => {
+function onResults(results) {
 
-        if (!running)
-            return;
+    if (!running) return;
 
 
-        /*
-            NO HAND
-        */
+    if (
+        results.multiHandLandmarks &&
+        results.multiHandLandmarks.length > 0
+    ) {
 
-        if (
-            !results.multiHandLandmarks ||
-            results.multiHandLandmarks.length === 0
-        ) {
+        processHand(
+            results.multiHandLandmarks[0]
+        );
 
-            handMissingFrames++;
+    } else {
 
-
-            /*
-                Don't immediately kill
-                tracking because one frame
-                disappeared.
-            */
-
-            if (
-                handMissingFrames <=
-                HAND_LOSS_GRACE
-            ) {
-
-                return;
-            }
-
-
-            cursor.style.display =
-                "none";
-
-
-            resetTracking();
-
-
-            status.textContent =
-                "No hand detected";
-
-            return;
-        }
-
-
-        handMissingFrames = 0;
-
-
-        const hand =
-            results.multiHandLandmarks[0];
-
-
-        /*
-            INDEX FINGERTIP
-        */
-
-        const index =
-            hand[8];
-
-
-        /*
-            Mirror X
-        */
-
-        let targetX =
-            (
-                1 -
-                index.x
-            ) *
-            canvas.width;
-
-
-        let targetY =
-            index.y *
-            canvas.height;
-
-
-        /*
-            Clamp
-        */
-
-        const safe =
-            safeCoordinates(
-                targetX,
-                targetY
-            );
-
-
-        targetX =
-            safe.x;
-
-        targetY =
-            safe.y;
-
-
-        /*
-            FILTER
-        */
-
-        const position =
-            filterPosition(
-                targetX,
-                targetY
-            );
-
-
-        const x =
-            position.x;
-
-        const y =
-            position.y;
-
-
-        /*
-            CURSOR
-        */
-
-        cursor.style.display =
-            "block";
-
-        cursor.style.left =
-            `${x}px`;
-
-        cursor.style.top =
-            `${y}px`;
-
-
-        /*
-            GESTURE ENGINE
-        */
-
-        updateGestureState(hand);
-
-
-        /* =================================================
-           CLEAR
-        ================================================= */
-
-        if (
-            gestureState ===
-            "CLEAR"
-        ) {
-
-            clearBoard();
-
-            status.textContent =
-                "Open palm — Board cleared";
-
-            palmFrames = 0;
-
-            gestureState =
-                "IDLE";
-
-            return;
-        }
-
-
-        /* =================================================
-           PINCH
-        ================================================= */
-
-        if (
-            gestureState ===
-            "PINCH"
-        ) {
-
-            resetDrawing();
-
-            status.textContent =
-                "Pinch — Drawing OFF";
-
-            return;
-        }
-
-
-        /* =================================================
-           DRAW
-        ================================================= */
-
-        if (
-            gestureState ===
-            "DRAW"
-        ) {
-
-            drawing = true;
-
-            status.textContent =
-                "Index finger — Drawing";
-
-
-            drawAt(
-                x,
-                y
-            );
-
-        }
+        handleNoHand();
 
     }
-);
+
+}
+
+
+/* =========================================================
+   INITIALIZE MEDIAPIPE
+========================================================= */
+
+function initializeHands() {
+
+    hands = new Hands({
+
+        locateFile: (file) => {
+
+            return `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`;
+
+        }
+
+    });
+
+
+    hands.setOptions({
+
+        maxNumHands: 1,
+
+        modelComplexity: 1,
+
+        minDetectionConfidence: 0.70,
+
+        minTrackingConfidence: 0.70
+
+    });
+
+
+    hands.onResults(onResults);
+
+}
 
 
 /* =========================================================
    START CAMERA
 ========================================================= */
 
-startBtn.addEventListener(
-    "click",
-    () => {
+async function startCamera() {
 
-        if (running)
-            return;
+    if (running) return;
 
 
-        try {
+    try {
 
-            camera =
-                new Camera(
-                    video,
-                    {
+        setStatus("Starting camera...");
 
-                        onFrame:
-                            async () => {
+        running = true;
 
-                                await hands.send({
-                                    image: video
-                                });
+        initializeHands();
 
-                            },
 
-                        width: 1280,
+        camera = new Camera(
+            video,
+            {
 
-                        height: 720
+                onFrame: async () => {
+
+                    if (!running) return;
+
+                    try {
+
+                        await hands.send({
+                            image: video
+                        });
+
+                    } catch (error) {
+
+                        console.error(
+                            "MediaPipe frame error:",
+                            error
+                        );
 
                     }
-                );
+
+                },
+
+                width: 1280,
+
+                height: 720
+
+            }
+        );
 
 
-            camera.start();
+        camera.start();
 
 
-            running = true;
+        startBtn.textContent =
+            "RUNNING";
+
+        startBtn.disabled =
+            true;
 
 
-            startBtn.textContent =
-                "RUNNING";
+        setStatus(
+            "Camera ready — show your hand"
+        );
 
 
-            status.textContent =
-                "Camera started — Show your hand";
+    } catch (error) {
 
-        }
+        console.error(error);
 
-        catch (error) {
+        running = false;
 
-            console.error(error);
-
-            status.textContent =
-                "Camera failed to start";
-
-        }
+        setStatus(
+            "Camera error — allow camera permission"
+        );
 
     }
+
+}
+
+
+/* =========================================================
+   START BUTTON
+========================================================= */
+
+startBtn.addEventListener(
+    "click",
+    startCamera
 );
 
 
@@ -1191,10 +1379,44 @@ clearBtn.addEventListener(
 
         clearBoard();
 
-        status.textContent =
-            "Board cleared";
+        setStatus(
+            "Board cleared"
+        );
 
     }
+);
+
+
+/* =========================================================
+   PREVENT TOUCH SCROLLING
+========================================================= */
+
+document.addEventListener(
+    "touchmove",
+    (event) => {
+
+        event.preventDefault();
+
+    },
+    {
+        passive: false
+    }
+);
+
+
+/* =========================================================
+   INITIAL CANVAS
+========================================================= */
+
+resizeCanvas();
+
+
+/* =========================================================
+   INITIAL STATUS
+========================================================= */
+
+setStatus(
+    "Press START"
 );
 
 </script>
